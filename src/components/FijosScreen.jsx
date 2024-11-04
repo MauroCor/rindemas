@@ -3,7 +3,7 @@ import NavbarComponent from './NavbarComponent';
 import CarouselComponent from './CarouselComponent';
 
 const FijosScreen = () => {
-  const [viewMode, setViewMode] = useState('actual'); // Cambia entre 'actual' y 'macro'
+  const [viewMode, setViewMode] = useState('macro'); // Cambia entre 'actual' y 'macro'
 
   return (
     <div className="dark bg-gray-900 text-white min-h-screen">

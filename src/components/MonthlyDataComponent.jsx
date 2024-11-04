@@ -1,46 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
+import FinancialDesplegableComponent from './FinancialDesplegableComponent';
 
 const MonthlyDataComponent = ({ month }) => {
-  const [showIngresos, setShowIngresos] = useState(false);
-  const [showEgresos, setShowEgresos] = useState(false);
 
   // Función para obtener el nombre del mes en base a `month`
   const getMonthName = (offset) => {
     const date = new Date();
     date.setMonth(date.getMonth() + offset);
-    return date.toLocaleString('es-ES', { month: 'long' });
+    const month = date.toLocaleString('es-ES', { month: 'long' });
+    return month.charAt(0).toUpperCase() + month.slice(1);
   };
 
   const currentMonthName = getMonthName(month);
 
   return (
-    <div className="w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center">
-      <h3 className="font-bold text-xl mb-2">{currentMonthName}</h3>
-      <div>Balance: $X</div>
-      
+    <div className={`w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center ${month === 0 ? 'border-2 border-yellow-500' : ''}`}>
+      <h3 className="font-bold text-2xl mb-2">{currentMonthName}</h3>
+      <label>Balance</label>
       <div>
-        <div onClick={() => setShowIngresos(!showIngresos)} className="cursor-pointer mt-2">
-          Ingresos: $X
-        </div>
-        {showIngresos && (
-          <div className="grid grid-cols-2 mt-2 gap-2">
-            <div>Nombre</div>
-            <div>Monto</div>
-          </div>
-        )}
+        <label className='text-2xl text-blue-500'>$350k</label>
       </div>
-
-      <div>
-        <div onClick={() => setShowEgresos(!showEgresos)} className="cursor-pointer mt-2">
-          Egresos: $X
-        </div>
-        {showEgresos && (
-          <div className="grid grid-cols-2 mt-2 gap-2">
-            <div>Nombre</div>
-            <div>Monto</div>
-          </div>
-        )}
-      </div>
+      <FinancialDesplegableComponent title="Ingresos" amount="400" isIncome={true} />
+      <FinancialDesplegableComponent title="Egresos" amount="50" isIncome={false} />
     </div>
   );
 };

@@ -8,9 +8,11 @@ const CarouselComponent = () => {
   const handlePrev = () => setCurrentMonth(currentMonth - 1);
 
   return (
-    <div className="relative flex justify-center items-center mt-8 space-x-4">
+    <div className="relative flex justify-center items-center mt-32 space-x-4">
       {/* Botón de retroceso anclado al centro izquierda */}
-      <button onClick={handlePrev} className="absolute left-0 text-white text-2xl">
+      <button
+        onClick={handlePrev}
+        className="absolute left-20 text-white text-2xl rounded-full bg-blue-600 w-10 h-10">
         {"<"}
       </button>
 
@@ -22,7 +24,9 @@ const CarouselComponent = () => {
       </div>
 
       {/* Botón de avance anclado al centro derecha */}
-      <button onClick={handleNext} className="absolute right-0 text-white text-2xl">
+      <button
+        onClick={handleNext}
+        className="absolute right-20 text-white text-2xl rounded-full bg-blue-600 w-10 h-10">
         {">"}
       </button>
     </div>
