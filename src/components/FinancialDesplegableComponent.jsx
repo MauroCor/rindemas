@@ -7,7 +7,7 @@ const FinancialDesplegableComponent = ({ title, amount, isIncome }) => {
         <div>
             <div onClick={() => setShowDetails(!showDetails)} className="cursor-pointer mt-4 bg-gray-700 hover:bg-gray-600 rounded-3xl flex justify-between items-center p-4">
                 <label>{title}</label>
-                <div className='right-4 text-xs'>{showDetails ? '▲' : '▼'}</div>
+                <div className='right-4 text-xs text-gray-950'>{showDetails ? '▲' : '▼'}</div>
                 <div>
                     <label className={`text-2xl ${isIncome ? 'text-green-500' : 'text-red-500'}`}>${amount}k</label>
                 </div>

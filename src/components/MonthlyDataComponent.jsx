@@ -15,10 +15,10 @@ const MonthlyDataComponent = ({ month }) => {
 
   return (
     <div className={`w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center ${month === 0 ? 'border-2 border-yellow-500' : ''}`}>
-      <h3 className="font-bold text-2xl mb-2">{currentMonthName}</h3>
+      <h3 className="font-bold text-2xl mb-4">{currentMonthName}</h3>
       <label>Balance</label>
       <div>
-        <label className='text-2xl text-blue-500'>$350k</label>
+        <label className='text-2xl text-blue-500 font-bold'>$350k</label>
       </div>
       <FinancialDesplegableComponent title="Ingresos" amount="400" isIncome={true} />
       <FinancialDesplegableComponent title="Egresos" amount="50" isIncome={false} />
