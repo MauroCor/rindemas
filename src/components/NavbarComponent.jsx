@@ -1,10 +1,13 @@
 import React from 'react';
 
 const NavbarComponent = () => (
-  <nav className="flex justify-around bg-gray-200 p-4">
-    <button>Fijos</button>
-    <button>Tarjetas</button>
-    <button>Ahorros</button>
+  <nav className="flex items-center justify-between bg-gray-800 p-4">
+    <div className="text-lg font-bold text-white">Stage Money</div>
+    <div className="flex space-x-4">
+      <button className="text-white">Fijos</button>
+      <button className="text-white">Tarjetas</button>
+      <button className="text-white">Ahorros</button>
+    </div>
   </nav>
 );
 
