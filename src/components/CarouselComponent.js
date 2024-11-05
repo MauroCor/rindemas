@@ -1,12 +1,10 @@
-import MonthlyDataComponent from './MonthlyDataComponent';
-
-const CarouselComponent = ({ currentMonth }) => {
+const CarouselComponent = ({ data, renderItem }) => {
   return (
     <div className="relative flex justify-center items-center mt-16 space-x-4">
       <div className="flex space-x-4">
-        <MonthlyDataComponent month={currentMonth - 1} />
-        <MonthlyDataComponent month={currentMonth} />
-        <MonthlyDataComponent month={currentMonth + 1} />
+        {data.map((itemData, i) => (
+          renderItem(itemData, i)
+        ))}
       </div>
     </div>
   );

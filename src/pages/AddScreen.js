@@ -1,10 +1,12 @@
 import ButtonComponent from '../components/ButtonComponent';
 import DropComponent from '../components/DropComponent';
+import InputPriceComponent from '../components/InputPriceComponent';
+import MonthDropComponent from '../components/MonthDropComponent';
 
 const AddScreen = () => {
 
   return (
-    <div className="dark bg-gray-900 text-white min-h-screen">
+    <div>
       <div className="flex justify-center items-center flex-wrap space-x-4 p-4">
         <ButtonComponent onClick={1} text="Ingreso" />
         <ButtonComponent onClick={1} text="Egreso" />
@@ -12,7 +14,10 @@ const AddScreen = () => {
         <ButtonComponent onClick={1} text="Ahorro" />
       </div>
 
-      <DropComponent title="Nombre ingreso" />
+      <DropComponent />
+      <InputPriceComponent />
+      <MonthDropComponent />
+      <ButtonComponent onClick={1} text="OK" />
     </div>
   );
 };
