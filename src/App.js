@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
-import AddScreen from './pages/AddScreen';
+import RouterConfig from './navegation/RouterConfig';
 
 class App extends Component {
   render() {
     return (
       <div className="dark">
-        <AddScreen />
+        <RouterConfig />
       </div>
     );
   }
