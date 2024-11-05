@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import NavbarComponent from './NavbarComponent';
-import CarouselComponent from './CarouselComponent';
-import ButtonPrevComponent from './ButtonPrevComponent';
-import ButtonNextComponent from './ButtonNextComponent';
-import ButtonAddComponent from './ButtonAddComponent';
-import ButtonCurrentMonthComponent from './ButtonCurrentMonthComponent';
+import NavbarComponent from '../components/NavbarComponent';
+import CarouselComponent from '../components/CarouselComponent';
+import ButtonComponent from '../components/ButtonComponent';
 
 const FijosScreen = () => {
   const [currentMonth, setCurrentMonth] = useState(0);
@@ -20,10 +17,10 @@ const FijosScreen = () => {
 
       <div className="relative p-4">
         <div className="flex justify-center items-center flex-wrap space-x-2">
-          <ButtonPrevComponent onClick={handlePrev} />
-          <ButtonAddComponent onClick={1} />
-          <ButtonCurrentMonthComponent onClick={resetToCurrentMonth} />
-          <ButtonNextComponent onClick={handleNext} />
+          <ButtonComponent onClick={handlePrev} text="<" />
+          <ButtonComponent onClick={1} text="+ Agregar" />
+          <ButtonComponent onClick={resetToCurrentMonth} text="Mes actual" />
+          <ButtonComponent onClick={handleNext} text=">"/>
         </div>
 
         <CarouselComponent currentMonth={currentMonth} />
