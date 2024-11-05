@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FinancialDesplegableComponent = ({ title, amount, isIncome }) => {
+const FinancialDropComponent = ({ title, amount, isIncome }) => {
     const [showDetails, setShowDetails] = useState(false);
 
     return (
@@ -56,4 +56,4 @@ const FinancialDesplegableComponent = ({ title, amount, isIncome }) => {
     );
 };
 
-export default FinancialDesplegableComponent;
+export default FinancialDropComponent;

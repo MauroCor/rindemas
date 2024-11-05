@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ButtonComponent = ({ onClick, text }) => (
     <button
         onClick={onClick}

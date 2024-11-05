@@ -1,5 +1,4 @@
-import React from 'react';
-import FinancialDesplegableComponent from './FinancialDesplegableComponent';
+import FinancialDropComponent from './FinancialDropComponent';
 
 const MonthlyDataComponent = ({ month }) => {
 
@@ -20,8 +19,8 @@ const MonthlyDataComponent = ({ month }) => {
       <div>
         <label className='text-2xl text-blue-500 font-bold'>$350k</label>
       </div>
-      <FinancialDesplegableComponent title="Ingresos" amount="400" isIncome={true} />
-      <FinancialDesplegableComponent title="Egresos" amount="50" isIncome={false} />
+      <FinancialDropComponent title="Ingresos" amount="400" isIncome={true} />
+      <FinancialDropComponent title="Egresos" amount="50" isIncome={false} />
     </div>
   );
 };

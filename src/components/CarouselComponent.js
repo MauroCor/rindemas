@@ -1,4 +1,3 @@
-import React from 'react';
 import MonthlyDataComponent from './MonthlyDataComponent';
 
 const CarouselComponent = ({ currentMonth }) => {

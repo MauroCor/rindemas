@@ -1,4 +1,3 @@
-import React from 'react';
 import ButtonComponent from '../components/ButtonComponent';
 import DropComponent from '../components/DropComponent';
 
