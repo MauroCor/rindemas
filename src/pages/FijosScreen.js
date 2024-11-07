@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
-import MonthlyDataComponent from '../components/FixedDataComponent';
+import FixedDataComponent from '../components/FixedDataComponent';
 import { Link } from 'react-router-dom';
-import mock from '../utils/months';
+import getIncomes from '../services/income';
+import getFixedCosts from '../services/fixedCost';
 
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
@@ -12,19 +13,40 @@ const FijosScreen = () => {
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
 
-  const setTreeMonths = () => {
-    if (dataMonths) {
-      return dataMonths.slice(startIndex, startIndex + itemsPerPages);
-    }
-    return [];
-  };
-
   useEffect(() => {
-    setDataMonths(mock);
+    const fetchAndMergeData = async () => {
+      try {
+        const incomes = await getIncomes();
+        const fixedCosts = await getFixedCosts();
+
+        // Combine income and fixed costs by matching on the date
+        const mergedData = incomes.map((incomeMonth) => {
+          const matchingFixedCost = fixedCosts.find((cost) => cost.date === incomeMonth.date) || { fixedCost: [], total: 0 };
+          
+          return {
+            date: incomeMonth.date,
+            income: {
+              items: incomeMonth.income,
+              total: incomeMonth.total,
+            },
+            fixedCost: {
+              items: matchingFixedCost.fixedCost,
+              total: matchingFixedCost.total,
+            },
+          };
+        });
+
+        setDataMonths(mergedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchAndMergeData();
   }, []);
 
   useEffect(() => {
-    setCurrentsMonths(setTreeMonths());
+    setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
   }, [dataMonths, startIndex, itemsPerPages]);
 
   const handlePrev = () => {
@@ -47,8 +69,8 @@ const FijosScreen = () => {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    
-    const currentIndex = dataMonths.findIndex(month => {
+
+    const currentIndex = dataMonths.findIndex((month) => {
       const monthDate = new Date(month.date);
       return monthDate.getFullYear() === currentYear && monthDate.getMonth() === currentMonth;
     });
@@ -65,11 +87,11 @@ const FijosScreen = () => {
         <div className="flex justify-center items-center flex-wrap space-x-2">
           <ButtonComponent text="<" onClick={handlePrev} />
           <Link className="bg-blue-600 rounded-full px-4 py-2 hover:bg-blue-500" to="/agregar">+ Agregar</Link>
-          <ButtonComponent text="Centrar" onClick={focusCurrentMonth} /> {/* Botón para centrar */}
+          <ButtonComponent text="Centrar" onClick={focusCurrentMonth} />
           <DropdownItemsPerPageComponent itemsPerPage={itemsPerPages} onItemsPerPageChange={handleItemsPerPageChange} />
           <ButtonComponent text=">" onClick={handleNext} />
         </div>
-        <CarouselComponent data={currentsMonths} renderItem={(monthData) => <MonthlyDataComponent monthData={monthData} />} />
+        <CarouselComponent data={currentsMonths} renderItem={(monthData) => <FixedDataComponent monthData={monthData} />} />
       </div>
     </div>
   );

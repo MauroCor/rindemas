@@ -20,7 +20,7 @@ const CardDataComponent = ({ monthData }) => {
   return (
     <div className={`w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center ${monthName === currentMonthName ? 'border-2 border-yellow-500' : ''}`}>
       <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
-      <FinancialDropComponent title="Total" amount="400" isIncome={false} />
+      <FinancialDropComponent title="Total" amount="400" isOpen />
     </div>
   );
 };

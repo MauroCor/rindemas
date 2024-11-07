@@ -1,8 +1,7 @@
 const mock = [
     {
-        "id": 1,
         "date": "2024-01-05",
-        "fixedCost": [
+        "CardCost": [
             {
                 "date": "01/01/2024",
                 "name": "CreditCard",
@@ -16,9 +15,8 @@ const mock = [
         ],
     },
     {
-        "id": 2,
-        "date": "2024-11-05",
-        "fixedCost": [
+        "date": "2024-02-05",
+        "cardCost": [
             {
                 "date": "2024-02-05",
                 "name": "Luz",
@@ -32,9 +30,8 @@ const mock = [
         ],
     },
     {
-        "id": 3,
         "date": "2024-03-05",
-        "fixedCost": [
+        "cardCost": [
             {
                 "date": "01/03/2024",
                 "name": "Luz2",
@@ -48,9 +45,8 @@ const mock = [
         ],
     },
     {
-        "id": 4,
         "date": "2024-04-05",
-        "fixedCost": [
+        "cardCost": [
             {
                 "date": "01/01/2024",
                 "name": "CreditCard",
@@ -64,9 +60,8 @@ const mock = [
         ],
     },
     {
-        "id": 5,
         "date": "2024-05-05",
-        "fixedCost": [
+        "cardCost": [
             {
                 "date": "01/02/2024",
                 "name": "Luz",
@@ -80,9 +75,8 @@ const mock = [
         ],
     },
     {
-        "id": 6,
         "date": "2024-06-05",
-        "fixedCost": [
+        "cardCost": [
             {
                 "date": "01/03/2024",
                 "name": "Luz22",

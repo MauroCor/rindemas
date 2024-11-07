@@ -16,7 +16,7 @@ const MonthDropComponent = ({ value, onChange }) => {
                 <option value={8}>Agosto</option>
                 <option value={9}>Septiembre</option>
                 <option value={10}>Octubre</option>
-                <option value={11}>Noviembre</option>
+                <option selected value={11}>Noviembre</option>
                 <option value={12}>Diciembre</option>
             </select>
         </div>
