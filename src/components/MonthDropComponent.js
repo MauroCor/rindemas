@@ -1,24 +1,23 @@
-const MonthDropComponent = ({ value, onChange }) => {
+import React, { useEffect } from 'react';
+
+const MonthDropComponent = ({ value, onChange, type }) => {
+    useEffect(() => {
+        if (type === "Desde" && !value && typeof onChange === "function") {
+            const currentDate = new Date();
+            const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+            onChange(formattedDate);
+        }
+    }, [type, value, onChange]);
+
     return (
         <div className="text-center mb-2">
-            <select
+            <input
+                type="month"
                 value={value}
-                onChange={onChange}
-                className="bg-gray-700 w-60 text-center h-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-                <option value={1}>Enero</option>
-                <option value={2}>Febrero</option>
-                <option value={3}>Marzo</option>
-                <option value={4}>Abril</option>
-                <option value={5}>Mayo</option>
-                <option value={6}>Junio</option>
-                <option value={7}>Julio</option>
-                <option value={8}>Agosto</option>
-                <option value={9}>Septiembre</option>
-                <option value={10}>Octubre</option>
-                <option selected value={11}>Noviembre</option>
-                <option value={12}>Diciembre</option>
-            </select>
+                onChange={(e) => onChange && onChange(e.target.value)}
+                lang="es"
+                className="bg-gray-700 w-60 pl-3 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white rounded-lg"
+            />
         </div>
     );
 };

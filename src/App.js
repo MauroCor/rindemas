@@ -5,7 +5,7 @@ import RouterConfig from './navegation/RouterConfig';
 class App extends Component {
   render() {
     return (
-      <div className="dark">
+      <div>
         <RouterConfig />
       </div>
     );
