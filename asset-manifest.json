@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.1b017394.css",
-    "main.js": "/static/js/main.1815b39d.js",
-    "index.html": "/index.html",
-    "main.1b017394.css.map": "/static/css/main.1b017394.css.map",
-    "main.1815b39d.js.map": "/static/js/main.1815b39d.js.map"
+    "main.css": "/stage-money-frontend/static/css/main.1b017394.css",
+    "main.js": "/stage-money-frontend/static/js/main.1815b39d.js",
+    "index.html": "/stage-money-frontend/index.html",
+    "main.1b017394.css.map": "/stage-money-frontend/static/css/main.1b017394.css.map",
+    "main.1815b39d.js.map": "/stage-money-frontend/static/js/main.1815b39d.js.map"
   },
   "entrypoints": [
     "static/css/main.1b017394.css",
