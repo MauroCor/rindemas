@@ -46,8 +46,8 @@ const AddScreen = () => {
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-10">Nombre</label>
                 <DropComponent plhdr={selectedOption === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'}
-                onChange={(e) => setName(e.target.value)}
-                type={selectedOption === 'Ingreso' ? 'income' : 'fixedCost'} />
+                  onChange={(e) => setName(e.target.value)}
+                  type={selectedOption === 'Ingreso' ? 'income' : 'fixedCost'} />
               </div>
 
               <div className="flex flex-col">
@@ -60,12 +60,10 @@ const AddScreen = () => {
                 <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
               </div>
 
-              {selectedOption === 'Ingreso' && (
-                <div className="flex flex-col">
-                  <label className="text-xs text-left mb-1 ml-10">Hasta (Opcional)</label>
-                  <MonthDropComponent value={hastaValue} onChange={setHastaValue} />
-                </div>
-              )}
+              <div className="flex flex-col">
+                <label className="text-xs text-left mb-1 ml-10">Hasta (Opcional)</label>
+                <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
+              </div>
             </>
           )}
 

@@ -22,7 +22,7 @@ const FijosScreen = () => {
         // Combine income and fixed costs by matching on the date
         const mergedData = incomes.map((incomeMonth) => {
           const matchingFixedCost = fixedCosts.find((cost) => cost.date === incomeMonth.date) || { fixedCost: [], total: 0 };
-          
+
           return {
             date: incomeMonth.date,
             income: {
@@ -82,14 +82,18 @@ const FijosScreen = () => {
   };
 
   return (
-    <div className="dark bg-gray-900 text-white min-h-screen">
-      <div className="relative p-4">
-        <div className="flex justify-center items-center flex-wrap space-x-2">
-          <ButtonComponent text="<" onClick={handlePrev} />
-          <Link className="bg-blue-600 rounded-full px-4 py-2 hover:bg-blue-500" to="/agregar">+ Agregar</Link>
-          <ButtonComponent text="Centrar" onClick={focusCurrentMonth} />
+    <div className="dark bg-gray-900 min-h-screen">
+      <div className="relative p-1">
+        <div className="text-center">
+          <Link className="bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer" to="/agregar">+ Agregar</Link>
+        </div>
+        <div className='flex justify-center items-center flex-wrap space-x-2 mt-6'>
+          <ButtonComponent text="⬅️" onClick={handlePrev} />
+          <div className='pl-16' />
+          <ButtonComponent text="Ver actual" onClick={focusCurrentMonth} />
           <DropdownItemsPerPageComponent itemsPerPage={itemsPerPages} onItemsPerPageChange={handleItemsPerPageChange} />
-          <ButtonComponent text=">" onClick={handleNext} />
+          <div className='pl-16' />
+          <ButtonComponent text="➡️" onClick={handleNext} />
         </div>
         <CarouselComponent data={currentsMonths} renderItem={(monthData) => <FixedDataComponent monthData={monthData} />} />
       </div>
