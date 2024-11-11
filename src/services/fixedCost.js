@@ -1,4 +1,7 @@
-const url = 'http://127.0.0.1:5050/api/fixed-cost/'
+import { base_url } from "./config";
+
+const url = `${base_url}/api/fixed-cost/`
+
 
 export const getFixedCosts = async () => {
   try {

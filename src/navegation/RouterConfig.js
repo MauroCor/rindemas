@@ -7,7 +7,7 @@ import CardScreen from '../pages/CardScreen';
 
 export default function RouterConfig() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/stage-money-frontend">
             <NavbarComponent />
             <Routes>
                 <Route path='/fijos' element={<FijosScreen />} />

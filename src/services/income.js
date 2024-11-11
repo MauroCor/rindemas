@@ -1,4 +1,6 @@
-const url = 'http://127.0.0.1:5050/api/income/'
+import { base_url } from "./config";
+
+const url = `${base_url}/api/income/`
 
 
 export const getIncomes = async () => {
