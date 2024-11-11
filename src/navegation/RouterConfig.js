@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import NavbarComponent from '../components/NavbarComponent';
 
 import FijosScreen from '../pages/FijosScreen';
@@ -7,9 +7,10 @@ import CardScreen from '../pages/CardScreen';
 
 export default function RouterConfig() {
     return (
-        <BrowserRouter basename="/stage-money-frontend">
+        <BrowserRouter basename="/sm">
             <NavbarComponent />
             <Routes>
+                <Route path='/' element={<Navigate to="/fijos" />} />
                 <Route path='/fijos' element={<FijosScreen />} />
                 <Route path='/agregar' element={<AddScreen />} />
                 <Route path='/tarjetas' element={<CardScreen />} />

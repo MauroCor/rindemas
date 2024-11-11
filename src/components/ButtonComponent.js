@@ -17,7 +17,7 @@ const ButtonComponent = ({ onClick, text }) => {
     return (
         <button
             onClick={onClick}
-            className={`rounded-full px-4 py-2 hover:bg-blue-500 ${buttonClass}`}>
+            className={`rounded-full hover:bg-blue-500 ${buttonClass}`}>
             {text}
         </button>
     );
