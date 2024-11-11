@@ -1,15 +1,38 @@
+const url = 'http://127.0.0.1:5050/api/fixed-cost/'
+
 export const getFixedCosts = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:5050/api/fixed-cost/');
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Failed to fetch fixed costs:", error);
-      throw error;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  };
-  
-  export default getFixedCosts;
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch fixed costs:", error);
+    throw error;
+  }
+};
+
+export const postFixedCost = async (data) => {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to post fixed cost');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error posting fixed cost:', error);
+    throw error;
+  }
+};
+
+export default getFixedCosts;
