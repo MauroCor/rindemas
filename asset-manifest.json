@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/stage-money-frontend/static/css/main.1b017394.css",
-    "main.js": "/stage-money-frontend/static/js/main.1815b39d.js",
+    "main.css": "/stage-money-frontend/static/css/main.e818edba.css",
+    "main.js": "/stage-money-frontend/static/js/main.dbd72c21.js",
     "index.html": "/stage-money-frontend/index.html",
-    "main.1b017394.css.map": "/stage-money-frontend/static/css/main.1b017394.css.map",
-    "main.1815b39d.js.map": "/stage-money-frontend/static/js/main.1815b39d.js.map"
+    "main.e818edba.css.map": "/stage-money-frontend/static/css/main.e818edba.css.map",
+    "main.dbd72c21.js.map": "/stage-money-frontend/static/js/main.dbd72c21.js.map"
   },
   "entrypoints": [
-    "static/css/main.1b017394.css",
-    "static/js/main.1815b39d.js"
+    "static/css/main.e818edba.css",
+    "static/js/main.dbd72c21.js"
   ]
 }
