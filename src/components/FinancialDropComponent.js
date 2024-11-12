@@ -21,9 +21,9 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
             {showDetails && !initialOpen && (
                 <div className="mt-4">
                     {data.items.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600">
-                            <span className="text-gray-300">{item.name}</span>
-                            <span className="text-gray-300">{formatNumber(item.price)}</span>
+                        <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600 text-gray-300">
+                            <span>{item.name}</span>
+                            <span>{formatNumber(item.price)}</span>
                         </div>
                     ))}
                 </div>
@@ -32,12 +32,10 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
             {showDetails && initialOpen && (
                 <div className="mt-4">
                     {data.cardSpend.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600 text-gray-300">
-                            {console.log(item)}
-                            
-                            <span className="w-1/3 text-left">{item.name}</span>
-                            <span className="w-1/3 text-right">{formatNumber(item.price)}</span>
-                            <span className="w-1/6 text-right text-gray-400">{item.installment}</span>
+                        <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
+                            <span className="w-[40%] text-left text-sm whitespace-normal">{item.name}</span>
+                            <span className="w-[20%] text-center text-sm">{formatNumber(item.price)}</span>
+                            <span className="w-[5%] text-right text-gray-400 text-sm">{item.installment}</span>
                             <button
                                 onClick={() => onDelete(item.id)}
                                 className="text-red-500 text-lg ml-2 hover:text-red-700"

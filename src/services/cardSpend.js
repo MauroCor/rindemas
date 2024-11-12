@@ -1,7 +1,6 @@
-// import { base_url } from "./config";
+import { base_url } from "./config";
 
-// const url = `${base_url}/api/card-spend/`
-const url = `http://127.0.0.1:5050/api/card-spend/`
+const url = `${base_url}/api/card-spend/`
 
 
 export const getCardSpends = async () => {

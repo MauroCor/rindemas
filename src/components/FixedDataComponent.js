@@ -4,10 +4,11 @@ import { formatNumber } from '../utils/numbers';
 const FixedDataComponent = ({ monthData }) => {
   const { date, income, fixedCost } = monthData;
 
-  function getMonthName(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleString('es-ES', { month: 'long' }).charAt(0).toUpperCase() + date.toLocaleString('es-ES', { month: 'long' }).slice(1);
-  }
+  const getMonthName = (dateStr) => {
+    const month = parseInt(dateStr.split('-')[1], 10) - 1;
+    const monthName = new Date(2024, month).toLocaleString('es-ES', { month: 'long' });
+    return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  };
 
   function getCurrentMonthName() {
     const date = new Date();
