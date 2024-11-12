@@ -10,8 +10,7 @@ export const getCardSpends = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Failed to fetch card spend:", error);
     throw error;
@@ -20,6 +19,8 @@ export const getCardSpends = async () => {
 
 export const postCardSpend = async (data) => {
   try {
+    console.log(data);
+    
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -35,6 +36,23 @@ export const postCardSpend = async (data) => {
     return await response.json();
   } catch (error) {
     console.error('Error posting card spend:', error);
+    throw error;
+  }
+};
+
+export const deleteCardSpend = async (id) => {
+  try {
+    const response = await fetch(`${url}${id}/`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete card spend');
+    }
+
+    return response
+  } catch (error) {
+    console.error('Error deleting card spend:', error);
     throw error;
   }
 };

@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 
 const MonthDropComponent = ({ value, onChange, type }) => {
     useEffect(() => {
-        if (type === "Desde" && !value && typeof onChange === "function") {
+        if (type === "Desde") {
             const currentDate = new Date();
             const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
             onChange(formattedDate);
         }
-        if (type === "DesdeTarj" && !value && typeof onChange === "function") {
+
+        if (type === "DesdeTarj") {
             const currentDate = new Date();
             const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 2).padStart(2, '0')}`;
             onChange(formattedDate);
@@ -21,7 +22,7 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 value={value}
                 onChange={(e) => onChange && onChange(e.target.value)}
                 lang="es"
-                className="bg-gray-700 w-60 pl-3 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white rounded-lg"
+                className="bg-gray-700 w-60 pl-3 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
             />
             {type === "Hasta" && value && (
                 <button

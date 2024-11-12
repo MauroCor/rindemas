@@ -6,6 +6,7 @@ import MonthDropComponent from '../components/MonthDropComponent';
 import OptionSelectorComponent from '../components/OptionSelectorComponent';
 import { postFixedCost } from '../services/fixedCost';
 import { postIncome } from '../services/income';
+import { postCardSpend } from '../services/cardSpend';
 import DropdownComponent from '../components/DropdownComponent';
 import InputComponent from '../components/InputComponent';
 
@@ -15,24 +16,46 @@ const AddScreen = () => {
   const [price, setPrice] = useState('');
   const [desdeValue, setDesdeValue] = useState('');
   const [hastaValue, setHastaValue] = useState('');
-  const [cuotas, setCuotas] = useState('');
+  const [cuotas, setCuotas] = useState('1');
 
   const handleSubmit = async () => {
-    const data = {
-      name,
-      price: parseInt(price),
-      date_from: desdeValue,
-      date_to: hastaValue || null,
-    };
+    let data = {};
     try {
-      if (selectedOption === 'Egreso') {
-        await postFixedCost(data);
-      } else if (selectedOption === 'Ingreso') {
-        await postIncome(data);
+      switch (selectedOption) {
+        case 'Egreso':
+          data = {
+            name,
+            price: parseInt(price),
+            date_from: desdeValue,
+            date_to: hastaValue || null,
+          };
+          await postFixedCost(data);
+          break;
+        case 'Ingreso':
+          data = {
+            name,
+            price: parseInt(price),
+            date_from: desdeValue,
+            date_to: hastaValue || null,
+          };
+          await postIncome(data);
+          break;
+        case 'Tarjeta':
+          data = {
+            name,
+            price: parseInt(price),
+            fees: parseInt(cuotas),
+            date_from: desdeValue,
+          };
+          await postCardSpend(data);
+          break;
+        default:
+          throw new Error("Opción no válida");
       }
-      alert('Enviado correctamente');
+      alert('Agregado correctamente.');
     } catch (error) {
-      alert('Error al enviar los datos');
+      console.error("Error al enviar los datos:", error);
+      alert('Error: Revise los datos ingresados.');
     }
   };
 
@@ -82,11 +105,7 @@ const AddScreen = () => {
                 <label className="text-xs text-left mb-1 ml-10">Monto</label>
                 <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} />
               </div>
-
-              <div className="flex flex-col">
-                <DropdownComponent value={cuotas} onChange={(e) => setCuotas(e.target.value)} />
-              </div>
-
+              <DropdownComponent value={cuotas} onChange={(e) => setCuotas(e.target.value)} />
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-10">Desde</label>
                 <MonthDropComponent type='DesdeTarj' value={desdeValue} onChange={setDesdeValue} />

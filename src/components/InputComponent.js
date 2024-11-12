@@ -8,7 +8,7 @@ const InputComponent = ({ name, value, onChange, placeholder, className }) => {
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className={`bg-gray-700 w-60 ${className}`}
+                    className={`bg-gray-700 w-60 rounded-lg ${className}`}
                 />
             </div>
         </div>

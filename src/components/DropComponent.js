@@ -38,7 +38,7 @@ const DropComponent = ({ plhdr, onChange, type }) => {
     return (
         <div className="text-center rounded-lg mb-2">
             <input
-                className='bg-gray-700 w-60'
+                className='bg-gray-700 w-60 rounded-lg'
                 type="text"
                 name="drop"
                 list="drop"

@@ -5,7 +5,7 @@ const DropdownComponent = ({ value, onChange }) => {
       <select
         value={value}
         onChange={onChange}
-        className="bg-gray-600 border-gray-950 mx-10 py-1 text-center"
+        className="bg-gray-700 mx-10 py-1 text-center rounded-lg"
       >
         <option value="1">1 cuota</option>
         {[3, 6, 9, 12, 18].map((cuota) => (

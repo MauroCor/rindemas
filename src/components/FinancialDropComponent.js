@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { formatNumber } from '../utils/numbers';
 
-const FinancialDropComponent = ({ title, data, isIncome, initialOpen = false }) => {
+const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen = false }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
     const toggleDropdown = () => setShowDetails(!showDetails);
 
@@ -33,11 +33,18 @@ const FinancialDropComponent = ({ title, data, isIncome, initialOpen = false }) 
                 <div className="mt-4">
                     {data.cardSpend.map((item, index) => (
                         <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600 text-gray-300">
+                            {console.log(item)}
+                            
                             <span className="w-1/3 text-left">{item.name}</span>
                             <span className="w-1/3 text-right">{formatNumber(item.price)}</span>
                             <span className="w-1/6 text-right text-gray-400">{item.installment}</span>
+                            <button
+                                onClick={() => onDelete(item.id)}
+                                className="text-red-500 text-lg ml-2 hover:text-red-700"
+                            >
+                                &#10005;
+                            </button>
                         </div>
-
                     ))}
                 </div>
             )}

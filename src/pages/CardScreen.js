@@ -5,6 +5,7 @@ import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
 import CardDataComponent from '../components/CardDataComponent';
 import getCardSpends from '../services/cardSpend';
+import { deleteCardSpend } from '../services/cardSpend';
 
 const CardScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
@@ -60,6 +61,26 @@ const CardScreen = () => {
             setStartIndex(adjustedIndex);
         }
     };
+
+    const handleDeleteCardSpend = async (id) => {
+        const isConfirmed = window.confirm('¿Quiere eliminar este gasto de tarjeta?');
+
+        if (isConfirmed) {
+            try {
+                await deleteCardSpend(id);
+
+                setDataMonths((prevData) =>
+                    prevData.map((month) => ({
+                        ...month,
+                        cardSpend: month.cardSpend.filter((item) => item.id !== id),
+                    }))
+                );
+            } catch (error) {
+                console.error('Error deleteCardSpend:', error);
+            }
+        }
+    };
+
     return (
         <div className="dark bg-gray-900 min-h-screen">
             <div className="relative p-1">
@@ -74,7 +95,7 @@ const CardScreen = () => {
                     <div className='pl-16' />
                     <ButtonComponent text="➡️" onClick={handleNext} />
                 </div>
-                <CarouselComponent data={currentsMonths} renderItem={(monthData) => <CardDataComponent monthData={monthData} />} />
+                <CarouselComponent data={currentsMonths} renderItem={(monthData) => <CardDataComponent monthData={monthData} onDeleteCardSpend={handleDeleteCardSpend} />} />
             </div>
         </div>
     );
