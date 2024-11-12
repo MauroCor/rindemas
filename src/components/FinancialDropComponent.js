@@ -14,16 +14,30 @@ const FinancialDropComponent = ({ title, data, isIncome, initialOpen = false }) 
                 <div className='right-4 text-xs text-gray-950'>{showDetails ? '▲' : '▼'}</div>
                 <div>
                     <label className={`text-xl ${isIncome ? 'text-green-500' : 'text-red-500'}`}
-                    style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{formatNumber(data.total)}</label>
+                        style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{formatNumber(data.total)}</label>
                 </div>
             </div>
-            {showDetails && (
+            {/* Fijos */}
+            {showDetails && !initialOpen && (
                 <div className="mt-4">
                     {data.items.map((item, index) => (
                         <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600">
                             <span className="text-gray-300">{item.name}</span>
                             <span className="text-gray-300">{formatNumber(item.price)}</span>
                         </div>
+                    ))}
+                </div>
+            )}
+            {/* Tarjetas */}
+            {showDetails && initialOpen && (
+                <div className="mt-4">
+                    {data.cardSpend.map((item, index) => (
+                        <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600 text-gray-300">
+                            <span className="w-1/3 text-left">{item.name}</span>
+                            <span className="w-1/3 text-right">{formatNumber(item.price)}</span>
+                            <span className="w-1/6 text-right text-gray-400">{item.installment}</span>
+                        </div>
+
                     ))}
                 </div>
             )}

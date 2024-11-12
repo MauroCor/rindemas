@@ -26,7 +26,6 @@ const DropComponent = ({ plhdr, onChange, type }) => {
                     )
                 ];
                 
-                console.log(names)
                 setOptions(names);
             } catch (error) {
                 console.error("Error fetching data:", error);
