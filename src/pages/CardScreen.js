@@ -63,7 +63,7 @@ const CardScreen = () => {
     };
 
     const handleDeleteCardSpend = async (id) => {
-        const isConfirmed = window.confirm('¿Quiere eliminar este gasto de tarjeta?');
+        const isConfirmed = window.confirm(`¿Quiere eliminar el gasto de tarjeta completamente?`);
 
         if (isConfirmed) {
             try {

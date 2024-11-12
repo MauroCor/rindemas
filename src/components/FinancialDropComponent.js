@@ -24,6 +24,21 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
                         <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600 text-gray-300">
                             <span>{item.name}</span>
                             <span>{formatNumber(item.price)}</span>
+                            {item.name !== 'Tarjeta' && (
+                                <button
+                                    onClick={() => onDelete(item)}
+                                    className="text-red-500 text-lg ml-2 hover:text-red-700"
+                                >
+                                    &#10005;
+                                </button>
+                            )}
+                            {item.name == 'Tarjeta' && (
+                                <button
+                                    className="text-gray-700 text-lg ml-2 cursor-default"
+                                >
+                                    &#10005;
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>

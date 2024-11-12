@@ -4,8 +4,8 @@ import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
 import FixedDataComponent from '../components/FixedDataComponent';
 import { Link } from 'react-router-dom';
-import getIncomes from '../services/income';
-import getFixedCosts from '../services/fixedCost';
+import { getIncomes, patchIncome } from '../services/income';
+import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
@@ -13,29 +13,50 @@ const FijosScreen = () => {
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
 
+  const mergeData = (incomes, fixedCosts) => {
+    // Combina ingresos y egresos para los meses, asegurando que si solo hay egresos, se muestren también
+    const allMonths = [
+      ...new Set([
+        ...incomes.map((income) => income.date),
+        ...fixedCosts.map((fixedCost) => fixedCost.date),
+      ]),
+    ];
+
+    const mergedData = allMonths.map((month) => {
+      const matchingIncome = incomes.find((incomeMonth) => incomeMonth.date === month);
+      const matchingFixedCost = fixedCosts.find((fixedCostMonth) => fixedCostMonth.date === month);
+
+      const income = matchingIncome || { income: [], total: 0 };
+      const fixedCost = matchingFixedCost || { fixedCost: [], total: 0 };
+
+      return {
+        date: month,
+        income: { items: income.income, total: income.total },
+        fixedCost: { items: fixedCost.fixedCost, total: fixedCost.total },
+      };
+    });
+
+    // Filtrar los meses que tienen ingresos o egresos
+    const filteredData = mergedData.filter(
+      (month) => month.income.items.length > 0 || month.fixedCost.items.length > 0
+    );
+
+    // Ordenar los datos por mes (formato YYYY-MM)
+    filteredData.sort((a, b) => (a.date > b.date ? 1 : -1));
+
+    return filteredData;
+  };
+
   useEffect(() => {
     const fetchAndMergeData = async () => {
       try {
         const incomes = await getIncomes();
         const fixedCosts = await getFixedCosts();
 
-        // Combine income and fixed costs by matching on the date
-        const mergedData = incomes.map((incomeMonth) => {
-          const matchingFixedCost = fixedCosts.find((cost) => cost.date === incomeMonth.date) || { fixedCost: [], total: 0 };
+        // Utilizar la función mergeData para combinar y ordenar los datos
+        const mergedData = mergeData(incomes, fixedCosts);
 
-          return {
-            date: incomeMonth.date,
-            income: {
-              items: incomeMonth.income,
-              total: incomeMonth.total,
-            },
-            fixedCost: {
-              items: matchingFixedCost.fixedCost,
-              total: matchingFixedCost.total,
-            },
-          };
-        });
-
+        // Establecer los datos en el estado
         setDataMonths(mergedData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -63,6 +84,29 @@ const FijosScreen = () => {
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPages(newItemsPerPage);
     setStartIndex(0);
+  };
+
+  const handleDeleteFijos = async (data, monthName, type) => {
+    const body = { ...data, date_to: monthName };
+    const isConfirmed = window.confirm(`¿Quiere eliminar '${data.name}' a partir de ${monthName}?`);
+
+    if (isConfirmed) {
+      try {
+        const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
+        await patchFunction(body);
+
+        // Obtener los datos actualizados de ingresos y egresos
+        const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
+
+        // Utilizar la función mergeData para combinar los datos y ordenarlos
+        const mergedData = mergeData(incomes, fixedCosts);
+
+        // Actualizar el estado con los datos combinados y ordenados
+        setDataMonths(mergedData);
+      } catch (error) {
+        console.error(`Error patching ${type}:`, error);
+      }
+    }
   };
 
   const focusCurrentMonth = () => {
@@ -95,7 +139,7 @@ const FijosScreen = () => {
           <div className='pl-16' />
           <ButtonComponent text="➡️" onClick={handleNext} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
         </div>
-        <CarouselComponent data={currentsMonths} renderItem={(monthData) => <FixedDataComponent monthData={monthData} />} />
+        <CarouselComponent data={currentsMonths} renderItem={(monthData) => <FixedDataComponent monthData={monthData} onDeleteFijos={handleDeleteFijos} />} />
       </div>
     </div>
   );

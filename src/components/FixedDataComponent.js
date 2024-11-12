@@ -1,7 +1,7 @@
 import FinancialDropComponent from './FinancialDropComponent';
 import { formatNumber } from '../utils/numbers';
 
-const FixedDataComponent = ({ monthData }) => {
+const FixedDataComponent = ({ monthData, onDeleteFijos }) => {
   const { date, income, fixedCost } = monthData;
 
   const getMonthName = (dateStr) => {
@@ -25,8 +25,8 @@ const FixedDataComponent = ({ monthData }) => {
       <div>
         <label className='text-2xl text-blue-500 font-bold'>{formatNumber(income.total - fixedCost.total)}</label>
       </div>
-      <FinancialDropComponent title="Ingresos" data={income} isIncome={true} />
-      <FinancialDropComponent title="Egresos" data={fixedCost} isIncome={false} />
+      <FinancialDropComponent title="Ingresos" data={income} isIncome={true} onDelete={(data) => onDeleteFijos(data, date, 'income')}/>
+      <FinancialDropComponent title="Egresos" data={fixedCost} isIncome={false} onDelete={(data) => onDeleteFijos(data, date, 'fixedCost')} />
     </div>
   );
 };

@@ -18,8 +18,6 @@ export const getCardSpends = async () => {
 
 export const postCardSpend = async (data) => {
   try {
-    console.log(data);
-    
     const response = await fetch(url, {
       method: 'POST',
       headers: {

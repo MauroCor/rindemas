@@ -29,7 +29,13 @@ const AddScreen = () => {
             date_from: desdeValue,
             date_to: hastaValue || null,
           };
-          await postFixedCost(data);
+
+          if (data.date_to <= data.date_from) {
+            alert('Error: La fecha fin debe ser mayor a la fecha inicio.');
+          } else {
+            await postFixedCost(data);
+            alert(`✅ Egreso agregado (${data.name}).`);
+          }
           break;
         case 'Ingreso':
           data = {
@@ -38,7 +44,12 @@ const AddScreen = () => {
             date_from: desdeValue,
             date_to: hastaValue || null,
           };
-          await postIncome(data);
+          if (data.date_to <= data.date_from) {
+            alert('Error: La fecha fin debe ser mayor a la fecha inicio.');
+          } else {
+            await postIncome(data);
+            alert(`✅ Ingreso agregado (${data.name}).`);
+          }
           break;
         case 'Tarjeta':
           data = {
@@ -48,11 +59,11 @@ const AddScreen = () => {
             date_from: desdeValue,
           };
           await postCardSpend(data);
+          alert(`✅ Gato de tarjeta agregado (${data.name}).`);
           break;
         default:
           throw new Error("Opción no válida");
       }
-      alert('Agregado correctamente.');
     } catch (error) {
       console.error("Error al enviar los datos:", error);
       alert('Error: Revise los datos ingresados.');

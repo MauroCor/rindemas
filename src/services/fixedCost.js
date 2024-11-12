@@ -38,4 +38,25 @@ export const postFixedCost = async (data) => {
   }
 };
 
+export const patchFixedCost = async (data) => {
+  try {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to patch fixed cost');
+    }
+
+    return response;
+  } catch (error) {
+    console.error('Error patching fixed cost:', error);
+    throw error;
+  }
+};
+
 export default getFixedCosts;
