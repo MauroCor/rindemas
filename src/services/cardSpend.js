@@ -5,7 +5,17 @@ const url = `${base_url}/api/card-spend/`
 
 export const getCardSpends = async () => {
   try {
-    const response = await fetch(url);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -18,9 +28,15 @@ export const getCardSpends = async () => {
 
 export const postCardSpend = async (data) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
@@ -39,8 +55,17 @@ export const postCardSpend = async (data) => {
 
 export const deleteCardSpend = async (id) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    
     const response = await fetch(`${url}${id}/`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {

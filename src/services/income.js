@@ -5,28 +5,46 @@ const url = `${base_url}/api/income/`
 
 export const getIncomes = async () => {
   try {
-    const response = await fetch(url);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Failed to fetch income:", error);
+    console.error("Failed to fetch:", error);
     throw error;
   }
 };
 
 export const postIncome = async (data) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to post income');
     }
@@ -40,9 +58,15 @@ export const postIncome = async (data) => {
 
 export const patchIncome = async (data) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    
     const response = await fetch(url, {
       method: 'PATCH',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),

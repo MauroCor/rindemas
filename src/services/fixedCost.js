@@ -5,10 +5,22 @@ const url = `${base_url}/api/fixed-cost/`
 
 export const getFixedCosts = async () => {
   try {
-    const response = await fetch(url);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     const data = await response.json();
     return data;
   } catch (error) {
@@ -17,11 +29,18 @@ export const getFixedCosts = async () => {
   }
 };
 
+
 export const postFixedCost = async (data) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
@@ -40,9 +59,15 @@ export const postFixedCost = async (data) => {
 
 export const patchFixedCost = async (data) => {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
     const response = await fetch(url, {
       method: 'PATCH',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
