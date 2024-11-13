@@ -89,10 +89,10 @@ const CardScreen = () => {
                 </div>
                 <div className='flex justify-center items-center flex-wrap space-x-2 mt-6'>
                     <ButtonComponent text="⬅️" onClick={handlePrev} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
-                    <div className='pl-16' />
-                    <ButtonComponent text="Ver actual" onClick={focusCurrentMonth} className='hover:bg-blue-500 bg-gray-600 px-2 py-0 border-gray-950' />
+                    <div className='pl-10' />
+                    <ButtonComponent text="Ver actual" onClick={focusCurrentMonth} className='hover:bg-blue-500 bg-gray-600 px-2 py-0 border-gray-950 text-white' />
                     <DropdownItemsPerPageComponent itemsPerPage={itemsPerPages} onItemsPerPageChange={handleItemsPerPageChange} />
-                    <div className='pl-16' />
+                    <div className='pl-10' />
                     <ButtonComponent text="➡️" onClick={handleNext} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
                 </div>
                 <CarouselComponent data={currentsMonths} renderItem={(monthData) => <CardDataComponent monthData={monthData} onDeleteCardSpend={handleDeleteCardSpend} />} />
