@@ -95,13 +95,10 @@ const FijosScreen = () => {
         const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
         await patchFunction(body);
 
-        // Obtener los datos actualizados de ingresos y egresos
         const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
 
-        // Utilizar la función mergeData para combinar los datos y ordenarlos
         const mergedData = mergeData(incomes, fixedCosts);
 
-        // Actualizar el estado con los datos combinados y ordenados
         setDataMonths(mergedData);
       } catch (error) {
         console.error(`Error patching ${type}:`, error);
@@ -126,17 +123,17 @@ const FijosScreen = () => {
   };
 
   return (
-    <div className="dark bg-gray-900 min-h-screen">
+    <div className="dark bg-gray-900 min-h-screen mt-8">
       <div className="relative p-1">
         <div className="text-center">
           <Link className="bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer" to="/agregar">+ Agregar</Link>
         </div>
         <div className='flex justify-center items-center flex-wrap space-x-2 mt-6'>
           <ButtonComponent text="⬅️" onClick={handlePrev} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
-          <div className='pl-16' />
-          <ButtonComponent text="Ver actual" onClick={focusCurrentMonth} className='hover:bg-blue-500 bg-gray-600 px-2 py-0 border-gray-950' />
+          <div className='pl-10' />
+          <ButtonComponent text="Ver actual" onClick={focusCurrentMonth} className='hover:bg-blue-500 bg-gray-600 px-2 py-0 border-gray-950 text-white' />
           <DropdownItemsPerPageComponent itemsPerPage={itemsPerPages} onItemsPerPageChange={handleItemsPerPageChange} />
-          <div className='pl-16' />
+          <div className='pl-10' />
           <ButtonComponent text="➡️" onClick={handleNext} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
         </div>
         <CarouselComponent data={currentsMonths} renderItem={(monthData) => <FixedDataComponent monthData={monthData} onDeleteFijos={handleDeleteFijos} />} />

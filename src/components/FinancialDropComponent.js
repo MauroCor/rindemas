@@ -10,7 +10,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
             <div
                 onClick={toggleDropdown}
                 className="flex justify-between items-center cursor-pointer p-2 bg-gray-700 hover:bg-gray-600 rounded-2xl">
-                <label style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{title}</label>
+                <label className='text-white' style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{title}</label>
                 <div className='right-4 text-xs text-gray-950'>{showDetails ? '▲' : '▼'}</div>
                 <div>
                     <label className={`text-xl ${isIncome ? 'text-green-500' : 'text-red-500'}`}

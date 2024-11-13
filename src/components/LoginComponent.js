@@ -24,8 +24,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center mt-16 bg-gray-900">
-      <div className="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-xl">
+    <div className="flex items-start justify-center min-h-screen bg-gray-900">
+      <div className="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-xl mt-24">
         <h2 className="text-center text-3xl font-extrabold text-white">Bienvenido de nuevo</h2>
         <p className="mt-4 text-center text-gray-400">Inicia sesión para continuar</p>
         <form onSubmit={handleLogin} className="mt-8 space-y-6">

@@ -1,18 +1,17 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'; // Importar AuthContext
-
+import { AuthContext } from '../context/AuthContext';
 const NavbarComponent = () => {
-  const { logout } = useContext(AuthContext);  // Acceder al contexto de autenticación
+  const { logout } = useContext(AuthContext);
 
   const handleLogout = () => {
-    logout();  // Llamar a la función de logout
+    logout();
   };
 
   return (
-    <nav className="flex items-center justify-between bg-gray-800 p-4 mb-6">
-      <div className="text-lg font-bold">Stage Money</div>
-      <div className="flex-1 flex justify-center space-x-4"> {/* Centra los enlaces */}
+    <nav className="flex items-center justify-between bg-gray-800 p-4">
+      <div className="text-lg font-bold text-white">Stage Money</div>
+      <div className="flex-1 flex justify-center space-x-4">
         <NavLink
           to="/fijos"
           className={({ isActive }) =>
@@ -30,6 +29,7 @@ const NavbarComponent = () => {
           Tarjetas
         </NavLink>
       </div>
+
       <button className="flex items-center" onClick={handleLogout}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -46,10 +46,10 @@ const NavbarComponent = () => {
             d="M5 2C3.34315 2 2 3.34315 2 5V19C2 20.6569 3.34315 22 5 22H14.5C15.8807 22 17 20.8807 17 19.5V16.7326C16.8519 16.647 16.7125 16.5409 16.5858 16.4142C15.9314 15.7598 15.8253 14.7649 16.2674 14H13C11.8954 14 11 13.1046 11 12C11 10.8954 11.8954 10 13 10H16.2674C15.8253 9.23514 15.9314 8.24015 16.5858 7.58579C16.7125 7.4591 16.8519 7.35296 17 7.26738V4.5C17 3.11929 15.8807 2 14.5 2H5Z"
           ></path>
         </svg>
-        Cerrar sesión
+        <span className="hidden sm:inline text-white">Cerrar sesión</span>
       </button>
-    </nav>
 
+    </nav>
   );
 };
 
