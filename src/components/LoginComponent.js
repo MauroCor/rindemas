@@ -5,8 +5,8 @@ import { postToken } from '../services/login';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
