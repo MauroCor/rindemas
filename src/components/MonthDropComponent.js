@@ -28,7 +28,7 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 value={value}
                 onChange={(e) => onChange && onChange(e.target.value)}
                 lang="es"
-                className="bg-gray-700 w-60 pl-3 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg text-white"
+                className="bg-gray-700 w-60 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg text-white"
             />
             {type === "Hasta" && value && (
                 <button

@@ -4,8 +4,8 @@ import DropComponent from '../components/DropComponent';
 import InputPriceComponent from '../components/InputPriceComponent';
 import MonthDropComponent from '../components/MonthDropComponent';
 import OptionSelectorComponent from '../components/OptionSelectorComponent';
-import { postFixedCost } from '../services/fixedCost';
-import { postIncome } from '../services/income';
+import { postFixedCost, putFixedCost } from '../services/fixedCost';
+import { postIncome, putIncome } from '../services/income';
 import { postCardSpend } from '../services/cardSpend';
 import DropdownComponent from '../components/DropdownComponent';
 import InputComponent from '../components/InputComponent';
@@ -33,8 +33,13 @@ const AddScreen = () => {
           if (data.date_to <= data.date_from) {
             alert('Error: La fecha fin debe ser mayor a la fecha inicio.');
           } else {
-            await postFixedCost(data);
-            alert(`✅ Egreso agregado (${data.name}).`);
+            try {
+              await postFixedCost(data);
+              alert(`Egreso agregado (${data.name}) ✔️`);
+            } catch {
+              await putFixedCost(data);
+              alert(`Egreso actualizado (${data.name}) ✔️`);
+            }
           }
           break;
         case 'Ingreso':
@@ -47,8 +52,13 @@ const AddScreen = () => {
           if (data.date_to <= data.date_from) {
             alert('Error: La fecha fin debe ser mayor a la fecha inicio.');
           } else {
-            await postIncome(data);
-            alert(`✅ Ingreso agregado (${data.name}).`);
+            try {
+              await postIncome(data);
+              alert(`Ingreso agregado (${data.name}) ✔️`);
+            } catch {
+              await putIncome(data);
+              alert(`Ingreso actualizado (${data.name}) ✔️`);
+            }
           }
           break;
         case 'Tarjeta':
@@ -59,7 +69,7 @@ const AddScreen = () => {
             date_from: desdeValue,
           };
           await postCardSpend(data);
-          alert(`✅ Gato de tarjeta agregado (${data.name}).`);
+          alert(`Gasto de tarjeta agregado (${data.name}) ✔️`);
           break;
         default:
           throw new Error("Opción no válida");
@@ -71,7 +81,7 @@ const AddScreen = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gray-900'>
+    <div className='min-h-screen bg-gray-900 py-8'>
       <h1 className='font-bold text-center text-xl mt-8 text-white'>¿Qué deseas agregar?</h1>
       <div className="p-4">
         <OptionSelectorComponent selectedOption={selectedOption} setSelectedOption={setSelectedOption} />

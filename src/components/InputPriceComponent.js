@@ -6,6 +6,11 @@ const InputPriceComponent = ({ onChange }) => {
                 type="number"
                 name="drop"
                 placeholder="Ej: $350.000"
+                onInput={(e) => {
+                    const value = e.target.value.slice(0, 9);
+                    e.target.value = value.replace(/\D/g, '');
+                    onChange(e); 
+                }}
                 onChange={onChange} />
         </div>
     );

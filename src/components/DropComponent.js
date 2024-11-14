@@ -42,6 +42,7 @@ const DropComponent = ({ plhdr, onChange, type }) => {
                 name="drop"
                 list="drop"
                 placeholder={plhdr}
+                maxLength={20}
                 onChange={onChange} />
             <datalist id="drop">
                 {options.map((opt, index) => (

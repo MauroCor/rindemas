@@ -83,4 +83,31 @@ export const patchIncome = async (data) => {
   }
 };
 
+export const putIncome = async (data) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to put income');
+    }
+
+    return response;
+  } catch (error) {
+    console.error('Error puttin income:', error);
+    throw error;
+  }
+};
+
 export default getIncomes;

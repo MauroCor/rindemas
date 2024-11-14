@@ -84,4 +84,31 @@ export const patchFixedCost = async (data) => {
   }
 };
 
+export const putFixedCost = async (data) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to put fixed cost');
+    }
+
+    return response;
+  } catch (error) {
+    console.error('Error putting fixed cost:', error);
+    throw error;
+  }
+};
+
 export default getFixedCosts;
