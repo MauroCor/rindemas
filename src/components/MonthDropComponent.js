@@ -41,7 +41,7 @@ const MonthDropComponent = ({ value, onChange, type }) => {
             )}
             {type === "Hasta" && !value && (
                 <div>
-                    <span className="text-xs text-left text-gray-300">
+                    <span className="text-xs text-center text-gray-300">
                         Por defecto se creará el registro por 1 año.
                     </span>
                 </div>
