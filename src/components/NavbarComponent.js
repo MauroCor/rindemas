@@ -28,6 +28,14 @@ const NavbarComponent = () => {
         >
           Tarjetas
         </NavLink>
+        <NavLink
+          to="/ahorros"
+          className={({ isActive }) =>
+            isActive ? "text-blue-500 font-bold" : "text-white"
+          }
+        >
+          Ahorros
+        </NavLink>
       </div>
 
       <button className="flex items-center" onClick={handleLogout}>

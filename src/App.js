@@ -6,6 +6,7 @@ import NavbarComponent from './components/NavbarComponent';
 import FijosScreen from './pages/FijosScreen';
 import AddScreen from './pages/AddScreen';
 import CardScreen from './pages/CardScreen';
+import SaveScreen from './pages/SaveScreen';
 import Login from './components/LoginComponent';
 
 const App = () => (
@@ -38,6 +39,14 @@ const App = () => (
           element={
             <PrivateRoute>
               <CardScreen />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/ahorros"
+          element={
+            <PrivateRoute>
+              <SaveScreen />
             </PrivateRoute>
           }
         />
