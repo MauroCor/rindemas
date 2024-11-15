@@ -89,25 +89,26 @@ const AddScreen = () => {
         <div className="max-w-xs mx-auto space-y-4">
           {(selectedOption === 'Ingreso' || selectedOption === 'Egreso') && (
             <>
+              <h3 className='text-center mt-2 text-[14px] text-gray-300'>Puedes modificar un registro por su nombre.</h3>
               <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-10 text-white">Nombre</label>
+                <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>
                 <DropComponent plhdr={selectedOption === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'}
                   onChange={(e) => setName(e.target.value)}
                   type={selectedOption === 'Ingreso' ? 'income' : 'fixedCost'} />
               </div>
 
               <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-10 text-white">Monto</label>
+                <label className="text-xs text-left mb-1 ml-11 text-white">Monto</label>
                 <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} />
               </div>
 
               <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-10 text-white">Desde</label>
+                <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
                 <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
               </div>
 
               <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-10 text-white">Hasta (Opcional)</label>
+                <label className="text-xs text-left mb-1 ml-11 text-white">Hasta (Opcional)</label>
                 <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
               </div>
             </>
@@ -123,12 +124,12 @@ const AddScreen = () => {
               />
 
               <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-10 text-white">Monto</label>
+                <label className="text-xs text-left mb-1 ml-11 text-white">Monto</label>
                 <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} />
               </div>
               <DropdownComponent value={cuotas} onChange={(e) => setCuotas(e.target.value)} />
               <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-10 text-white">Desde</label>
+                <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
                 <MonthDropComponent type='DesdeTarj' value={desdeValue} onChange={setDesdeValue} />
               </div>
             </>

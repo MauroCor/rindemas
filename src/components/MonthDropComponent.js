@@ -28,7 +28,7 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 value={value}
                 onChange={(e) => onChange && onChange(e.target.value)}
                 lang="es"
-                className="bg-gray-700 w-60 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg text-white"
+                className="text-center bg-gray-700 w-60 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg text-white"
             />
             {type === "Hasta" && value && (
                 <button
@@ -38,6 +38,13 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 >
                     x
                 </button>
+            )}
+            {type === "Hasta" && !value && (
+                <div>
+                    <span className="text-xs text-left text-gray-300">
+                        Por defecto se creará el registro por 1 año.
+                    </span>
+                </div>
             )}
         </div>
     );

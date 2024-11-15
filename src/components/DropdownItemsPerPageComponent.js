@@ -6,9 +6,9 @@ const DropdownItemsPerPageComponent = ({ itemsPerPage, onItemsPerPageChange }) =
         onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
         className="bg-gray-600 border-gray-950 ml-2 px-2 py-[2px] text-white"
       >
-        <option value={1}>1</option>
-        <option value={3}>3</option>
-        <option value={5}>5</option>
+        <option value={1}>1 mes</option>
+        <option value={3}>3 meses</option>
+        <option value={5}>5 meses</option>
       </select>
     </div>
   );
