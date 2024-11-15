@@ -41,6 +41,7 @@ const DropComponent = ({ plhdr, onChange, type }) => {
                 type="text"
                 name="drop"
                 list="drop"
+                autocomplete='off'
                 placeholder={plhdr}
                 maxLength={20}
                 onChange={onChange} />

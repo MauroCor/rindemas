@@ -5,6 +5,7 @@ const InputComponent = ({ name, value, onChange, placeholder, className }) => {
             <div className="text-center mb-2">
                 <input
                     type="text"
+                    autocomplete='off'
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
