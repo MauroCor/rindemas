@@ -34,7 +34,7 @@ const Login = () => {
             <input
               id="username"
               type="text"
-              autocomplete='off'
+              autoComplete='off'
               placeholder="Nombre de usuario"
               className="appearance-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               value={username}
@@ -47,7 +47,7 @@ const Login = () => {
             <input
               id="password"
               type="password"
-              autocomplete='off'
+              autoComplete='off'
               placeholder="Contraseña"
               className="appearance-none relative block w-full px-3 py-3 border border-gray-700 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               value={password}
