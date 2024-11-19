@@ -30,12 +30,16 @@ const AddScreen = () => {
             date_to: hastaValue || null,
           };
 
-          if (data.date_to <= data.date_from) {
+          if (data.date_to < data.date_from) {
             alert('Error: La fecha fin debe ser mayor a la fecha inicio.');
           } else {
             try {
               await postFixedCost(data);
               alert(`Egreso agregado (${data.name}) ✔️`);
+              setName('a');
+              setPrice(0);
+              setDesdeValue('');
+              setHastaValue('');
             } catch {
               await putFixedCost(data);
               alert(`Egreso actualizado (${data.name}) ✔️`);
@@ -49,7 +53,7 @@ const AddScreen = () => {
             date_from: desdeValue,
             date_to: hastaValue || null,
           };
-          if (data.date_to <= data.date_from) {
+          if (data.date_to < data.date_from) {
             alert('Error: La fecha fin debe ser mayor a la fecha inicio.');
           } else {
             try {
@@ -89,7 +93,8 @@ const AddScreen = () => {
         <div className="max-w-xs mx-auto space-y-4">
           {(selectedOption === 'Ingreso' || selectedOption === 'Egreso') && (
             <>
-              <h3 className='text-center mt-2 text-[14px] text-gray-300'>Puedes modificar un registro por su nombre.</h3>
+              <h3 className="text-center mt-2 text-[14px] text-gray-300">
+                Agrega o modifica un {selectedOption.toLowerCase()} por su nombre.</h3>
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>
                 <DropComponent plhdr={selectedOption === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'}

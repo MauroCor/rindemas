@@ -24,7 +24,7 @@ const DropComponent = ({ plhdr, onChange, type }) => {
                         )
                     )
                 ];
-                
+                names = names.filter(name => name !== "Tarjeta");
                 setOptions(names);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -41,7 +41,7 @@ const DropComponent = ({ plhdr, onChange, type }) => {
                 type="text"
                 name="drop"
                 list="drop"
-                autocomplete='off'
+                autoComplete='off'
                 placeholder={plhdr}
                 maxLength={20}
                 onChange={onChange} />

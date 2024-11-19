@@ -10,7 +10,7 @@ const CarouselComponent = ({ data, renderItem }) => {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 text-center mt-4 text-lg p-10">Aún no hay datos cargados para visualizar.</p>
+        <p className="text-gray-500 text-center mt-4 text-lg p-10">Aún no hay datos cargados.</p>
       )}
     </div>
   );
