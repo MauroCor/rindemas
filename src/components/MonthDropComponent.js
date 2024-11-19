@@ -5,13 +5,11 @@ const MonthDropComponent = ({ value, onChange, type }) => {
 
     useEffect(() => {
         if (type === "Desde" && !initialValueSet) {
-            const currentDate = new Date();
-            const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+            const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
             onChange(formattedDate);
             setInitialValueSet(true);
         } else if (type === "DesdeTarj" && !initialValueSet) {
-            const currentDate = new Date();
-            const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 2).padStart(2, '0')}`;
+            const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, '0')}`;
             onChange(formattedDate);
             setInitialValueSet(true);
         }

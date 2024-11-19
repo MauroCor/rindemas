@@ -35,13 +35,19 @@ const AddScreen = () => {
           } else {
             try {
               await postFixedCost(data);
-              alert(`Egreso agregado (${data.name}) ✔️`);
-              setName('a');
-              setPrice(0);
-              setDesdeValue('');
+              setName('');
+              setPrice('');
+              const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+              setDesdeValue(formattedDate);
               setHastaValue('');
+              alert(`Egreso agregado (${data.name}) ✔️`);
             } catch {
               await putFixedCost(data);
+              setName('');
+              setPrice('');
+              const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+              setDesdeValue(formattedDate);
+              setHastaValue('');
               alert(`Egreso actualizado (${data.name}) ✔️`);
             }
           }
@@ -58,9 +64,19 @@ const AddScreen = () => {
           } else {
             try {
               await postIncome(data);
+              setName('');
+              setPrice('');
+              const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+              setDesdeValue(formattedDate);
+              setHastaValue('');
               alert(`Ingreso agregado (${data.name}) ✔️`);
             } catch {
               await putIncome(data);
+              setName('');
+              setPrice('');
+              const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+              setDesdeValue(formattedDate);
+              setHastaValue('');
               alert(`Ingreso actualizado (${data.name}) ✔️`);
             }
           }
@@ -99,6 +115,7 @@ const AddScreen = () => {
                 <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>
                 <DropComponent plhdr={selectedOption === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'}
                   onChange={(e) => setName(e.target.value)}
+                  value={name}
                   type={selectedOption === 'Ingreso' ? 'income' : 'fixedCost'} />
               </div>
 

@@ -9,7 +9,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
         <div className="max-w-md mx-auto my-4 p-4 bg-gray-800 rounded-lg shadow-lg">
             <div
                 onClick={toggleDropdown}
-                className="flex justify-between items-center cursor-pointer p-2 bg-gray-700 hover:bg-gray-600 rounded-2xl">
+                className="flex justify-between items-center cursor-pointer p-2 bg-gray-700 hover:bg-gray-600 rounded-2xl" onMouseDown={(e) => e.preventDefault()}>
                 <label className='text-white' style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{title}</label>
                 <div className='right-4 text-xs text-gray-950'>{showDetails ? '▲' : '▼'}</div>
                 <div>
@@ -19,11 +19,11 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
             </div>
             {/* Fijos */}
             {showDetails && !initialOpen && (
-                <div className="mt-4">
+                <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.items.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center p-2 border-b border-gray-600 text-gray-300">
-                            <span>{item.name}</span>
-                            <span>{formatNumber(item.price)}</span>
+                        <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
+                            <span className="w-[55%] text-left text-sm whitespace-normal">{item.name}</span>
+                            <span className="w-[20%] text-center text-sm">{formatNumber(item.price)}</span>
                             {item.name !== 'Tarjeta' && (
                                 <button
                                     onClick={() => onDelete(item)}
@@ -45,12 +45,12 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
             )}
             {/* Tarjetas */}
             {showDetails && initialOpen && (
-                <div className="mt-4">
+                <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.cardSpend.map((item, index) => (
                         <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
-                            <span className="w-[40%] text-left text-sm whitespace-normal">{item.name}</span>
+                            <span className="w-[30%] text-left text-sm whitespace-normal">{item.name}</span>
                             <span className="w-[20%] text-center text-sm">{formatNumber(item.price)}</span>
-                            <span className="w-[5%] text-right text-gray-400 text-sm">{item.installment}</span>
+                            <span className="w-[10%] text-right text-gray-400 text-sm">{item.installment}</span>
                             <button
                                 onClick={() => onDelete(item.id)}
                                 className="text-red-500 text-lg ml-2 hover:text-red-700"

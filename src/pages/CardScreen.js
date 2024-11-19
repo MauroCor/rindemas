@@ -11,7 +11,20 @@ const CardScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
-    const [startIndex, setStartIndex] = useState(0);
+
+    const focusCurrentMonth2 = () => {
+        const currentDate = new Date();
+        const currentIndex = dataMonths.findIndex((month) => {
+            const monthDate = new Date(month.date);
+            return monthDate.getFullYear() === currentDate.getFullYear() && monthDate.getMonth() === currentDate.getMonth();
+        });
+
+        if (currentIndex !== -1) {
+            setStartIndex(currentIndex - 1);
+        }
+    };
+
+    const [startIndex, setStartIndex] = useState(focusCurrentMonth2);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,6 +42,10 @@ const CardScreen = () => {
     useEffect(() => {
         setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
     }, [dataMonths, startIndex, itemsPerPages]);
+
+    useEffect(() => {
+        focusCurrentMonth();
+      }, [dataMonths]); 
 
     const handlePrev = () => {
         setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));

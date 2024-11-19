@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getFixedCosts } from '../services/fixedCost';
 import { getIncomes } from '../services/income';
 
-const DropComponent = ({ plhdr, onChange, type }) => {
+const DropComponent = ({ plhdr, onChange, type, value }) => {
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
@@ -41,6 +41,7 @@ const DropComponent = ({ plhdr, onChange, type }) => {
                 type="text"
                 name="drop"
                 list="drop"
+                value={value}
                 autoComplete='off'
                 placeholder={plhdr}
                 maxLength={20}

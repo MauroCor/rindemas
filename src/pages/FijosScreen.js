@@ -12,7 +12,20 @@ const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
   const [itemsPerPages, setItemsPerPages] = useState(3);
   const [currentsMonths, setCurrentsMonths] = useState([]);
-  const [startIndex, setStartIndex] = useState(0);
+
+  const focusCurrentMonth = () => {
+    const currentDate = new Date();
+    const currentIndex = dataMonths.findIndex((month) => {
+      const monthDate = new Date(month.date);
+      return monthDate.getFullYear() === currentDate.getFullYear() && monthDate.getMonth() === currentDate.getMonth();
+    });
+
+    if (currentIndex !== -1) {
+      setStartIndex(currentIndex - 1);
+    }
+  };
+
+  const [startIndex, setStartIndex] = useState(focusCurrentMonth);
 
   const mergeData = (incomes, fixedCosts) => {
     // Combina ingresos y egresos para los meses, asegurando que si solo hay egresos, se muestren también
@@ -71,6 +84,10 @@ const FijosScreen = () => {
     setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
   }, [dataMonths, startIndex, itemsPerPages]);
 
+  useEffect(() => {
+    focusCurrentMonth();
+  }, [dataMonths]); 
+
   const handlePrev = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
   };
@@ -107,21 +124,6 @@ const FijosScreen = () => {
     }
   };
 
-  const focusCurrentMonth = () => {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-
-    const currentIndex = dataMonths.findIndex((month) => {
-      const monthDate = new Date(month.date);
-      return monthDate.getFullYear() === currentYear && monthDate.getMonth() === currentMonth;
-    });
-
-    if (currentIndex !== -1) {
-      const adjustedIndex = Math.floor(currentIndex / itemsPerPages) * itemsPerPages;
-      setStartIndex(adjustedIndex);
-    }
-  };
 
   return (
     <div className="dark bg-gray-900 min-h-screen py-8">
