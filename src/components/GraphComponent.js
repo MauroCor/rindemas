@@ -145,28 +145,32 @@ const GraphComponent = ({ data }) => {
     <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
       <h2 className="text-lg font-bold text-white mb-4">Evolución de Ahorros</h2>
       <div className="mb-4 text-sm">
-        <label className="text-white mr-2" htmlFor="startMonth">Desde:</label>
-        <input
-          type="month"
-          id="startMonth"
-          value={startMonth}
-          onChange={(e) => setStartMonth(e.target.value)}
-          className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer"
-          style={{ colorScheme: 'dark' }}
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={(e) => e.target.showPicker && e.target.showPicker()}
-        />
-        <label className="text-white mx-2 pl-2" htmlFor="endMonth">Hasta:</label>
-        <input
-          type="month"
-          id="endMonth"
-          value={endMonth}
-          onChange={(e) => setEndMonth(e.target.value)}
-          className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer"
-          style={{ colorScheme: 'dark' }}
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={(e) => e.target.showPicker && e.target.showPicker()}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col items-center">
+            <label className="text-white mb-1" htmlFor="startMonth">Desde:</label>
+            <input
+              type="month"
+              id="startMonth"
+              value={startMonth}
+              onChange={(e) => setStartMonth(e.target.value)}
+              className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer"
+              style={{ colorScheme: 'dark' }}
+              onClick={(e) => e.target.showPicker && e.target.showPicker()}
+            />
+          </div>
+          <div className="flex flex-col items-center">
+            <label className="text-white mb-1" htmlFor="endMonth">Hasta:</label>
+            <input
+              type="month"
+              id="endMonth"
+              value={endMonth}
+              onChange={(e) => setEndMonth(e.target.value)}
+              className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer"
+              style={{ colorScheme: 'dark' }}
+              onClick={(e) => e.target.showPicker && e.target.showPicker()}
+            />
+          </div>
+        </div>
       </div>
       <Line data={chartData} options={options} />
     </div>

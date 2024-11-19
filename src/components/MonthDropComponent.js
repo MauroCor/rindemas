@@ -28,7 +28,6 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 lang="es"
                 className="text-center bg-gray-700 w-60 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg text-white"
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                onMouseDown={(e) => e.preventDefault()}
                 style={{colorScheme: 'dark'}}
             />
             {type === "Hasta" && value && (
