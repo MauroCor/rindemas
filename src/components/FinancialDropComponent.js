@@ -4,7 +4,7 @@ import { formatNumber } from '../utils/numbers';
 const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen = false }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
     const toggleDropdown = () => setShowDetails(!showDetails);
-
+    
     return (
         <div className="max-w-md mx-auto my-4 p-4 bg-gray-800 rounded-lg shadow-lg">
             <div
@@ -78,7 +78,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
                                     : formatNumber(item.invested)}
                             </span>
                             <button
-                                // onClick={() => onDelete(item.id)}
+                                onClick={() => onDelete(item.id)}
                                 className="text-red-500 text-lg ml-2 hover:text-red-700"
                             >
                                 &#10005;

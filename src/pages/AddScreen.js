@@ -7,6 +7,7 @@ import OptionSelectorComponent from '../components/OptionSelectorComponent';
 import { postFixedCost, putFixedCost } from '../services/fixedCost';
 import { postIncome, putIncome } from '../services/income';
 import { postCardSpend } from '../services/cardSpend';
+import { postSaving } from '../services/saving';
 import DropdownComponent from '../components/DropdownComponent';
 import InputComponent from '../components/InputComponent';
 
@@ -14,6 +15,8 @@ const AddScreen = () => {
   const [selectedOption, setSelectedOption] = useState('Tarjeta');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [invested, setInvested] = useState('');
+  const [obtained, setObtained] = useState('');
   const [desdeValue, setDesdeValue] = useState('');
   const [hastaValue, setHastaValue] = useState('');
   const [cuotas, setCuotas] = useState('1');
@@ -89,7 +92,29 @@ const AddScreen = () => {
             date_from: desdeValue,
           };
           await postCardSpend(data);
+          setName('');
+          setPrice('');
+          setCuotas('1');
+          const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, '0')}`;
+          setDesdeValue(formattedDate);
           alert(`Gasto de tarjeta agregado (${data.name}) ✔️`);
+          break;
+        case 'Ahorro':
+          data = {
+            name,
+            invested: parseInt(invested),
+            obtained: parseInt(obtained),
+            date_from: desdeValue,
+            date_to: hastaValue,
+          };
+          await postSaving(data);
+          setName('');
+          setInvested('');
+          setObtained('');
+          const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+          setDesdeValue(fdate);
+          setHastaValue('');
+          alert(`Ahorro agregado (${data.name}) ✔️`);
           break;
         default:
           throw new Error("Opción no válida");
@@ -149,10 +174,44 @@ const AddScreen = () => {
                 <label className="text-xs text-left mb-1 ml-11 text-white">Monto</label>
                 <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} />
               </div>
+
               <DropdownComponent value={cuotas} onChange={(e) => setCuotas(e.target.value)} />
+
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
                 <MonthDropComponent type='DesdeTarj' value={desdeValue} onChange={setDesdeValue} />
+              </div>
+            </>
+          )}
+
+          {selectedOption === 'Ahorro' && (
+            <>
+              <InputComponent
+                name="Nombre"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ej: Plazo fijo"
+              />
+
+              <div className="flex flex-col">
+                <label className="text-xs text-left mb-1 ml-11 text-white">Monto inicial</label>
+                <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs text-left mb-1 ml-11 text-white">Monto final</label>
+                <InputPriceComponent value={obtained} onChange={(e) => setObtained(e.target.value)}
+                  placeholder={"Ej: $400.000"} />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
+                <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs text-left mb-1 ml-11 text-white">Hasta (Opcional)</label>
+                <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
               </div>
             </>
           )}

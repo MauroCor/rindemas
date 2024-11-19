@@ -4,9 +4,7 @@ import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
 import SavingDataComponent from '../components/SavingDataComponent';
-// import getSavings from '../services/saving';
-// import { deleteSaving } from '../services/saving';
-import { saving } from '../utils/saving';
+import { getSavings, deleteSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
 
 
@@ -32,8 +30,7 @@ const SavingScreen = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const savings = await getSavings();
-                const savings = saving;
+                const savings = await getSavings();
                 setDataMonths(savings);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -72,14 +69,13 @@ const SavingScreen = () => {
 
         if (isConfirmed) {
             try {
-                // await deleteSaving(id);
-                const a = 1;
-                // setDataMonths((prevData) =>
-                //     prevData.map((month) => ({
-                //         ...month,
-                //         saving: month.saving.filter((item) => item.id !== id),
-                //     }))
-                // );
+                await deleteSaving(id);
+                setDataMonths((prevData) =>
+                    prevData.map((month) => ({
+                        ...month,
+                        saving: month.saving.filter((item) => item.id !== id),
+                    }))
+                );
             } catch (error) {
                 console.error('Error deleting saving:', error);
             }
@@ -100,10 +96,10 @@ const SavingScreen = () => {
                     <div className='pl-10' />
                     <ButtonComponent text="➡️" onClick={handleNext} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
                 </div>
-                <CarouselComponent data={currentsMonths} renderItem={(monthData) => <SavingDataComponent monthData={monthData} onDeleteCardSpend={handleDeleteSaving} />} />
+                <CarouselComponent data={currentsMonths} renderItem={(monthData) => <SavingDataComponent monthData={monthData} onDeleteSaving={handleDeleteSaving} />} />
             </div>
             <div className="pt-10 text-center max-w-screen-sm mx-auto">
-                <GraphComponent data={saving} />
+                <GraphComponent data={dataMonths} />
             </div>
 
         </div>

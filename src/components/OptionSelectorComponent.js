@@ -23,10 +23,11 @@ const Option = ({ value, label, selected, onChange }) => (
 );
 
 const OptionSelectorComponent = ({ selectedOption, setSelectedOption }) => (
-  <div className="wrapper flex items-center w-[250px] h-9 bg-gray-900 border-2 border-black rounded-full shadow-[4px_4px_0px_0px] shadow-black mx-auto mb-4">
+  <div className="wrapper flex items-center w-[320px] h-9 bg-gray-900 border-2 border-black rounded-full shadow-[4px_4px_0px_0px] shadow-black mx-auto mb-4">
     <Option value="Ingreso" label="Ingreso" selected={selectedOption} onChange={setSelectedOption} />
     <Option value="Egreso" label="Egreso" selected={selectedOption} onChange={setSelectedOption} />
     <Option value="Tarjeta" label="Tarjeta" selected={selectedOption} onChange={setSelectedOption} />
+    <Option value="Ahorro" label="Ahorro" selected={selectedOption} onChange={setSelectedOption} />
   </div>
 );
 
