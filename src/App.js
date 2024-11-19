@@ -6,7 +6,7 @@ import NavbarComponent from './components/NavbarComponent';
 import FijosScreen from './pages/FijosScreen';
 import AddScreen from './pages/AddScreen';
 import CardScreen from './pages/CardScreen';
-import SaveScreen from './pages/SaveScreen';
+import SavingScreen from './pages/SavingScreen';
 import Login from './components/LoginComponent';
 
 const App = () => (
@@ -46,7 +46,7 @@ const App = () => (
           path="/ahorros"
           element={
             <PrivateRoute>
-              <SaveScreen />
+              <SavingScreen />
             </PrivateRoute>
           }
         />
