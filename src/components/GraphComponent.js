@@ -145,32 +145,51 @@ const GraphComponent = ({ data }) => {
     <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
       <h2 className="text-lg font-bold text-white mb-4">Evolución de Ahorros</h2>
       <div className="mb-4 text-sm">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col items-center">
+        <div className="grid grid-cols-2 gap-4 relative">
+          <div className="flex flex-col items-center relative">
             <label className="text-white mb-1" htmlFor="startMonth">Desde:</label>
-            <input
-              type="month"
-              id="startMonth"
-              value={startMonth}
-              onChange={(e) => setStartMonth(e.target.value)}
-              className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer"
-              style={{ colorScheme: 'dark' }}
-              onClick={(e) => e.target.showPicker && e.target.showPicker()}
-            />
+            <div>
+              <button
+                type="button"
+                onClick={() => setStartMonth("")}
+                className="pr-2 text-gray-300 hover:text-gray-500 font-bold text-xl"
+              >
+                x
+              </button>
+              <input
+                type="month"
+                id="startMonth"
+                value={startMonth}
+                onChange={(e) => setStartMonth(e.target.value)}
+                className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer pl-6"
+                style={{ colorScheme: 'dark' }}
+                onClick={(e) => e.target.showPicker && e.target.showPicker()}
+              />
+            </div>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center relative">
             <label className="text-white mb-1" htmlFor="endMonth">Hasta:</label>
-            <input
-              type="month"
-              id="endMonth"
-              value={endMonth}
-              onChange={(e) => setEndMonth(e.target.value)}
-              className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer"
-              style={{ colorScheme: 'dark' }}
-              onClick={(e) => e.target.showPicker && e.target.showPicker()}
-            />
+            <div>
+              <input
+                type="month"
+                id="endMonth"
+                value={endMonth}
+                onChange={(e) => setEndMonth(e.target.value)}
+                className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer pr-6"
+                style={{ colorScheme: 'dark' }}
+                onClick={(e) => e.target.showPicker && e.target.showPicker()}
+              />
+              <button
+                type="button"
+                onClick={() => setEndMonth("")}
+                className="pl-2 text-gray-300 hover:text-gray-500 font-bold text-xl"
+              >
+                x
+              </button>
+            </div>
           </div>
         </div>
+
       </div>
       <Line data={chartData} options={options} />
     </div>
