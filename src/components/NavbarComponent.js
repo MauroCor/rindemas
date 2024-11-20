@@ -33,7 +33,7 @@ const NavbarComponent = () => {
     <nav className="flex items-center justify-between bg-gray-800 p-4">
       <div className="text-lg font-bold text-white">Stage Money</div>
 
-      <div className="flex-1 flex justify-center space-x-4">
+      <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-4">
         <NavLink
           to="/fijos"
           className={({ isActive }) =>
@@ -42,7 +42,7 @@ const NavbarComponent = () => {
         >
           Fijos
         </NavLink>
-        
+
         <NavLink
           to="/tarjetas"
           className={({ isActive }) =>
