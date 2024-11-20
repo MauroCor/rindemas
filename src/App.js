@@ -8,6 +8,7 @@ import AddScreen from './pages/AddScreen';
 import CardScreen from './pages/CardScreen';
 import SavingScreen from './pages/SavingScreen';
 import Login from './components/LoginComponent';
+import Footer from './components/FooterComponent';
 
 const App = () => (
   <AuthProvider>
@@ -51,6 +52,7 @@ const App = () => (
           }
         />
       </Routes>
+      <Footer />
     </BrowserRouter>
   </AuthProvider>
 );
