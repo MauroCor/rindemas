@@ -6,7 +6,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
     const toggleDropdown = () => setShowDetails(!showDetails);
     
     return (
-        <div className="max-w-md mx-auto my-4 p-4 bg-gray-800 rounded-lg shadow-lg">
+        <div className="max-w-md mx-auto my-2 p-4 bg-gray-800 rounded-lg shadow-lg">
             <div
                 onClick={toggleDropdown}
                 className="flex justify-between items-center cursor-pointer p-2 bg-gray-700 hover:bg-gray-600 rounded-2xl" onMouseDown={(e) => e.preventDefault()}>
@@ -66,16 +66,12 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
                 <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.saving.map((item, index) => (
                         <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
-                            <span className="w-[10%] text-center text-sm pb-1">
-                                {new Date(item.date_to).toISOString().slice(0, 7) === new Date(data.date).toISOString().slice(0, 7)
-                                    ? '💰'
-                                    : ''}
+                            <span className="w-[10%] text-center text-sm">
+                                {item.liquid ? '💰' : ''}
                             </span>
                             <span className="w-[50%] text-left text-sm whitespace-normal pl-2">{item.name}</span>
                             <span className="w-[30%] text-center text-sm">
-                                {new Date(item.date_to).toISOString().slice(0, 7) === new Date(data.date).toISOString().slice(0, 7)
-                                    ? formatNumber(item.obtained)
-                                    : formatNumber(item.invested)}
+                                {item.liquid ? formatNumber(item.obtained) : formatNumber(item.invested)}
                             </span>
                             <button
                                 onClick={() => onDelete(item.id)}
