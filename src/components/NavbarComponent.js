@@ -30,37 +30,48 @@ const NavbarComponent = () => {
   }, [isLoginPage]);
 
   return (
-    <nav className="flex items-center justify-between bg-gray-800 p-4">
-      <div className="text-lg font-bold text-white">Stage Money</div>
+    <nav className={`flex items-center ${isLoginPage ? 'justify-center' : 'justify-between'} bg-gray-800 p-4`}>
+      {isLoginPage && (
+        <div className={'text-2xl font-bold text-green-200'}>Stage Money</div>
+      )}
+      {!isLoginPage && (
+        <div
+          className='text-xl font-bold text-green-200 sm:text-left text-center pr-1'>
+          <span className="block sm:inline">Stage </span>
+          <span className="block sm:inline">Money</span>
+        </div>
+      )}
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-4">
-        <NavLink
-          to="/fijos"
-          className={({ isActive }) =>
-            isActive ? "text-blue-500 font-bold" : "text-white"
-          }
-        >
-          Fijos
-        </NavLink>
+      {!isLoginPage && (
+        <div className="flex-1 flex justify-center space-x-4">
+          <NavLink
+            to="/fijos"
+            className={({ isActive }) =>
+              isActive ? "text-blue-500 font-bold text-lg" : "text-white"
+            }
+          >
+            Fijo
+          </NavLink>
 
-        <NavLink
-          to="/tarjetas"
-          className={({ isActive }) =>
-            isActive ? "text-blue-500 font-bold" : "text-white"
-          }
-        >
-          Tarjetas
-        </NavLink>
+          <NavLink
+            to="/tarjetas"
+            className={({ isActive }) =>
+              isActive ? "text-blue-500 font-bold text-lg" : "text-white"
+            }
+          >
+            Tarjeta
+          </NavLink>
 
-        <NavLink
-          to="/ahorros"
-          className={({ isActive }) =>
-            isActive ? "text-blue-500 font-bold" : "text-white"
-          }
-        >
-          Ahorros
-        </NavLink>
-      </div>
+          <NavLink
+            to="/ahorros"
+            className={({ isActive }) =>
+              isActive ? "text-blue-500 font-bold text-lg" : "text-white"
+            }
+          >
+            Ahorro
+          </NavLink>
+        </div>
+      )}
 
       {!isLoginPage && userFullName && (
         <UserMenu userName={userFullName} handleLogout={handleLogout} />
