@@ -45,7 +45,7 @@ const CardScreen = () => {
 
     useEffect(() => {
         focusCurrentMonth();
-      }, [dataMonths]); 
+    }, [dataMonths]);
 
     const handlePrev = () => {
         setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
@@ -85,21 +85,62 @@ const CardScreen = () => {
     return (
         <div className="dark bg-gray-900 min-h-screen py-8">
             <div className="relative p-1">
+                {/* Botón Agregar */}
                 <div className="text-center">
-                    <Link className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer" to="/agregar">+ Agregar</Link>
+                    <Link
+                        className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
+                        to="/agregar"
+                    >
+                        + Agregar
+                    </Link>
                 </div>
-                <div className='flex justify-center items-center flex-wrap space-x-2 mt-6'>
-                    <ButtonComponent text="⬅️" onClick={handlePrev} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
-                    <div className='pl-10' />
-                    <ButtonComponent text="Ver actual" onClick={focusCurrentMonth} className='hover:bg-blue-500 bg-gray-600 px-2 py-0 border-gray-950 text-white' />
-                    <DropdownItemsPerPageComponent itemsPerPage={itemsPerPages} onItemsPerPageChange={handleItemsPerPageChange} />
-                    <div className='pl-10' />
-                    <ButtonComponent text="➡️" onClick={handleNext} className='hover:bg-blue-500 text-2xl rounded-full px-1 py-1' />
+
+                {/* Contenedor de botones y dropdown */}
+                <div className="flex justify-center">
+                    <div className="flex justify-between items-center mt-6 w-[48rem]">
+                        {/* Botón Izquierdo */}
+                        <ButtonComponent
+                            text="⬅️"
+                            onClick={handlePrev}
+                            className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                        />
+
+                        {/* Botones Carrusel */}
+                        <div className="flex flex-grow justify-center items-center space-x-4 px-4">
+                            <ButtonComponent
+                                text="Ver actual"
+                                onClick={focusCurrentMonth}
+                                className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
+                            />
+                            <DropdownItemsPerPageComponent
+                                itemsPerPage={itemsPerPages}
+                                onItemsPerPageChange={handleItemsPerPageChange}
+                            />
+                        </div>
+
+                        {/* Botón Derecho */}
+                        <ButtonComponent
+                            text="➡️"
+                            onClick={handleNext}
+                            className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                        />
+                    </div>
                 </div>
-                <CarouselComponent data={currentsMonths} renderItem={(monthData) => <CardDataComponent monthData={monthData} onDeleteCardSpend={handleDeleteCardSpend} />} />
+
+                {/* Componente Carrusel */}
+                <CarouselComponent
+                    data={currentsMonths}
+                    renderItem={(monthData) => (
+                        <CardDataComponent
+                            monthData={monthData}
+                            onDeleteCardSpend={handleDeleteCardSpend}
+                        />
+                    )}
+                />
             </div>
         </div>
     );
 };
+
 
 export default CardScreen;
