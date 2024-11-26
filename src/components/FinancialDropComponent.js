@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { formatNumber } from '../utils/numbers';
 
-const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen = false }) => {
+const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
     const toggleDropdown = () => setShowDetails(!showDetails);
-    
+
     return (
         <div className="max-w-md mx-auto my-2 p-4 bg-gray-800 rounded-lg shadow-lg">
             <div
@@ -47,7 +47,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
             {showDetails && initialOpen && !isIncome && (
                 <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.cardSpend.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
+                        <div key={index} className="flex -ml-1 justify-between items-center border-b border-gray-600 text-gray-300">
                             <span className="w-[44%] text-left text-sm whitespace-normal">{item.name}</span>
                             <span className="w-[30%] text-center text-sm">{formatNumber(item.price)}</span>
                             <span className="w-[13%] text-right text-gray-400 text-xs">{item.installment}</span>
@@ -66,19 +66,29 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, initialOpen =
                 <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.saving.map((item, index) => (
                         <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
-                            <span className="w-[10%] text-center text-sm">
-                                {item.liquid ? '💰' : ''}
-                            </span>
-                            <span className="w-[50%] text-left text-sm whitespace-normal pl-2">{item.name}</span>
-                            <span className="w-[30%] text-center text-sm">
+                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''}`}>{item.name}</span>
+                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold text-yellow-100' : ''}`}>
                                 {item.liquid ? formatNumber(item.obtained) : formatNumber(item.invested)}
                             </span>
-                            <button
-                                onClick={() => onDelete(item.id)}
-                                className="text-red-500 text-lg ml-2 hover:text-red-700"
-                            >
-                                &#10005;
-                            </button>
+                            <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>
+                            {item.type === 'fijo' && (
+                                <>
+                                    <button
+                                        onClick={() => onDelete(item.id)}
+                                        className="w-[30%] text-right text-red-500 text-lg hover:text-red-700"
+                                    > &#10005; 
+                                    </button>
+                                </>
+                            )}
+                            {item.type === 'flex' && (
+                                <>
+                                    <button
+                                        onClick={() => onPatch(item.id, item)}
+                                        className="w-[30%] text-right pb-1"
+                                    > <span className='text-[12px]'>&#9209; </span>
+                                    </button>
+                                </>
+                            )}
                         </div>
                     ))}
                 </div>

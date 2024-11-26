@@ -24,7 +24,7 @@ const GraphComponent = ({ data }) => {
       const isLastMonth = item.date === saving.date_to;
       return {
         ...saving,
-        amount: isLastMonth ? saving.obtained : saving.invested,
+        amount: (saving.type === 'flex' || isLastMonth) ? saving.obtained : saving.invested
       };
     }),
   }));
@@ -103,9 +103,9 @@ const GraphComponent = ({ data }) => {
         callbacks: {
           label: function (context) {
             if (context.dataset.label === 'Promedio') {
-              return `Promedio: ${formatNumber(context.raw)}`;
+              return `Promedio: $${parseInt(context.raw)}`;
             }
-            return `${context.dataset.label}: ${formatNumber(context.raw)}`;
+            return `${context.dataset.label}: $${context.raw}`;
           },
         },
       },

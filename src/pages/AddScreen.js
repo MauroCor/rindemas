@@ -10,6 +10,7 @@ import { postCardSpend } from '../services/cardSpend';
 import { postSaving } from '../services/saving';
 import DropdownComponent from '../components/DropdownComponent';
 import InputComponent from '../components/InputComponent';
+import DropdownSavingComponent from '../components/DropdownSavingComponent';
 
 const AddScreen = () => {
   const [selectedOption, setSelectedOption] = useState('Tarjeta');
@@ -20,6 +21,8 @@ const AddScreen = () => {
   const [desdeValue, setDesdeValue] = useState('');
   const [hastaValue, setHastaValue] = useState('');
   const [cuotas, setCuotas] = useState('1');
+  const [plazo, setPlazo] = useState('fijo');
+  const [tna, setTna] = useState('');
 
   const handleSubmit = async () => {
     let data = {};
@@ -102,13 +105,17 @@ const AddScreen = () => {
         case 'Ahorro':
           data = {
             name,
+            type: plazo,
             invested: parseInt(invested),
             obtained: parseInt(obtained),
             date_from: desdeValue,
-            date_to: hastaValue,
+            date_to: hastaValue === "" ? null : hastaValue,
+            tna: parseFloat(tna),
           };
           await postSaving(data);
           setName('');
+          setPlazo('fijo');
+          setTna('');
           setInvested('');
           setObtained('');
           const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
@@ -134,8 +141,8 @@ const AddScreen = () => {
         <div className="max-w-xs mx-auto space-y-4">
           {(selectedOption === 'Ingreso' || selectedOption === 'Egreso') && (
             <>
-              <h3 className="text-center mt-2 text-[14px] text-gray-300">
-                Agrega o modifica un {selectedOption.toLowerCase()} por su nombre.</h3>
+              <h3 className="text-center mt-2 text-sm text-gray-300">
+                Agrega o modifica un <span className='font-bold text-white'>{selectedOption.toLowerCase()}</span> por su nombre.</h3>
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>
                 <DropComponent plhdr={selectedOption === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'}
@@ -163,6 +170,8 @@ const AddScreen = () => {
 
           {selectedOption === 'Tarjeta' && (
             <>
+              <h3 className="text-center mt-2 text-sm text-gray-300">Agrega un gasto con <span className='font-bold text-white'>tarjeta</span>.</h3>
+
               <InputComponent
                 name="Nombre"
                 value={name}
@@ -186,33 +195,79 @@ const AddScreen = () => {
 
           {selectedOption === 'Ahorro' && (
             <>
-              <InputComponent
-                name="Nombre"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ej: Plazo fijo"
-              />
+              <h3 className="text-center mt-2 text-sm text-gray-300">Agrega un <span className='font-bold text-white'>ahorro</span> para invertir.</h3>
 
-              <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-11 text-white">Monto inicial</label>
-                <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} />
-              </div>
+              <DropdownSavingComponent value={plazo} onChange={(e) => setPlazo(e.target.value)} />
 
-              <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-11 text-white">Monto final</label>
-                <InputPriceComponent value={obtained} onChange={(e) => setObtained(e.target.value)}
-                  placeholder={"Ej: $400.000"} />
-              </div>
+              {plazo === 'fijo' && (
+                <>
+                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés simple, monto final definido.</p>
 
-              <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
-                <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
-              </div>
+                  <InputComponent
+                    name="Nombre"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ej: Lecap"
+                  />
 
-              <div className="flex flex-col">
-                <label className="text-xs text-left mb-1 ml-11 text-white">Hasta (Opcional)</label>
-                <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
-              </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Monto inicial</label>
+                    <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Monto final</label>
+                    <InputPriceComponent value={obtained} onChange={(e) => setObtained(e.target.value)}
+                      placeholder={"Ej: $400.000"} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
+                    <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Hasta (Opcional)</label>
+                    <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
+                  </div>
+                </>
+              )}
+
+              {plazo === 'flex' && (
+                <>
+
+                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés compuesto, reinversión mensual.</p>
+
+                  <InputComponent
+                    name="Nombre"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ej: Staking"
+                  />
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Monto inicial</label>
+                    <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">TNA</label>
+                    <InputPriceComponent value={tna} onChange={(e) => setTna(e.target.value)}
+                      placeholder={"Ej: 30%"} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
+                    <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Hasta (Opcional)</label>
+                    <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
+                  </div>
+                </>
+              )}
+
             </>
           )}
 

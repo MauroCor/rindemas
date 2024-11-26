@@ -4,8 +4,9 @@ import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
 import SavingDataComponent from '../components/SavingDataComponent';
-import { getSavings, deleteSaving } from '../services/saving';
+import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
+import { subtractMonths } from '../utils/numbers';
 
 
 const SavingScreen = () => {
@@ -82,6 +83,21 @@ const SavingScreen = () => {
         }
     };
 
+    const handlePatchSaving = async (id, data, date) => {
+        const body = { ...data, date_to: subtractMonths(date, 1) };
+        const isConfirmed = window.confirm(`¿Quiere finalizar '${data.name}' a partir del ${date}?`);
+
+        if (isConfirmed) {
+            try {
+                await patchSaving(id, body);
+                const updatedData = await getSavings();
+                setDataMonths(updatedData);
+            } catch (error) {
+                console.error('Error patching saving:', error);
+            }
+        }
+    };
+
     return (
         <div className="dark bg-gray-900 min-h-screen py-8">
             <div className="relative p-1">
@@ -134,6 +150,7 @@ const SavingScreen = () => {
                         <SavingDataComponent
                             monthData={monthData}
                             onDeleteSaving={handleDeleteSaving}
+                            onPatchSaving={handlePatchSaving}
                         />
                     )}
                 />

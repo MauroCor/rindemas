@@ -82,4 +82,31 @@ export const deleteSaving = async (id) => {
   }
 };
 
+export const patchSaving = async (id, data) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    
+    const response = await fetch(`${url}${id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to patch saving');
+    }
+
+    return response
+  } catch (error) {
+    console.error('Error patching saving:', error);
+    throw error;
+  }
+};
+
 export default getSavings;
