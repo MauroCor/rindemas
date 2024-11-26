@@ -170,7 +170,7 @@ const AddScreen = () => {
 
           {selectedOption === 'Tarjeta' && (
             <>
-              <h3 className="text-center mt-2 text-sm text-gray-300">Agrega un gasto con <span className='font-bold text-white'>tarjeta</span>.</h3>
+              <h3 className="text-center mt-2 text-sm text-gray-300">Agrega un gasto de <span className='font-bold text-white'>tarjeta</span>.</h3>
 
               <InputComponent
                 name="Nombre"
