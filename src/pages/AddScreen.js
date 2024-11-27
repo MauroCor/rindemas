@@ -201,7 +201,7 @@ const AddScreen = () => {
 
               {plazo === 'fijo' && (
                 <>
-                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés simple, monto final definido.</p>
+                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés simple (plazo fijo, bono).</p>
 
                   <InputComponent
                     name="Nombre"
@@ -236,7 +236,7 @@ const AddScreen = () => {
               {plazo === 'flex' && (
                 <>
 
-                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés compuesto, reinversión mensual.</p>
+                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés compuesto (staking, billetera virtual).</p>
 
                   <InputComponent
                     name="Nombre"
@@ -264,6 +264,30 @@ const AddScreen = () => {
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Hasta (Opcional)</label>
                     <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
+                  </div>
+                </>
+              )}
+
+              {plazo === 'var' && (
+                <>
+
+                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés variable (acciones, cedears, etfs).</p>
+
+                  <InputComponent
+                    name="Nombre"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Ej: SPY500"
+                  />
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Monto invertido</label>
+                    <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Desde</label>
+                    <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
                   </div>
                 </>
               )}

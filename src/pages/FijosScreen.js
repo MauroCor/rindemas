@@ -126,7 +126,9 @@ const FijosScreen = () => {
 
 
   return (
-    <div className="dark bg-gray-900 min-h-screen py-8">
+    <div className="dark bg-gray-900 min-h-screen py-4">
+      <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
+      <p className="italic text-center text-sm text-blue-200 mb-6">- Ingresos y egresos fijos -</p>
       <div className="relative p-1">
         {/* Botón Agregar */}
         <div className="text-center">
@@ -140,7 +142,7 @@ const FijosScreen = () => {
 
         {/* Contenedor de botones y dropdown */}
         <div className="flex justify-center ">
-          <div className="flex justify-between items-center mt-6 w-[48rem]">
+          <div className="flex justify-between items-center mt-4 w-[48rem]">
             {/* Botón Izquierdo */}
             <ButtonComponent
               text="⬅️"

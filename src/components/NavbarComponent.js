@@ -30,7 +30,7 @@ const NavbarComponent = () => {
   }, [isLoginPage]);
 
   return (
-    <nav className={`flex items-center ${isLoginPage ? 'justify-center' : 'justify-between'} bg-gray-800 p-4`}>
+    <nav className={`flex items-center ${isLoginPage ? 'justify-center' : 'justify-between'} bg-gray-800 px-4 py-2`}>
       {isLoginPage && (
         <div className={'text-2xl font-bold text-green-200'}>Stage Money</div>
       )}

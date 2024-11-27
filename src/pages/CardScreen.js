@@ -83,7 +83,9 @@ const CardScreen = () => {
     };
 
     return (
-        <div className="dark bg-gray-900 min-h-screen py-8">
+        <div className="dark bg-gray-900 min-h-screen py-4">
+            <h1 className="text-center text-2xl font-bold text-white tracking-tight">Gastos de Tarjeta</h1>
+            <p className="italic text-center text-sm text-blue-200 mb-6">- Compras en cuotas -</p>
             <div className="relative p-1">
                 {/* Botón Agregar */}
                 <div className="text-center">
@@ -97,7 +99,7 @@ const CardScreen = () => {
 
                 {/* Contenedor de botones y dropdown */}
                 <div className="flex justify-center">
-                    <div className="flex justify-between items-center mt-6 w-[48rem]">
+                    <div className="flex justify-between items-center mt-4 w-[48rem]">
                         {/* Botón Izquierdo */}
                         <ButtonComponent
                             text="⬅️"

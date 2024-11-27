@@ -1,17 +1,15 @@
 const DropdownSavingComponent = ({ value, onChange }) => {
   return (
     <div className="flex flex-col">
-      <label className="text-xs text-left mb-1 ml-11 text-white">Plazo</label>
+      <label className="text-xs text-left mb-1 ml-11 text-white">Tipo</label>
       <select
         value={value}
         onChange={onChange}
-        className="bg-gray-700 mx-10 p-2 rounded-lg text-white"
-        style={{
-          paddingLeft: "90px",
-        }}
+        className="bg-gray-700 mx-10 p-2 rounded-lg text-center"
       >
-        <option value="fijo">Fijo</option>
-        <option value="flex">Flex</option>
+        <option value="fijo">Renta fija</option>
+        <option value="flex">Renta pasiva</option>
+        <option className="text-gray-500" disabled alue="var">Renta variable</option>
       </select>
     </div>
   );
