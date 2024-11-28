@@ -9,7 +9,7 @@ const DropdownSavingComponent = ({ value, onChange }) => {
       >
         <option value="fijo">Renta fija</option>
         <option value="flex">Renta pasiva</option>
-        <option className="text-gray-500" disabled alue="var">Renta variable</option>
+        <option value="var">Renta variable</option>
       </select>
     </div>
   );

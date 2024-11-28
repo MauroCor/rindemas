@@ -24,7 +24,7 @@ const GraphComponent = ({ data }) => {
       const isLastMonth = item.date === saving.date_to;
       return {
         ...saving,
-        amount: (saving.type === 'flex' || isLastMonth) ? saving.obtained : saving.invested
+        amount: (saving.type === 'flex' || saving.type === 'var' || isLastMonth) ? saving.obtained : saving.invested
       };
     }),
   }));

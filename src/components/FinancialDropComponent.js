@@ -6,16 +6,14 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
     const toggleDropdown = () => setShowDetails(!showDetails);
 
     return (
-        <div className="max-w-md mx-auto my-2 p-4 bg-gray-800 rounded-lg shadow-lg">
+        <div className="max-w-md mx-auto my-2 px-2 py-4 bg-gray-800 rounded-lg shadow-lg">
             <div
                 onClick={toggleDropdown}
                 className="flex justify-between items-center cursor-pointer p-2 bg-gray-700 hover:bg-gray-600 rounded-2xl" onMouseDown={(e) => e.preventDefault()}>
                 <label className='text-white' style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{title}</label>
                 <div className='right-4 text-xs text-gray-950'>{showDetails ? '▲' : '▼'}</div>
-                <div>
-                    <label className={`text-xl ${isIncome ? 'text-green-500' : 'text-red-500'}`}
-                        style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{formatNumber(data.total)}</label>
-                </div>
+                <label className={`text-lg ${isIncome ? 'text-green-500' : 'text-red-500'}`}
+                    style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{formatNumber(data.total)}</label>
             </div>
             {/* Fijos */}
             {showDetails && !initialOpen && (
@@ -66,21 +64,31 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                 <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.saving.map((item, index) => (
                         <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
-                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''}`}>{item.name}</span>
-                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold text-yellow-100' : ''}`}>
-                                {item.liquid ? formatNumber(item.obtained) : formatNumber(item.invested)}
+                            <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-green-500' : item.type === 'flex' ? 'text-blue-500' : 'text-yellow-500'}`}>
+                                {item.type === 'fijo' ? 'RF' : item.type === 'flex' ? 'RP' : 'RV'}
                             </span>
+
+                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''}`}>
+                                {item.name}
+                                {item.type === 'var' && <sup className="text-[10px] ml-1">{item.qty}</sup>}
+                            </span>
+
+                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold text-yellow-100' : ''}`}>
+                                {formatNumber(item.type === 'var' || item.liquid ? item.obtained : item.invested)}
+                            </span>
+
                             <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>
+
                             {item.type === 'fijo' && (
                                 <>
                                     <button
                                         onClick={() => onDelete(item.id)}
                                         className="w-[30%] text-right text-red-500 text-lg hover:text-red-700"
-                                    > &#10005; 
+                                    > &#10005;
                                     </button>
                                 </>
                             )}
-                            {item.type === 'flex' && (
+                            {(item.type === 'flex' || item.type === 'var') && (
                                 <>
                                     <button
                                         onClick={() => onPatch(item.id, item)}
