@@ -6,31 +6,47 @@ import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageCom
 import CardDataComponent from '../components/CardDataComponent';
 import getCardSpends from '../services/cardSpend';
 import { deleteCardSpend } from '../services/cardSpend';
+import { parse, isSameMonth} from "date-fns";
 
 const CardScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
+    const [startIndex, setStartIndex] = useState(0);
 
     const focusCurrentMonth = () => {
         const currentDate = new Date();
-        const currentIndex = dataMonths.findIndex((month) => {
-            const monthDate = new Date(month.date);
-            return monthDate.getFullYear() === currentDate.getFullYear() && monthDate.getMonth() === currentDate.getMonth();
+        let currentIndex = dataMonths.findIndex((month) => {
+            const monthDate = parse(month.date, 'yyyy-MM', new Date());
+            return isSameMonth(monthDate, currentDate);
         });
 
-        if (currentIndex !== -1) {
-            setStartIndex(currentIndex - 1);
+        // Si no se encuentra el mes actual, buscar el siguiente mes con datos
+        if (currentIndex === -1) {
+            for (let i = 1; i < dataMonths.length; i++) {
+                const nextMonthDate = parse(dataMonths[i].date, 'yyyy-MM', new Date());
+                if (nextMonthDate > currentDate) {
+                    currentIndex = i;
+                    break;
+                }
+            }
         }
-    };
 
-    const [startIndex, setStartIndex] = useState(focusCurrentMonth);
+        if (currentIndex !== -1) {
+            return currentIndex - 1;
+        }
+
+        return 0; // Si no hay datos disponibles, mostrar los primeros meses
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const cardSpends = await getCardSpends();
                 setDataMonths(cardSpends);
+
+                const initialIndex = focusCurrentMonth();
+                setStartIndex(initialIndex);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -42,10 +58,6 @@ const CardScreen = () => {
     useEffect(() => {
         setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
     }, [dataMonths, startIndex, itemsPerPages]);
-
-    useEffect(() => {
-        focusCurrentMonth();
-    }, [dataMonths]);
 
     const handlePrev = () => {
         setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));

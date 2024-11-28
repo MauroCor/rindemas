@@ -7,32 +7,45 @@ import SavingDataComponent from '../components/SavingDataComponent';
 import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
 import { subtractMonths } from '../utils/numbers';
-
+import { parse, isSameMonth } from "date-fns";
 
 const SavingScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
+    const [startIndex, setStartIndex] = useState(0);
 
+    // Función para enfocar el mes actual o el siguiente disponible
     const focusCurrentMonth = () => {
         const currentDate = new Date();
-        const currentIndex = dataMonths.findIndex((month) => {
-            const monthDate = new Date(month.date);
-            return monthDate.getFullYear() === currentDate.getFullYear() && monthDate.getMonth() === currentDate.getMonth();
+        let currentIndex = dataMonths.findIndex((month) => {
+            const monthDate = parse(month.date, "yyyy-MM", new Date());
+            return isSameMonth(monthDate, currentDate);
         });
 
-        if (currentIndex !== -1) {
-            setStartIndex(currentIndex - 1);
+        // Si el mes actual no está disponible, buscar el siguiente con datos
+        if (currentIndex === -1) {
+            for (let i = 0; i < dataMonths.length; i++) {
+                const monthDate = parse(dataMonths[i].date, "yyyy-MM", new Date());
+                if (monthDate > currentDate) {
+                    currentIndex = i;
+                    break;
+                }
+            }
         }
-    };
 
-    const [startIndex, setStartIndex] = useState(focusCurrentMonth);
+        // Ajustar el índice para mostrar datos
+        setStartIndex(currentIndex !== -1 ? Math.max(currentIndex - 1, 0) : 0);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const savings = await getSavings();
                 setDataMonths(savings);
+
+                // Focalizar el mes actual tras obtener los datos
+                focusCurrentMonth();
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -44,10 +57,6 @@ const SavingScreen = () => {
     useEffect(() => {
         setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
     }, [dataMonths, startIndex, itemsPerPages]);
-
-    useEffect(() => {
-        focusCurrentMonth();
-    }, [dataMonths]);
 
     const handlePrev = () => {
         setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
@@ -78,7 +87,7 @@ const SavingScreen = () => {
                     }))
                 );
             } catch (error) {
-                console.error('Error deleting saving:', error);
+                console.error("Error deleting saving:", error);
             }
         }
     };
@@ -93,7 +102,7 @@ const SavingScreen = () => {
                 const updatedData = await getSavings();
                 setDataMonths(updatedData);
             } catch (error) {
-                console.error('Error patching saving:', error);
+                console.error("Error patching saving:", error);
             }
         }
     };

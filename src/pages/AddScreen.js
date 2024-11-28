@@ -256,7 +256,7 @@ const AddScreen = () => {
 
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">TNA</label>
-                    <InputPercentComponent value={tna} onChange={(e) => setTna(e.target.value)}/>
+                    <InputPercentComponent value={tna} onChange={(e) => setTna(e.target.value)} />
                   </div>
 
                   <div className="flex flex-col">

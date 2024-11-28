@@ -8,27 +8,36 @@ import { getIncomes, patchIncome } from '../services/income';
 import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 import { subtractMonths } from '../utils/numbers';
 
+import { parse, isSameMonth, compareAsc } from "date-fns";
+
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
   const [itemsPerPages, setItemsPerPages] = useState(3);
   const [currentsMonths, setCurrentsMonths] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
 
   const focusCurrentMonth = () => {
     const currentDate = new Date();
-    const currentIndex = dataMonths.findIndex((month) => {
-      const monthDate = new Date(month.date);
-      return monthDate.getFullYear() === currentDate.getFullYear() && monthDate.getMonth() === currentDate.getMonth();
+    let currentIndex = dataMonths.findIndex((month) => {
+      const monthDate = parse(month.date, "yyyy-MM", new Date());
+      return isSameMonth(monthDate, currentDate);
     });
 
-    if (currentIndex !== -1) {
-      setStartIndex(currentIndex - 1);
+    // Si no encuentra el mes actual, busca el siguiente disponible
+    if (currentIndex === -1) {
+      for (let i = 0; i < dataMonths.length; i++) {
+        const monthDate = parse(dataMonths[i].date, "yyyy-MM", new Date());
+        if (monthDate > currentDate) {
+          currentIndex = i;
+          break;
+        }
+      }
     }
+
+    setStartIndex(currentIndex !== -1 ? Math.max(currentIndex - 1, 0) : 0);
   };
 
-  const [startIndex, setStartIndex] = useState(focusCurrentMonth);
-
   const mergeData = (incomes, fixedCosts) => {
-    // Combina ingresos y egresos para los meses, asegurando que si solo hay egresos, se muestren también
     const allMonths = [
       ...new Set([
         ...incomes.map((income) => income.date),
@@ -50,13 +59,13 @@ const FijosScreen = () => {
       };
     });
 
-    // Filtrar los meses que tienen ingresos o egresos
+    // Filtrar meses con ingresos o egresos
     const filteredData = mergedData.filter(
       (month) => month.income.items.length > 0 || month.fixedCost.items.length > 0
     );
 
-    // Ordenar los datos por mes (formato YYYY-MM)
-    filteredData.sort((a, b) => (a.date > b.date ? 1 : -1));
+    // Ordenar por fecha usando compareAsc
+    filteredData.sort((a, b) => compareAsc(parse(a.date, "yyyy-MM", new Date()), parse(b.date, "yyyy-MM", new Date())));
 
     return filteredData;
   };
@@ -64,14 +73,12 @@ const FijosScreen = () => {
   useEffect(() => {
     const fetchAndMergeData = async () => {
       try {
-        const incomes = await getIncomes();
-        const fixedCosts = await getFixedCosts();
-
-        // Utilizar la función mergeData para combinar y ordenar los datos
+        const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
         const mergedData = mergeData(incomes, fixedCosts);
-
-        // Establecer los datos en el estado
         setDataMonths(mergedData);
+
+        // Focalizar el mes actual tras obtener los datos
+        focusCurrentMonth();
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -83,10 +90,6 @@ const FijosScreen = () => {
   useEffect(() => {
     setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
   }, [dataMonths, startIndex, itemsPerPages]);
-
-  useEffect(() => {
-    focusCurrentMonth();
-  }, [dataMonths]);
 
   const handlePrev = () => {
     setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
@@ -110,13 +113,11 @@ const FijosScreen = () => {
 
     if (isConfirmed) {
       try {
-        const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
+        const patchFunction = type === "fixedCost" ? patchFixedCost : patchIncome;
         await patchFunction(body);
 
         const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
-
         const mergedData = mergeData(incomes, fixedCosts);
-
         setDataMonths(mergedData);
       } catch (error) {
         console.error(`Error patching ${type}:`, error);

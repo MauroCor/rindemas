@@ -18,13 +18,14 @@ export const getIncomes = async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
+      throw new Error('Failed to get incomes');
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Failed to fetch:", error);
     throw error;
   }
 };
@@ -46,12 +47,13 @@ export const postIncome = async (data) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to post income');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error posting income:', error);
     throw error;
   }
 };
@@ -62,7 +64,7 @@ export const patchIncome = async (data) => {
     if (!token) {
       throw new Error('Token not found');
     }
-    
+
     const response = await fetch(url, {
       method: 'PATCH',
       headers: {
@@ -73,12 +75,13 @@ export const patchIncome = async (data) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to patch income');
     }
 
     return response;
   } catch (error) {
-    console.error('Error patching income:', error);
     throw error;
   }
 };
@@ -89,7 +92,7 @@ export const putIncome = async (data) => {
     if (!token) {
       throw new Error('Token not found');
     }
-    
+
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -100,12 +103,13 @@ export const putIncome = async (data) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to put income');
     }
 
     return response;
   } catch (error) {
-    console.error('Error puttin income:', error);
     throw error;
   }
 };
