@@ -7,34 +7,14 @@ import { Link } from 'react-router-dom';
 import { getIncomes, patchIncome } from '../services/income';
 import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 import { subtractMonths } from '../utils/numbers';
-import { parse, isSameMonth, compareAsc } from 'date-fns';
-import { getMonthlyData, handlePrev, handleNext } from '../utils/useMonthlyData';
+import { parse, compareAsc } from 'date-fns';
+import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
   const [itemsPerPages, setItemsPerPages] = useState(3);
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
-
-  const focusCurrentMonth = () => {
-    const currentDate = new Date();
-    let currentIndex = dataMonths.findIndex((month) => {
-      const monthDate = parse(month.date, "yyyy-MM", new Date());
-      return isSameMonth(monthDate, currentDate);
-    });
-
-    if (currentIndex === -1) {
-      for (let i = 0; i < dataMonths.length; i++) {
-        const monthDate = parse(dataMonths[i].date, "yyyy-MM", new Date());
-        if (monthDate > currentDate) {
-          currentIndex = i;
-          break;
-        }
-      }
-    }
-
-    setStartIndex(currentIndex !== -1 ? Math.max(currentIndex - 1, 0) : 0);
-  };
 
   const mergeData = (incomes, fixedCosts) => {
     const allMonths = [
@@ -73,12 +53,11 @@ const FijosScreen = () => {
         const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
         const mergedData = mergeData(incomes, fixedCosts);
         setDataMonths(mergedData);
-        focusCurrentMonth();
+        focusCurrentMonth(dataMonths, setStartIndex);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchAndMergeData();
   }, []);
 
@@ -109,7 +88,6 @@ const FijosScreen = () => {
     }
   };
 
-
   return (
     <div className="dark bg-gray-900 min-h-screen py-4">
       <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
@@ -134,7 +112,7 @@ const FijosScreen = () => {
             <div className="flex flex-grow justify-center items-center space-x-4 px-4">
               <ButtonComponent
                 text="Ver actual"
-                onClick={focusCurrentMonth}
+                onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
                 className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
               />
               <DropdownItemsPerPageComponent

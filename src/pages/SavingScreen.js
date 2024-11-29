@@ -7,8 +7,7 @@ import SavingDataComponent from '../components/SavingDataComponent';
 import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
 import { subtractMonths } from '../utils/numbers';
-import { parse, isSameMonth } from 'date-fns';
-import { getMonthlyData, handlePrev, handleNext } from '../utils/useMonthlyData';
+import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 
 const SavingScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
@@ -16,52 +15,22 @@ const SavingScreen = () => {
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
 
-    const focusCurrentMonth = () => {
-        const currentDate = new Date();
-        let currentIndex = dataMonths.findIndex((month) => {
-            const monthDate = parse(month.date, 'yyyy-MM', new Date());
-            return isSameMonth(monthDate, currentDate);
-        });
-
-        if (currentIndex === -1) {
-            for (let i = 0; i < dataMonths.length; i++) {
-                const monthDate = parse(dataMonths[i].date, 'yyyy-MM', new Date());
-                if (monthDate > currentDate) {
-                    currentIndex = i;
-                    break;
-                }
-            }
-        }
-
-        setStartIndex(currentIndex !== -1 ? Math.max(currentIndex - 1, 0) : 0);
-    };
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const savings = await getSavings();
                 setDataMonths(savings);
-
-                focusCurrentMonth();
+                focusCurrentMonth(dataMonths, setStartIndex);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
     }, []);
 
     useEffect(() => {
         setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
     }, [dataMonths, startIndex, itemsPerPages]);
-
-    const handlePrevClick = () => {
-        setStartIndex((prevIndex) => handlePrev(prevIndex, itemsPerPages));
-    };
-
-    const handleNextClick = () => {
-        setStartIndex((prevIndex) => handleNext(prevIndex, itemsPerPages, dataMonths.length));
-    };
 
     const handleItemsPerPageChange = (newItemsPerPage) => {
         setItemsPerPages(newItemsPerPage);
@@ -120,7 +89,7 @@ const SavingScreen = () => {
                     <div className="flex justify-between items-center mt-4 w-[48rem]">
                         <ButtonComponent
                             text="⬅️"
-                            onClick={handlePrevClick} // Usar la función handlePrevClick
+                            onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
                             className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                         />
 
@@ -128,7 +97,7 @@ const SavingScreen = () => {
                         <div className="flex flex-grow justify-center items-center space-x-4 px-4">
                             <ButtonComponent
                                 text="Ver actual"
-                                onClick={focusCurrentMonth}
+                                onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
                                 className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
                             />
                             <DropdownItemsPerPageComponent
@@ -139,7 +108,7 @@ const SavingScreen = () => {
 
                         <ButtonComponent
                             text="➡️"
-                            onClick={handleNextClick} // Usar la función handleNextClick
+                            onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
                             className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                         />
                     </div>
