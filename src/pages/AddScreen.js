@@ -7,7 +7,7 @@ import OptionSelectorComponent from '../components/OptionSelectorComponent';
 import { postFixedCost, putFixedCost } from '../services/fixedCost';
 import { postIncome, putIncome } from '../services/income';
 import { postCardSpend } from '../services/cardSpend';
-import { postSaving } from '../services/saving';
+import { postSaving, putSaving } from '../services/saving';
 import DropdownComponent from '../components/DropdownComponent';
 import InputComponent from '../components/InputComponent';
 import DropdownSavingComponent from '../components/DropdownSavingComponent';
@@ -48,7 +48,7 @@ const AddScreen = () => {
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
-              alert(`Egreso agregado (${data.name}) ✔️`);
+              alert(`'${data.name}' agregado en egresos. ✔️`);
             } catch {
               await putFixedCost(data);
               setName('');
@@ -56,7 +56,7 @@ const AddScreen = () => {
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
-              alert(`Egreso actualizado (${data.name}) ✔️`);
+              alert(`'${data.name}' actualizado en egresos. ✔️`);
             }
           }
           break;
@@ -77,7 +77,7 @@ const AddScreen = () => {
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
-              alert(`Ingreso agregado (${data.name}) ✔️`);
+              alert(`'${data.name}' agregado en ingresos ✔️`);
             } catch {
               await putIncome(data);
               setName('');
@@ -85,7 +85,7 @@ const AddScreen = () => {
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
-              alert(`Ingreso actualizado (${data.name}) ✔️`);
+              alert(`'${data.name}' actualizado en ingresos ✔️`);
             }
           }
           break;
@@ -102,7 +102,7 @@ const AddScreen = () => {
           setCuotas('1');
           const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, '0')}`;
           setDesdeValue(formattedDate);
-          alert(`Gasto de tarjeta agregado (${data.name}) ✔️`);
+          alert(`'${data.name}' agregado en Tarjeta ✔️`);
           break;
         case 'Ahorro':
           data = {
@@ -115,24 +115,45 @@ const AddScreen = () => {
             tna: parseFloat(tna),
             qty
           };
-          await postSaving(data);
-          setName('');
-          setPlazo('fijo');
-          setTna('');
-          setQty('');
-          setInvested('');
-          setObtained('');
-          const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
-          setDesdeValue(fdate);
-          setHastaValue('');
-          alert(`Ahorro agregado (${data.name}) ✔️`);
+          try {
+            console.log(data);
+            await postSaving(data);
+            setName('');
+            setPlazo('fijo');
+            setTna('');
+            setQty('');
+            setInvested('');
+            setObtained('');
+            const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+            setDesdeValue(fdate);
+            setHastaValue('');
+            alert(`'${data.name}' agregado en Ahorro ✔️`);
+          } catch {
+            if (data.type === 'fijo') {
+              console.error("Error creando ahorro tipo 'fijo'.")
+            } else {
+              console.log(data);
+              
+              await putSaving(data);
+              setName('');
+              setPlazo('fijo');
+              setTna('');
+              setQty('');
+              setInvested('');
+              setObtained('');
+              const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+              setDesdeValue(fdate);
+              setHastaValue('');
+              alert(`'${data.name}' actualizado en Ahorro ✔️`);
+            }
+          }
           break;
         default:
           throw new Error("Opción no válida");
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
-      alert('Error: Revise los datos ingresados.');
+      alert('Error: Revise los datos ingresados 🧐');
     }
   };
 
@@ -147,6 +168,7 @@ const AddScreen = () => {
             <>
               <h3 className="text-center mt-2 text-sm text-gray-300">
                 Agrega o modifica un <span className='font-bold text-white'>{selectedOption.toLowerCase()}</span> por su nombre.</h3>
+
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>
                 <DropComponent plhdr={selectedOption === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'}
@@ -242,12 +264,13 @@ const AddScreen = () => {
 
                   <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés compuesto (staking, billetera virtual).</p>
 
-                  <InputComponent
-                    name="Nombre"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ej: Staking"
-                  />
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>
+                    <DropComponent plhdr="Ej: Staking"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      type='savingFlex' />
+                  </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Monto inicial</label>
@@ -276,12 +299,13 @@ const AddScreen = () => {
 
                   <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés variable (acciones, cedears, etfs).</p>
 
-                  <InputComponent
-                    name="Ticker"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ej: AAPL"
-                  />
+                  <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">Ticker</label>
+                    <DropComponent plhdr="Ej: AAPL"
+                      onChange={(e) => setName(e.target.value)}
+                      value={name}
+                      type='savingVar' />
+                  </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Monto</label>

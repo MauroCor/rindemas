@@ -16,12 +16,14 @@ export const getCardSpends = async () => {
         'Content-Type': 'application/json',
       },
     });
+
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     return await response.json();
   } catch (error) {
-    console.error("Failed to fetch card spend:", error);
     throw error;
   }
 };
@@ -43,12 +45,13 @@ export const postCardSpend = async (data) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to post card spend');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error posting card spend:', error);
     throw error;
   }
 };
@@ -69,12 +72,13 @@ export const deleteCardSpend = async (id) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to delete card spend');
     }
 
     return response
   } catch (error) {
-    console.error('Error deleting card spend:', error);
     throw error;
   }
 };

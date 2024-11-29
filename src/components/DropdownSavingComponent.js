@@ -5,7 +5,7 @@ const DropdownSavingComponent = ({ value, onChange }) => {
       <select
         value={value}
         onChange={onChange}
-        className="bg-gray-700 mx-10 p-2 rounded-lg text-center"
+        className="bg-gray-700 mx-10 p-2 rounded-lg text-center text-white"
       >
         <option value="fijo">Renta fija</option>
         <option value="flex">Renta pasiva</option>

@@ -18,13 +18,14 @@ export const getSavings = async () => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Failed to fetch:", error);
     throw error;
   }
 };
@@ -46,12 +47,13 @@ export const postSaving = async (data) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to post saving');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error posting saving:', error);
     throw error;
   }
 };
@@ -70,14 +72,14 @@ export const deleteSaving = async (id) => {
         'Content-Type': 'application/json',
       },
     });
-
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to delete saving');
     }
 
     return response
   } catch (error) {
-    console.error('Error deleting saving:', error);
     throw error;
   }
 };
@@ -99,12 +101,41 @@ export const patchSaving = async (id, data) => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error('Failed to patch saving');
     }
 
     return response
   } catch (error) {
-    console.error('Error patching saving:', error);
+    throw error;
+  }
+};
+
+export const putSaving = async (data) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
+      throw new Error('Failed to put saving');
+    }
+
+    return response;
+  } catch (error) {
     throw error;
   }
 };

@@ -18,13 +18,14 @@ export const getUser = async () => {
     });
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Error response body:', errorBody);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Failed to fetch:", error);
     throw error;
   }
 };

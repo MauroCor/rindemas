@@ -12,13 +12,14 @@ export const postToken = async (username, password) => {
       });
   
       if (!response.ok) {
+        const errorBody = await response.text();
+        console.error('Error response body:', errorBody);
         throw new Error('Failed to get token');
       }
   
       const data = await response.json();
       return data.access;
     } catch (error) {
-      console.error('Error posting token:', error);
       throw error;
     }
   };
