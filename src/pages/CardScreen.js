@@ -6,7 +6,8 @@ import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageCom
 import CardDataComponent from '../components/CardDataComponent';
 import getCardSpends from '../services/cardSpend';
 import { deleteCardSpend } from '../services/cardSpend';
-import { parse, isSameMonth} from "date-fns";
+import { parse, isSameMonth } from 'date-fns';
+import { getMonthlyData, handlePrev, handleNext } from '../utils/useMonthlyData';
 
 const CardScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
@@ -21,9 +22,8 @@ const CardScreen = () => {
             return isSameMonth(monthDate, currentDate);
         });
 
-        // Si no se encuentra el mes actual, buscar el siguiente mes con datos
         if (currentIndex === -1) {
-            for (let i = 1; i < dataMonths.length; i++) {
+            for (let i = 0; i < dataMonths.length; i++) {
                 const nextMonthDate = parse(dataMonths[i].date, 'yyyy-MM', new Date());
                 if (nextMonthDate > currentDate) {
                     currentIndex = i;
@@ -32,11 +32,7 @@ const CardScreen = () => {
             }
         }
 
-        if (currentIndex !== -1) {
-            return currentIndex - 1;
-        }
-
-        return 0; // Si no hay datos disponibles, mostrar los primeros meses
+        return currentIndex !== -1 ? currentIndex : 0;
     };
 
     useEffect(() => {
@@ -44,11 +40,10 @@ const CardScreen = () => {
             try {
                 const cardSpends = await getCardSpends();
                 setDataMonths(cardSpends);
-
                 const initialIndex = focusCurrentMonth();
                 setStartIndex(initialIndex);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error('Error fetching data:', error);
             }
         };
 
@@ -56,18 +51,15 @@ const CardScreen = () => {
     }, []);
 
     useEffect(() => {
-        setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
+        setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
     }, [dataMonths, startIndex, itemsPerPages]);
 
-    const handlePrev = () => {
-        setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
+    const handlePrevClick = () => {
+        setStartIndex((prevIndex) => handlePrev(prevIndex, itemsPerPages));
     };
 
-    const handleNext = () => {
-        setStartIndex((prevIndex) => {
-            const newIndex = prevIndex + itemsPerPages;
-            return newIndex >= dataMonths.length ? Math.max(0, dataMonths.length - itemsPerPages) : newIndex;
-        });
+    const handleNextClick = () => {
+        setStartIndex((prevIndex) => handleNext(prevIndex, itemsPerPages, dataMonths.length));
     };
 
     const handleItemsPerPageChange = (newItemsPerPage) => {
@@ -86,7 +78,7 @@ const CardScreen = () => {
                     prevData.map((month) => ({
                         ...month,
                         cardSpend: month.cardSpend.filter((item) => item.id !== id),
-                    }))
+                    })).filter((month) => month.cardSpend.length > 0)
                 );
             } catch (error) {
                 console.error('Error deleteCardSpend:', error);
@@ -94,12 +86,16 @@ const CardScreen = () => {
         }
     };
 
+    const handleViewCurrentMonth = () => {
+        const currentMonthIndex = focusCurrentMonth();
+        setStartIndex(currentMonthIndex);
+    };
+
     return (
         <div className="dark bg-gray-900 min-h-screen py-4">
             <h1 className="text-center text-2xl font-bold text-white tracking-tight">Gastos de Tarjeta</h1>
             <p className="italic text-center text-sm text-blue-200 mb-6">- Compras en cuotas -</p>
             <div className="relative p-1">
-                {/* Botón Agregar */}
                 <div className="text-center">
                     <Link
                         className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
@@ -109,21 +105,19 @@ const CardScreen = () => {
                     </Link>
                 </div>
 
-                {/* Contenedor de botones y dropdown */}
                 <div className="flex justify-center">
                     <div className="flex justify-between items-center mt-4 w-[48rem]">
-                        {/* Botón Izquierdo */}
+
                         <ButtonComponent
                             text="⬅️"
-                            onClick={handlePrev}
+                            onClick={handlePrevClick}
                             className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                         />
 
-                        {/* Botones Carrusel */}
                         <div className="flex flex-grow justify-center items-center space-x-4 px-4">
                             <ButtonComponent
                                 text="Ver actual"
-                                onClick={focusCurrentMonth}
+                                onClick={handleViewCurrentMonth}
                                 className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
                             />
                             <DropdownItemsPerPageComponent
@@ -132,16 +126,14 @@ const CardScreen = () => {
                             />
                         </div>
 
-                        {/* Botón Derecho */}
                         <ButtonComponent
                             text="➡️"
-                            onClick={handleNext}
+                            onClick={handleNextClick}
                             className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                         />
                     </div>
                 </div>
 
-                {/* Componente Carrusel */}
                 <CarouselComponent
                     data={currentsMonths}
                     renderItem={(monthData) => (
@@ -155,6 +147,5 @@ const CardScreen = () => {
         </div>
     );
 };
-
 
 export default CardScreen;

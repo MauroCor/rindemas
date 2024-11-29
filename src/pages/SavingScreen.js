@@ -7,7 +7,8 @@ import SavingDataComponent from '../components/SavingDataComponent';
 import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
 import { subtractMonths } from '../utils/numbers';
-import { parse, isSameMonth } from "date-fns";
+import { parse, isSameMonth } from 'date-fns';
+import { getMonthlyData, handlePrev, handleNext } from '../utils/useMonthlyData';
 
 const SavingScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
@@ -15,18 +16,16 @@ const SavingScreen = () => {
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
 
-    // Función para enfocar el mes actual o el siguiente disponible
     const focusCurrentMonth = () => {
         const currentDate = new Date();
         let currentIndex = dataMonths.findIndex((month) => {
-            const monthDate = parse(month.date, "yyyy-MM", new Date());
+            const monthDate = parse(month.date, 'yyyy-MM', new Date());
             return isSameMonth(monthDate, currentDate);
         });
 
-        // Si el mes actual no está disponible, buscar el siguiente con datos
         if (currentIndex === -1) {
             for (let i = 0; i < dataMonths.length; i++) {
-                const monthDate = parse(dataMonths[i].date, "yyyy-MM", new Date());
+                const monthDate = parse(dataMonths[i].date, 'yyyy-MM', new Date());
                 if (monthDate > currentDate) {
                     currentIndex = i;
                     break;
@@ -34,7 +33,6 @@ const SavingScreen = () => {
             }
         }
 
-        // Ajustar el índice para mostrar datos
         setStartIndex(currentIndex !== -1 ? Math.max(currentIndex - 1, 0) : 0);
     };
 
@@ -44,10 +42,9 @@ const SavingScreen = () => {
                 const savings = await getSavings();
                 setDataMonths(savings);
 
-                // Focalizar el mes actual tras obtener los datos
                 focusCurrentMonth();
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error('Error fetching data:', error);
             }
         };
 
@@ -55,18 +52,15 @@ const SavingScreen = () => {
     }, []);
 
     useEffect(() => {
-        setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
+        setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
     }, [dataMonths, startIndex, itemsPerPages]);
 
-    const handlePrev = () => {
-        setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
+    const handlePrevClick = () => {
+        setStartIndex((prevIndex) => handlePrev(prevIndex, itemsPerPages));
     };
 
-    const handleNext = () => {
-        setStartIndex((prevIndex) => {
-            const newIndex = prevIndex + itemsPerPages;
-            return newIndex >= dataMonths.length ? Math.max(0, dataMonths.length - itemsPerPages) : newIndex;
-        });
+    const handleNextClick = () => {
+        setStartIndex((prevIndex) => handleNext(prevIndex, itemsPerPages, dataMonths.length));
     };
 
     const handleItemsPerPageChange = (newItemsPerPage) => {
@@ -86,8 +80,9 @@ const SavingScreen = () => {
                         saving: month.saving.filter((item) => item.id !== id),
                     }))
                 );
+                setDataMonths((prevData) => prevData.filter((month) => month.saving.length > 0));
             } catch (error) {
-                console.error("Error deleting saving:", error);
+                console.error('Error deleting saving:', error);
             }
         }
     };
@@ -102,7 +97,7 @@ const SavingScreen = () => {
                 const updatedData = await getSavings();
                 setDataMonths(updatedData);
             } catch (error) {
-                console.error("Error patching saving:", error);
+                console.error('Error patching saving:', error);
             }
         }
     };
@@ -112,7 +107,6 @@ const SavingScreen = () => {
             <h1 className="text-center text-2xl font-bold text-white tracking-tight">Ahorros Invertidos</h1>
             <p className="italic text-center text-sm text-blue-200 mb-6">- Renta fija, pasiva y variable -</p>
             <div className="relative p-1">
-                {/* Botón Agregar */}
                 <div className="text-center">
                     <Link
                         className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
@@ -122,13 +116,11 @@ const SavingScreen = () => {
                     </Link>
                 </div>
 
-                {/* Contenedor de botones y dropdown */}
                 <div className="flex justify-center">
                     <div className="flex justify-between items-center mt-4 w-[48rem]">
-                        {/* Botón Izquierdo */}
                         <ButtonComponent
                             text="⬅️"
-                            onClick={handlePrev}
+                            onClick={handlePrevClick} // Usar la función handlePrevClick
                             className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                         />
 
@@ -145,16 +137,14 @@ const SavingScreen = () => {
                             />
                         </div>
 
-                        {/* Botón Derecho */}
                         <ButtonComponent
                             text="➡️"
-                            onClick={handleNext}
+                            onClick={handleNextClick} // Usar la función handleNextClick
                             className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                         />
                     </div>
                 </div>
 
-                {/* Componente Carrusel */}
                 <CarouselComponent
                     data={currentsMonths}
                     renderItem={(monthData) => (
@@ -167,7 +157,6 @@ const SavingScreen = () => {
                 />
             </div>
 
-            {/* Gráfico */}
             <div className="pt-10 text-center max-w-screen-sm mx-auto">
                 <GraphComponent data={dataMonths} />
             </div>

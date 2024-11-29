@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 import { getIncomes, patchIncome } from '../services/income';
 import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 import { subtractMonths } from '../utils/numbers';
-
-import { parse, isSameMonth, compareAsc } from "date-fns";
+import { parse, isSameMonth, compareAsc } from 'date-fns';
+import { getMonthlyData, handlePrev, handleNext } from '../utils/useMonthlyData';
 
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
@@ -23,7 +23,6 @@ const FijosScreen = () => {
       return isSameMonth(monthDate, currentDate);
     });
 
-    // Si no encuentra el mes actual, busca el siguiente disponible
     if (currentIndex === -1) {
       for (let i = 0; i < dataMonths.length; i++) {
         const monthDate = parse(dataMonths[i].date, "yyyy-MM", new Date());
@@ -59,12 +58,10 @@ const FijosScreen = () => {
       };
     });
 
-    // Filtrar meses con ingresos o egresos
     const filteredData = mergedData.filter(
       (month) => month.income.items.length > 0 || month.fixedCost.items.length > 0
     );
 
-    // Ordenar por fecha usando compareAsc
     filteredData.sort((a, b) => compareAsc(parse(a.date, "yyyy-MM", new Date()), parse(b.date, "yyyy-MM", new Date())));
 
     return filteredData;
@@ -76,8 +73,6 @@ const FijosScreen = () => {
         const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
         const mergedData = mergeData(incomes, fixedCosts);
         setDataMonths(mergedData);
-
-        // Focalizar el mes actual tras obtener los datos
         focusCurrentMonth();
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -88,19 +83,8 @@ const FijosScreen = () => {
   }, []);
 
   useEffect(() => {
-    setCurrentsMonths(dataMonths.slice(startIndex, startIndex + itemsPerPages));
+    setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
   }, [dataMonths, startIndex, itemsPerPages]);
-
-  const handlePrev = () => {
-    setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPages, 0));
-  };
-
-  const handleNext = () => {
-    setStartIndex((prevIndex) => {
-      const newIndex = prevIndex + itemsPerPages;
-      return newIndex >= dataMonths.length ? Math.max(0, dataMonths.length - itemsPerPages) : newIndex;
-    });
-  };
 
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPages(newItemsPerPage);
@@ -131,7 +115,6 @@ const FijosScreen = () => {
       <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
       <p className="italic text-center text-sm text-blue-200 mb-6">- Ingresos y egresos fijos -</p>
       <div className="relative p-1">
-        {/* Botón Agregar */}
         <div className="text-center">
           <Link
             className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
@@ -141,17 +124,13 @@ const FijosScreen = () => {
           </Link>
         </div>
 
-        {/* Contenedor de botones y dropdown */}
         <div className="flex justify-center ">
           <div className="flex justify-between items-center mt-4 w-[48rem]">
-            {/* Botón Izquierdo */}
             <ButtonComponent
               text="⬅️"
-              onClick={handlePrev}
+              onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
               className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
             />
-
-            {/* Botones Carrusel */}
             <div className="flex flex-grow justify-center items-center space-x-4 px-4">
               <ButtonComponent
                 text="Ver actual"
@@ -163,17 +142,14 @@ const FijosScreen = () => {
                 onItemsPerPageChange={handleItemsPerPageChange}
               />
             </div>
-
-            {/* Botón Derecho */}
             <ButtonComponent
               text="➡️"
-              onClick={handleNext}
+              onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
               className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
             />
           </div>
         </div>
 
-        {/* Componente Carrusel */}
         <CarouselComponent
           data={currentsMonths}
           renderItem={(monthData) => (
