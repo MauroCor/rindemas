@@ -3,14 +3,14 @@ import { base_url } from "./config";
 const url = `${base_url}/api/fixed-cost/`
 
 
-export const getFixedCosts = async () => {
+export const getFixedCosts = async (queryParam) => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('Token not found');
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(`${url}${queryParam}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',

@@ -12,11 +12,13 @@ import DropdownComponent from '../components/DropdownComponent';
 import InputComponent from '../components/InputComponent';
 import DropdownSavingComponent from '../components/DropdownSavingComponent';
 import InputPercentComponent from '../components/InputPercentComponent';
+import InputPriceComponent from '../components/InputPriceComponent';
 
 const AddScreen = () => {
   const [selectedOption, setSelectedOption] = useState('Tarjeta');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [ccy, setCcy] = useState('ARS');
   const [invested, setInvested] = useState('');
   const [obtained, setObtained] = useState('');
   const [desdeValue, setDesdeValue] = useState('');
@@ -64,6 +66,7 @@ const AddScreen = () => {
           data = {
             name,
             price: parseInt(price),
+            ccy,
             date_from: desdeValue,
             date_to: hastaValue || null,
           };
@@ -74,6 +77,7 @@ const AddScreen = () => {
               await postIncome(data);
               setName('');
               setPrice('');
+              setCcy('ARS');
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
@@ -116,7 +120,6 @@ const AddScreen = () => {
             qty
           };
           try {
-            console.log(data);
             await postSaving(data);
             setName('');
             setPlazo('fijo');
@@ -132,8 +135,6 @@ const AddScreen = () => {
             if (data.type === 'fijo') {
               console.error("Error creando ahorro tipo 'fijo'.")
             } else {
-              console.log(data);
-              
               await putSaving(data);
               setName('');
               setPlazo('fijo');
@@ -179,7 +180,8 @@ const AddScreen = () => {
 
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-11 text-white">Monto</label>
-                <InputNumberComponent value={price} onChange={(e) => setPrice(e.target.value)} />
+                <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)}
+                  currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} />
               </div>
 
               <div className="flex flex-col">

@@ -9,6 +9,7 @@ import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 import { subtractMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import ExchangeRateComponent from '../components/ExchangeRateComponent';
 
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
@@ -47,18 +48,23 @@ const FijosScreen = () => {
     return filteredData;
   };
 
+  const fetchAndMergeData = async (customRate = '') => {
+    try {
+      const [incomes, fixedCosts] = await Promise.all([
+        getIncomes(customRate),
+        getFixedCosts(customRate)]);
+
+      const mergedData = mergeData(incomes, fixedCosts);
+      setDataMonths(mergedData);
+      focusCurrentMonth(dataMonths, setStartIndex);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchAndMergeData = async () => {
-      try {
-        const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
-        const mergedData = mergeData(incomes, fixedCosts);
-        setDataMonths(mergedData);
-        focusCurrentMonth(dataMonths, setStartIndex);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchAndMergeData();
+    const exrate = handleApply() 
+    fetchAndMergeData(`?custom_rate=${exrate}`);
   }, []);
 
   useEffect(() => {
@@ -88,18 +94,25 @@ const FijosScreen = () => {
     }
   };
 
+  const handleApply = async (customRate) => {
+    fetchAndMergeData(`?custom_rate=${customRate}`);
+  };
+
   return (
     <div className="dark bg-gray-900 min-h-screen py-4">
       <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
       <p className="italic text-center text-sm text-blue-200 mb-6">- Ingresos y egresos fijos -</p>
       <div className="relative p-1">
-        <div className="text-center">
-          <Link
-            className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
-            to="/agregar"
-          >
-            + Agregar
-          </Link>
+        <div className="text-center flex justify-center gap-4">
+          <div className='content-center'>
+            <Link
+              className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
+              to="/agregar"
+            >
+              + Agregar
+            </Link>
+          </div>
+          <ExchangeRateComponent onApply={handleApply} />
         </div>
 
         <div className="flex justify-center ">
