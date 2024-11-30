@@ -16,6 +16,8 @@ const FijosScreen = () => {
   const [itemsPerPages, setItemsPerPages] = useState(3);
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
+  const [isApplied, setIsApplied] = useState(false);
+  const [customRate, setCustomRate] = useState('');
 
   const mergeData = (incomes, fixedCosts) => {
     const allMonths = [
@@ -52,20 +54,22 @@ const FijosScreen = () => {
     try {
       const [incomes, fixedCosts] = await Promise.all([
         getIncomes(customRate),
-        getFixedCosts(customRate)]);
-
+        getFixedCosts(customRate),
+      ]);
+  
       const mergedData = mergeData(incomes, fixedCosts);
       setDataMonths(mergedData);
-      focusCurrentMonth(dataMonths, setStartIndex);
+      focusCurrentMonth(mergedData, setStartIndex);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
+  
   useEffect(() => {
-    const exrate = handleApply() 
-    fetchAndMergeData(`?custom_rate=${exrate}`);
-  }, []);
+    if (isApplied && customRate) {
+      fetchAndMergeData(`?custom_rate=${customRate}`);
+    }
+  }, [isApplied, customRate]);
 
   useEffect(() => {
     setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
@@ -94,8 +98,9 @@ const FijosScreen = () => {
     }
   };
 
-  const handleApply = async (customRate) => {
-    fetchAndMergeData(`?custom_rate=${customRate}`);
+  const handleApply = (rate) => {
+    setCustomRate(rate);
+    setIsApplied(true);
   };
 
   return (
