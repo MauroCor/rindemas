@@ -1,7 +1,7 @@
 import FinancialDropComponent from './FinancialDropComponent';
 import { formatNumber } from '../utils/numbers';
 
-const CardDataComponent = ({ monthData, onDeleteSaving, onPatchSaving }) => {
+const CardDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate }) => {
 
   const getMonthName = (dateStr) => {
     const month = parseInt(dateStr.split('-')[1], 10) - 1;
@@ -19,7 +19,7 @@ const CardDataComponent = ({ monthData, onDeleteSaving, onPatchSaving }) => {
 
   const monthLiquid = monthData.saving
     .filter((saving) => saving.liquid)
-    .reduce((total, saving) => total + saving.obtained, 0); 
+    .reduce((total, saving) => total + (saving.ccy == 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
 
   return (
     <div className={`w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center ${monthName === currentMonthName ? 'border-2 border-yellow-500' : ''}`}>

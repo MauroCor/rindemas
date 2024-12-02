@@ -8,25 +8,29 @@ import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
 import { subtractMonths } from '../utils/numbers';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import ExchangeRateComponent from '../components/ExchangeRateComponent';
 
 const SavingScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
+    const [exRate, setExRate] = useState('');
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async (exRate = '') => {
             try {
-                const savings = await getSavings();
+                const savings = await getSavings(exRate);
                 setDataMonths(savings);
                 focusCurrentMonth(dataMonths, setStartIndex);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-        fetchData();
-    }, []);
+        if (exRate) {
+            fetchData(`?exchg_rate=${exRate}`);
+        }
+    }, [exRate]);
 
     useEffect(() => {
         setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
@@ -63,7 +67,7 @@ const SavingScreen = () => {
         if (isConfirmed) {
             try {
                 await patchSaving(id, body);
-                const updatedData = await getSavings();
+                const updatedData = await getSavings(`?exchg_rate=${exRate}`);
                 setDataMonths(updatedData);
             } catch (error) {
                 console.error('Error patching saving:', error);
@@ -71,18 +75,25 @@ const SavingScreen = () => {
         }
     };
 
+    const handleApply = (rate) => {
+        setExRate(rate);
+      };
+
     return (
         <div className="dark bg-gray-900 min-h-screen py-4">
             <h1 className="text-center text-2xl font-bold text-white tracking-tight">Ahorros Invertidos</h1>
             <p className="italic text-center text-sm text-blue-200 mb-6">- Renta fija, pasiva y variable -</p>
             <div className="relative p-1">
-                <div className="text-center">
-                    <Link
-                        className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
-                        to="/agregar"
-                    >
-                        + Agregar
-                    </Link>
+                <div className="text-center flex justify-center gap-10">
+                    <ExchangeRateComponent onApply={handleApply} />
+                    <div className='content-center'>
+                        <Link
+                            className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
+                            to="/agregar"
+                        >
+                            + Agregar
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="flex justify-center">
@@ -121,6 +132,7 @@ const SavingScreen = () => {
                             monthData={monthData}
                             onDeleteSaving={handleDeleteSaving}
                             onPatchSaving={handlePatchSaving}
+                            exRate={exRate}
                         />
                     )}
                 />

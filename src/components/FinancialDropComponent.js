@@ -75,7 +75,8 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             </span>
 
                             <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold text-yellow-100' : ''}`}>
-                                {formatNumber(item.type === 'var' || item.liquid ? item.obtained : item.invested)}
+                                {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.ccy)}
+                                {/* {formatNumber(item.type === 'var' || item.liquid ? item.obtained : item.invested)} */}
                             </span>
 
                             <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>

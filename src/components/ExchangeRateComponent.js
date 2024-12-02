@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const ExchangeRateComponent = ({ onApply }) => {
-  const [rateType, setRateType] = useState("blue");
+  const [rateType, setRateType] = useState("cripto");
   const [operation, setOperation] = useState("compra");
   const [exchangeRate, setExchangeRate] = useState("");
 

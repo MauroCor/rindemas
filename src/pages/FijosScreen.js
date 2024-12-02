@@ -88,9 +88,7 @@ const FijosScreen = () => {
         const patchFunction = type === "fixedCost" ? patchFixedCost : patchIncome;
         await patchFunction(body);
 
-        const [incomes, fixedCosts] = await Promise.all([getIncomes(), getFixedCosts()]);
-        const mergedData = mergeData(incomes, fixedCosts);
-        setDataMonths(mergedData);
+        fetchAndMergeData(`?exchg_rate=${exRate}`);
       } catch (error) {
         console.error(`Error patching ${type}:`, error);
       }

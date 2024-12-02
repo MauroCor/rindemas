@@ -3,14 +3,14 @@ import { base_url } from "./config";
 const url = `${base_url}/api/saving/`
 
 
-export const getSavings = async () => {
+export const getSavings = async (queryParam = '') => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('Token not found');
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(`${url}${queryParam}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export const getSavings = async () => {
     if (!response.ok) {
       const errorBody = await response.text();
       console.error('Error response body:', errorBody);
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error('Failed to get savings');
     }
 
     const data = await response.json();
