@@ -13,7 +13,7 @@ const ExchangeRateComponent = ({ onApply }) => {
         throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-      const rate = data[op];
+      const rate = parseInt(data[op]);
       setExchangeRate(rate);
       if (onApply) onApply(rate);
     } catch (error) {
