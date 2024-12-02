@@ -3,7 +3,7 @@ import { base_url } from "./config";
 const url = `${base_url}/api/fixed-cost/`
 
 
-export const getFixedCosts = async (queryParam) => {
+export const getFixedCosts = async (queryParam = '') => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {

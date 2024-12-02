@@ -3,7 +3,7 @@ import { base_url } from "./config";
 const url = `${base_url}/api/income/`
 
 
-export const getIncomes = async (queryParam) => {
+export const getIncomes = async (queryParam = '') => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {

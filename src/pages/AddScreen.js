@@ -36,6 +36,7 @@ const AddScreen = () => {
           data = {
             name,
             price: parseInt(price),
+            ccy,
             date_from: desdeValue,
             date_to: hastaValue || null,
           };
@@ -47,6 +48,7 @@ const AddScreen = () => {
               await postFixedCost(data);
               setName('');
               setPrice('');
+              setCcy('ARS');
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
@@ -55,6 +57,7 @@ const AddScreen = () => {
               await putFixedCost(data);
               setName('');
               setPrice('');
+              setCcy('ARS');
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
@@ -86,6 +89,7 @@ const AddScreen = () => {
               await putIncome(data);
               setName('');
               setPrice('');
+              setCcy('ARS');
               const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(formattedDate);
               setHastaValue('');
