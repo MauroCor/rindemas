@@ -22,7 +22,7 @@ const SavingScreen = () => {
             try {
                 const savings = await getSavings(exRate);
                 setDataMonths(savings);
-                focusCurrentMonth(dataMonths, setStartIndex);
+                focusCurrentMonth(savings, setStartIndex);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
