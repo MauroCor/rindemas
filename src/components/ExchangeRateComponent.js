@@ -13,7 +13,9 @@ const ExchangeRateComponent = ({ onApply }) => {
         throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-      setExchangeRate(data[op]);
+      const rate = data[op];
+      setExchangeRate(rate);
+      if (onApply) onApply(rate); 
     } catch (error) {
       console.error("Error fetching exchange rate:", error);
     }
