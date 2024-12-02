@@ -55,7 +55,7 @@ const FijosScreen = () => {
         getIncomes(exRate),
         getFixedCosts(exRate),
       ]);
-  
+
       const mergedData = mergeData(incomes, fixedCosts);
       setDataMonths(mergedData);
       focusCurrentMonth(mergedData, setStartIndex);
@@ -63,7 +63,7 @@ const FijosScreen = () => {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   useEffect(() => {
     if (exRate) {
       fetchAndMergeData(`?custom_rate=${exRate}`);
@@ -106,7 +106,8 @@ const FijosScreen = () => {
       <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
       <p className="italic text-center text-sm text-blue-200 mb-6">- Ingresos y egresos fijos -</p>
       <div className="relative p-1">
-        <div className="text-center flex justify-center gap-4">
+        <div className="text-center flex justify-center gap-10">
+          <ExchangeRateComponent onApply={handleApply} />
           <div className='content-center'>
             <Link
               className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
@@ -115,7 +116,6 @@ const FijosScreen = () => {
               + Agregar
             </Link>
           </div>
-          <ExchangeRateComponent onApply={handleApply} />
         </div>
 
         <div className="flex justify-center ">

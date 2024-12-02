@@ -15,7 +15,7 @@ const ExchangeRateComponent = ({ onApply }) => {
       const data = await response.json();
       const rate = data[op];
       setExchangeRate(rate);
-      if (onApply) onApply(rate); 
+      if (onApply) onApply(rate);
     } catch (error) {
       console.error("Error fetching exchange rate:", error);
     }
@@ -30,11 +30,10 @@ const ExchangeRateComponent = ({ onApply }) => {
   };
 
   return (
-    <div className="flex flex-col items-center bg-gray-800 p-2 rounded-lg w-32 space-y-2">
-      <label className="text-white text-xs">Dólar:</label>
+    <div className="flex flex-col items-center bg-gray-800 p-1 rounded-lg w-28 space-y-2">
       <div className="flex items-center justify-between w-full space-x-1">
         <select
-          className="bg-gray-700 text-white text-xs rounded p-1 w-16"
+          className="bg-gray-700 text-white text-xs rounded p-1 px-[5px] ml-[3px]"
           value={rateType}
           onChange={(e) => setRateType(e.target.value)}
         >
@@ -44,17 +43,18 @@ const ExchangeRateComponent = ({ onApply }) => {
         </select>
         <div
           className={`relative w-16 h-5 flex items-center bg-gray-600 rounded-full px-1 cursor-pointer ${operation === "venta" ? "justify-end" : "justify-start"}`}
-          onClick={() =>
-            setOperation(operation === "compra" ? "venta" : "compra")
-          }
+          onClick={() => setOperation(operation === "compra" ? "venta" : "compra")}
         >
           <div className="w-4 h-4 bg-blue-400 rounded-full transition-transform" />
-          <span className={`absolute text-xs text-white transform -translate-x-1/2 top-[55%] -translate-y-1/2 ${operation === "compra" ? "left-[25%]" : "left-[75%]"}`}>
+          <span
+            className={`absolute text-xs text-white transform -translate-x-1/2 top-[55%] -translate-y-1/2 ${operation === "compra" ? "left-[35%]" : "left-[66%]"
+              }`}
+          >
             {operation === "compra" ? "C" : "V"}
           </span>
         </div>
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-between space-x-2">
         <input
           type="text"
           className="bg-gray-700 text-white text-xs rounded p-1 w-16 text-center"
@@ -66,7 +66,7 @@ const ExchangeRateComponent = ({ onApply }) => {
           placeholder="Cotización"
         />
         <button
-          className="bg-blue-500 text-white text-xs rounded px-2 py-1 hover:bg-blue-600 w-10"
+          className="bg-blue-500 text-white text-xs rounded px-2 py-1 hover:bg-blue-600"
           onClick={handleApply}
         >
           ✓
