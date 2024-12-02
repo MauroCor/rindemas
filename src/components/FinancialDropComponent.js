@@ -20,7 +20,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                 <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                     {data.items.map((item, index) => (
                         <div key={index} className="flex justify-between items-center border-b border-gray-600 text-gray-300">
-                            <span className="w-[40%] text-left text-sm whitespace-normal">{item.name}</span>
+                            <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
                             <span className="w-[35%] text-left text-sm whitespace-normal">{item.ccy != 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
                             <span className="w-[33%] text-left text-sm">{formatPrice(item.price, 'ARS')}</span>
                             {item.name !== 'Tarjeta' && (

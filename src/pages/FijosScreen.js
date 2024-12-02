@@ -66,7 +66,7 @@ const FijosScreen = () => {
 
   useEffect(() => {
     if (exRate) {
-      fetchAndMergeData(`?custom_rate=${exRate}`);
+      fetchAndMergeData(`?exchg_rate=${exRate}`);
     }
   }, [exRate]);
 
