@@ -1,5 +1,5 @@
 import FinancialDropComponent from './FinancialDropComponent';
-import { formatNumber } from '../utils/numbers';
+import { formatPrice } from '../utils/numbers';
 
 const FixedDataComponent = ({ monthData, onDeleteFijos }) => {
   const { date, income, fixedCost } = monthData;
@@ -23,7 +23,7 @@ const FixedDataComponent = ({ monthData, onDeleteFijos }) => {
       <h3 className="font-bold text-2xl mb-4 text-white">{monthName}</h3>
       <label className='text-white'>Balance</label>
       <div>
-        <label className='text-2xl text-blue-500 font-bold'>{formatNumber(income.total - fixedCost.total)}</label>
+        <label className='text-2xl text-blue-500 font-bold'>{formatPrice(income.total - fixedCost.total, 'ARS')}</label>
       </div>
       <FinancialDropComponent title="Ingresos" data={income} isIncome={true} onDelete={(data) => onDeleteFijos(data, date, 'income')}/>
       <FinancialDropComponent title="Egresos" data={fixedCost} isIncome={false} onDelete={(data) => onDeleteFijos(data, date, 'fixedCost')} />

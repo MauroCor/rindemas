@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatNumber, formatPrice } from '../utils/numbers';
+import { formatPrice } from '../utils/numbers';
 
 const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
@@ -13,7 +13,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                 <label className='text-white' style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{title}</label>
                 <div className='right-4 text-xs text-gray-950'>{showDetails ? '▲' : '▼'}</div>
                 <label className={`text-lg ${isIncome ? 'text-green-500' : 'text-red-500'}`}
-                    style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{formatNumber(data.total)}</label>
+                    style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{formatPrice(data.total, 'ARS')}</label>
             </div>
             {/* Fijos */}
             {showDetails && !initialOpen && (
@@ -48,7 +48,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                     {data.cardSpend.map((item, index) => (
                         <div key={index} className="flex -ml-1 justify-between items-center border-b border-gray-600 text-gray-300">
                             <span className="w-[44%] text-left text-sm whitespace-normal">{item.name}</span>
-                            <span className="w-[30%] text-center text-sm">{formatNumber(item.price)}</span>
+                            <span className="w-[30%] text-center text-sm">{formatPrice(item.price, 'ARS')}</span>
                             <span className="w-[13%] text-right text-gray-400 text-xs">{item.installment}</span>
                             <button
                                 onClick={() => onDelete(item.id)}
@@ -76,7 +76,6 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
 
                             <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold text-yellow-100' : ''}`}>
                                 {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.ccy)}
-                                {/* {formatNumber(item.type === 'var' || item.liquid ? item.obtained : item.invested)} */}
                             </span>
 
                             <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>
