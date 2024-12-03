@@ -6,7 +6,7 @@ import FixedDataComponent from '../components/FixedDataComponent';
 import { Link } from 'react-router-dom';
 import { getIncomes, patchIncome } from '../services/income';
 import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
-import { subtractMonths } from '../utils/numbers';
+import { adjustMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import ExchangeRateComponent from '../components/ExchangeRateComponent';
@@ -80,7 +80,7 @@ const FijosScreen = () => {
   };
 
   const handleDeleteFijos = async (data, monthName, type) => {
-    const body = { ...data, date_to: subtractMonths(monthName, 1) };
+    const body = { ...data, date_to: adjustMonths(monthName, -1) };
     const isConfirmed = window.confirm(`¿Quiere eliminar '${data.name}' a partir de ${monthName}?`);
 
     if (isConfirmed) {

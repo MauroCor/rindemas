@@ -18,9 +18,9 @@ export const formatPrice = (num, ccy) => {
     );
 };
 
-export const subtractMonths = (date, months) => {
+export const adjustMonths = (date, months) => {
     const [year, month] = date.split('-').map(Number);
     const result = new Date(year, month - 1);
-    result.setMonth(result.getMonth() - months);
+    result.setMonth(result.getMonth() + months);
     return result.toISOString().slice(0, 7);
-};
+  };

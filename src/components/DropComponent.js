@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getFixedCosts } from '../services/fixedCost';
 import { getIncomes } from '../services/income';
-import getSavings from '../services/saving';
+import { getSavings } from '../services/saving';
 
 const DropComponent = ({ plhdr, onChange, type, value }) => {
     const [options, setOptions] = useState([]);

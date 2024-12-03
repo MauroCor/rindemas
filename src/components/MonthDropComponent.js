@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { adjustMonths } from '../utils/numbers';
 
 const MonthDropComponent = ({ value, onChange, type }) => {
     const [initialValueSet, setInitialValueSet] = useState(false);
@@ -9,7 +10,7 @@ const MonthDropComponent = ({ value, onChange, type }) => {
             onChange(formattedDate);
             setInitialValueSet(true);
         } else if (type === "DesdeTarj" && !initialValueSet) {
-            const formattedDate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, '0')}`;
+            const formattedDate = adjustMonths(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`, 1);
             onChange(formattedDate);
             setInitialValueSet(true);
         }

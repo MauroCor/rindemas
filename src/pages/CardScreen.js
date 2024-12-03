@@ -4,7 +4,7 @@ import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
 import CardDataComponent from '../components/CardDataComponent';
-import getCardSpends from '../services/cardSpend';
+import { getCardSpends } from '../services/cardSpend';
 import { deleteCardSpend } from '../services/cardSpend';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 

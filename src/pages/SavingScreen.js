@@ -6,7 +6,7 @@ import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageCom
 import SavingDataComponent from '../components/SavingDataComponent';
 import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
-import { subtractMonths } from '../utils/numbers';
+import { adjustMonths } from '../utils/numbers';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import ExchangeRateComponent from '../components/ExchangeRateComponent';
 
@@ -61,7 +61,7 @@ const SavingScreen = () => {
     };
 
     const handlePatchSaving = async (id, data, date) => {
-        const body = { ...data, date_to: subtractMonths(date, 1) };
+        const body = { ...data, date_to: adjustMonths(date, -1) };
         const isConfirmed = window.confirm(`¿Quiere finalizar '${data.name}' a partir del ${date}?`);
 
         if (isConfirmed) {

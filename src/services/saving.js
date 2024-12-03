@@ -1,143 +1,22 @@
-import { base_url } from "./config";
+import apiRequest from './apiClient';
 
-const url = `${base_url}/api/saving/`
-
-
-export const getSavings = async (queryParam = '') => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token not found');
-    }
-
-    const response = await fetch(`${url}${queryParam}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error('Failed to get savings');
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
+export const getSavings = (queryParam = '') => {
+  return apiRequest(`/api/saving/${queryParam}`)
+    .then(data => data.json());
 };
 
-export const postSaving = async (data) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token not found');
-    }
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error('Failed to post saving');
-    }
-
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
+export const postSaving = (data) => {
+  return apiRequest('/api/saving/', 'POST', data);
 };
 
-export const deleteSaving = async (id) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token not found');
-    }
-    
-    const response = await fetch(`${url}${id}/`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error('Failed to delete saving');
-    }
-
-    return response
-  } catch (error) {
-    throw error;
-  }
+export const patchSaving = (id, data) => {
+  return apiRequest(`/api/saving/${id}/`, 'PATCH', data);
 };
 
-export const patchSaving = async (id, data) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token not found');
-    }
-    
-    const response = await fetch(`${url}${id}/`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error('Failed to patch saving');
-    }
-
-    return response
-  } catch (error) {
-    throw error;
-  }
+export const putSaving = (data) => {
+  return apiRequest('/api/saving/', 'PUT', data);
 };
 
-export const putSaving = async (data) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token not found');
-    }
-
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error('Failed to put saving');
-    }
-
-    return response;
-  } catch (error) {
-    throw error;
-  }
+export const deleteSaving = (id) => {
+  return apiRequest(`/api/saving/${id}/`, 'DELETE');
 };
-
-export default getSavings;
