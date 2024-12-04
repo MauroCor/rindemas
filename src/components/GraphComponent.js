@@ -35,6 +35,10 @@ const GraphComponent = ({ data }) => {
     return item.date >= startMonth && item.date <= endMonth;
   });
 
+  if (filteredData.length === 0) {
+    return;
+  }
+
   const labels = filteredData.map((item) => item.date);
   const totals = filteredData.map((item) => item.total);
   const average = totals.reduce((acc, val) => acc + val, 0) / (totals.length || 1);

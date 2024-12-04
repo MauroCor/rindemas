@@ -115,32 +115,6 @@ const FijosScreen = () => {
           </div>
         </div>
 
-        <div className="flex justify-center ">
-          <div className="flex justify-between items-center mt-4 w-[48rem]">
-            <ButtonComponent
-              text="⬅️"
-              onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
-              className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
-            />
-            <div className="flex flex-grow justify-center items-center space-x-4 px-4">
-              <ButtonComponent
-                text="Ver actual"
-                onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
-                className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
-              />
-              <DropdownItemsPerPageComponent
-                itemsPerPage={itemsPerPages}
-                onItemsPerPageChange={handleItemsPerPageChange}
-              />
-            </div>
-            <ButtonComponent
-              text="➡️"
-              onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
-              className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
-            />
-          </div>
-        </div>
-
         <CarouselComponent
           data={currentsMonths}
           loading={loading}
@@ -150,7 +124,33 @@ const FijosScreen = () => {
               onDeleteFijos={handleDeleteFijos}
             />
           )}
-        />
+        >
+          <div className="flex justify-center">
+            <div className="flex justify-between items-center mt-4 w-[48rem]">
+              <ButtonComponent
+                text="⬅️"
+                onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
+                className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+              />
+              <div className="flex flex-grow justify-center items-center space-x-4 px-4">
+                <ButtonComponent
+                  text="Ver actual"
+                  onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
+                  className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
+                />
+                <DropdownItemsPerPageComponent
+                  itemsPerPage={itemsPerPages}
+                  onItemsPerPageChange={handleItemsPerPageChange}
+                />
+              </div>
+              <ButtonComponent
+                text="➡️"
+                onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
+                className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+              />
+            </div>
+          </div>
+        </CarouselComponent>
       </div>
     </div>
   );
