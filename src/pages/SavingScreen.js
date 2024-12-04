@@ -16,8 +16,10 @@ const SavingScreen = () => {
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
     const [exRate, setExRate] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
         const fetchData = async (exRate = '') => {
             try {
                 const savings = await getSavings(exRate);
@@ -25,6 +27,8 @@ const SavingScreen = () => {
                 focusCurrentMonth(savings, setStartIndex);
             } catch (error) {
                 console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
             }
         };
         if (exRate) {
@@ -122,6 +126,7 @@ const SavingScreen = () => {
 
                 <CarouselComponent
                     data={currentsMonths}
+                    loading={loading}
                     renderItem={(monthData) => (
                         <SavingDataComponent
                             monthData={monthData}

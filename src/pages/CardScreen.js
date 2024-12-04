@@ -13,15 +13,19 @@ const CardScreen = () => {
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const cardSpends = await getCardSpends();
                 setDataMonths(cardSpends);
                 focusCurrentMonth(dataMonths, setStartIndex);
             } catch (error) {
                 console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
@@ -95,6 +99,7 @@ const CardScreen = () => {
 
                 <CarouselComponent
                     data={currentsMonths}
+                    loading={loading}
                     renderItem={(monthData) => (
                         <CardDataComponent
                             monthData={monthData}

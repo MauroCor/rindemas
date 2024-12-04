@@ -17,6 +17,7 @@ const FijosScreen = () => {
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [exRate, setExRate] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const mergeData = (incomes, fixedCosts) => {
     const allMonths = [
@@ -50,6 +51,7 @@ const FijosScreen = () => {
   };
 
   const fetchAndMergeData = async (exRate = '') => {
+    setLoading(true);
     try {
       const [incomes, fixedCosts] = await Promise.all([
         getIncomes(exRate),
@@ -61,6 +63,8 @@ const FijosScreen = () => {
       focusCurrentMonth(mergedData, setStartIndex);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -139,6 +143,7 @@ const FijosScreen = () => {
 
         <CarouselComponent
           data={currentsMonths}
+          loading={loading}
           renderItem={(monthData) => (
             <FixedDataComponent
               monthData={monthData}

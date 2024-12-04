@@ -1,7 +1,11 @@
-const CarouselComponent = ({ data, renderItem }) => {
+import SpinnerComponent from "./SpinnerComponent";
+
+const CarouselComponent = ({ data, renderItem, loading }) => {
   return (
     <div className="relative flex justify-center items-center mt-1">
-      {data && data.length > 0 ? (
+      {loading ? (
+        <SpinnerComponent />
+      ) : data && data.length > 0 ? (
         <div className="flex space-x-4 overflow-x-auto whitespace-nowrap">
           {data.map((itemData, i) => (
             <div key={i} className="inline-block">
@@ -10,7 +14,10 @@ const CarouselComponent = ({ data, renderItem }) => {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 text-center mt-4 text-lg p-10">Aún no hay datos cargados.</p>
+        <div>
+          <p className="text-gray-400 text-center mt-4 text-lg pt-10">Parece que no tienes datos aún.</p>
+          <p className="text-gray-400 text-center mt-4 text-lg">Usa el botón <span className="font-bold">+ Agregar</span> para empezar.</p>
+        </div>
       )}
     </div>
   );
