@@ -1,14 +1,12 @@
 import { base_url } from "./config";
 
+let sessionExpired = false;
+
 const apiRequest = async (endpoint, method = 'GET', data = null, login = false) => {
   const url = `${base_url}${endpoint}`;
 
   try {
     const token = localStorage.getItem('token');
-
-    if (!token && !login) {
-      throw new Error('Token not found');
-    }
 
     const options = {
       method,
@@ -21,10 +19,14 @@ const apiRequest = async (endpoint, method = 'GET', data = null, login = false) 
 
     const response = await fetch(url, options);
 
-    if (response.status === 401) {
-      console.error('Unauthorized: redirecting to login');
-      window.location.href = '/sm/login';
-      return;
+    if (response.status === 401 && !sessionExpired  && !login) {
+      sessionExpired = true;
+      alert('Sesión vencida, vuelva a ingresar.');
+      localStorage.removeItem('token');
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/sm/login';
+      }
+      throw new Error('Unauthorized or expired token');
     }
 
     if (!response.ok) {
