@@ -62,21 +62,24 @@ const DropComponent = ({ plhdr, onChange, type, value }) => {
 
     return (
         <div className="text-center rounded-lg mb-2">
-            <input
-                className='text-center bg-gray-700 w-60 p-2 rounded-lg text-white'
-                type="text"
-                name="drop"
-                list="drop"
-                value={value}
-                autoComplete='off'
-                placeholder={plhdr}
-                maxLength={20}
-                onChange={onChange} />
-            <datalist id="drop">
-                {options.map((opt, index) => (
-                    <option key={index} value={opt} />
-                ))}
-            </datalist>
+            <div>
+                <input
+                    className='text-center bg-gray-700 w-60 p-2 rounded-lg text-white'
+                    type="text"
+                    name="drop"
+                    list="drop"
+                    value={value}
+                    autoComplete='off'
+                    placeholder={plhdr}
+                    maxLength={20}
+                    onChange={onChange} />
+                <datalist id="drop">
+                    {options.map((opt, index) => (
+                        <option key={index} value={opt} />
+                    ))}
+                </datalist>
+            </div>
+            <p className='text-blue-400 text-[12px] text-center !mt-1'>También puedes <span className='font-bold'>actualizar</span> uno existente.</p>
         </div>
     );
 };

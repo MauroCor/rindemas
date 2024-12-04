@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
@@ -9,6 +8,7 @@ import GraphComponent from '../components/GraphComponent';
 import { adjustMonths } from '../utils/numbers';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import ExchangeRateComponent from '../components/ExchangeRateComponent';
+import AddButtonComponent from '../components/AddButtonComponent';
 
 const SavingScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
@@ -77,7 +77,7 @@ const SavingScreen = () => {
 
     const handleApply = (rate) => {
         setExRate(rate);
-      };
+    };
 
     return (
         <div className="dark bg-gray-900 min-h-screen py-4">
@@ -87,12 +87,7 @@ const SavingScreen = () => {
                 <div className="text-center flex justify-center gap-10">
                     <ExchangeRateComponent onApply={handleApply} />
                     <div className='content-center'>
-                        <Link
-                            className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
-                            to="/agregar"
-                        >
-                            + Agregar
-                        </Link>
+                        <AddButtonComponent fromScreen="Ahorro" />
                     </div>
                 </div>
 

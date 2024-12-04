@@ -13,9 +13,11 @@ import InputComponent from '../components/InputComponent';
 import DropdownSavingComponent from '../components/DropdownSavingComponent';
 import InputPercentComponent from '../components/InputPercentComponent';
 import InputPriceComponent from '../components/InputPriceComponent';
+import { useSearchParams } from 'react-router-dom';
 
 const AddScreen = () => {
-  const [selectedOption, setSelectedOption] = useState('Tarjeta');
+  const [searchParams] = useSearchParams();
+  const [selectedOption, setSelectedOption] = useState(searchParams.get("selectedOption") || "Tarjeta");
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [ccy, setCcy] = useState('ARS');
@@ -175,7 +177,7 @@ const AddScreen = () => {
           {(selectedOption === 'Ingreso' || selectedOption === 'Egreso') && (
             <>
               <h3 className="text-center mt-2 text-sm text-gray-300">
-                Agrega o modifica un <span className='font-bold text-white'>{selectedOption.toLowerCase()}</span> por su nombre.</h3>
+                Agrega un <span className='font-bold text-white'>{selectedOption.toLowerCase()}</span> por su nombre.</h3>
 
               <div className="flex flex-col">
                 <label className="text-xs text-left mb-1 ml-11 text-white">Nombre</label>

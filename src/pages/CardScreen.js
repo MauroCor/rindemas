@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
@@ -7,6 +6,7 @@ import CardDataComponent from '../components/CardDataComponent';
 import { getCardSpends } from '../services/cardSpend';
 import { deleteCardSpend } from '../services/cardSpend';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import AddButtonComponent from '../components/AddButtonComponent';
 
 const CardScreen = () => {
     const [dataMonths, setDataMonths] = useState([]);
@@ -61,12 +61,7 @@ const CardScreen = () => {
             <p className="italic text-center text-sm text-blue-200 mb-6">- Compras en cuotas -</p>
             <div className="relative p-1">
                 <div className="text-center">
-                    <Link
-                        className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
-                        to="/agregar"
-                    >
-                        + Agregar
-                    </Link>
+                    <AddButtonComponent fromScreen="Tarjeta" />
                 </div>
 
                 <div className="flex justify-center">

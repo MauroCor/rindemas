@@ -3,13 +3,13 @@ import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
 import FixedDataComponent from '../components/FixedDataComponent';
-import { Link } from 'react-router-dom';
 import { getIncomes, patchIncome } from '../services/income';
 import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 import { adjustMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import ExchangeRateComponent from '../components/ExchangeRateComponent';
+import AddButtonComponent from '../components/AddButtonComponent';
 
 const FijosScreen = () => {
   const [dataMonths, setDataMonths] = useState([]);
@@ -107,12 +107,7 @@ const FijosScreen = () => {
         <div className="text-center flex justify-center gap-10">
           <ExchangeRateComponent onApply={handleApply} />
           <div className='content-center'>
-            <Link
-              className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
-              to="/agregar"
-            >
-              + Agregar
-            </Link>
+            <AddButtonComponent fromScreen="Ingreso" />
           </div>
         </div>
 
