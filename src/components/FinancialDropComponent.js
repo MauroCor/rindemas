@@ -71,11 +71,11 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
 
                             <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''}`}>
                                 {item.name}
-                                {item.type === 'var' && <sup className="text-[10px] ml-1">{item.qty}</sup>}
+                                {item.type === 'var' && <sup className="text-[10px] ml-1">{parseFloat(item.qty)}</sup>}
                             </span>
 
                             <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold text-yellow-100' : ''}`}>
-                                {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.ccy)}
+                                {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.type === 'var' ? 'USD' : item.ccy)}
                             </span>
 
                             <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>

@@ -12,7 +12,7 @@ const InputPriceComponent = ({ onChange, value, currency, onCurrencyChange }) =>
                 </select>
                 
                 <input
-                    className="bg-gray-700 w-[10.4rem] p-2 text-center text-white rounded-r-lg"
+                    className="bg-gray-700 w-[10.4rem] p-[7px] text-center text-white rounded-r-lg"
                     type="number"
                     name="drop1234"
                     autoComplete="off"

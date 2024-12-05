@@ -9,7 +9,7 @@ export const formatNumber = (num) => {
 export const formatPrice = (num, ccy) => {
     const isARS = ccy === 'ARS';
     const currencySymbol = isARS ? '$' : 'u$d';
-    const formattedValue = Math.abs(num) >= 1000 ? `${Math.round(num / 1000)}k` : `${Math.round(num)}`;
+    const formattedValue = Math.abs(num) >= 1000 && isARS? `${Math.round(num / 1000)}k` : `${Math.round(num)}`;
 
     return (
         <>

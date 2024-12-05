@@ -14,6 +14,7 @@ import DropdownSavingComponent from '../components/DropdownSavingComponent';
 import InputPercentComponent from '../components/InputPercentComponent';
 import InputPriceComponent from '../components/InputPriceComponent';
 import { useSearchParams } from 'react-router-dom';
+import InputQuantityComponent from '../components/InputQuantityComponent';
 
 const AddScreen = () => {
   const [searchParams] = useSearchParams();
@@ -310,7 +311,7 @@ const AddScreen = () => {
               {plazo === 'var' && (
                 <>
 
-                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés variable (acciones, cedears, etfs).</p>
+                  <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés variable (cedears, criptos).</p>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Ticker</label>
@@ -328,8 +329,7 @@ const AddScreen = () => {
 
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Cantidad</label>
-                    <InputNumberComponent value={qty} onChange={(e) => setQty(e.target.value)}
-                      placeholder={"Ej: 10 valores"} />
+                    <InputQuantityComponent value={qty} onChange={(e) => setQty(e.target.value)} />
                   </div>
 
                   <div className="flex flex-col">
