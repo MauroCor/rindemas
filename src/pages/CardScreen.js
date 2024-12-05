@@ -87,9 +87,9 @@ const CardScreen = () => {
                             />
                             <div className="flex flex-grow justify-center items-center space-x-4 px-4">
                                 <ButtonComponent
-                                    text="Ver actual"
+                                    text="Actual"
                                     onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
-                                    className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
+                                    className="hover:bg-blue-500 bg-gray-600 px-1 border-gray-950 text-white"
                                 />
                                 <DropdownItemsPerPageComponent
                                     itemsPerPage={itemsPerPages}

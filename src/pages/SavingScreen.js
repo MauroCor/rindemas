@@ -7,22 +7,23 @@ import { getSavings, deleteSaving, patchSaving } from '../services/saving';
 import GraphComponent from '../components/GraphComponent';
 import { adjustMonths } from '../utils/numbers';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
-import ExchangeRateComponent from '../components/ExchangeRateComponent';
+import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
+import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
 
 const SavingScreen = () => {
+    const { exchangeRate } = useExchangeRate();
     const [dataMonths, setDataMonths] = useState([]);
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
-    const [exRate, setExRate] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setLoading(true);
-        const fetchData = async (exRate = '') => {
+        const fetchData = async () => {
             try {
-                const savings = await getSavings(exRate);
+                const savings = await getSavings(`?exchg_rate=${exchangeRate}`);
                 setDataMonths(savings);
                 focusCurrentMonth(savings, setStartIndex);
             } catch (error) {
@@ -31,10 +32,8 @@ const SavingScreen = () => {
                 setLoading(false);
             }
         };
-        if (exRate) {
-            fetchData(`?exchg_rate=${exRate}`);
-        }
-    }, [exRate]);
+        fetchData();
+    }, [exchangeRate]);
 
     useEffect(() => {
         setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
@@ -71,7 +70,7 @@ const SavingScreen = () => {
         if (isConfirmed) {
             try {
                 await patchSaving(id, body);
-                const updatedData = await getSavings(`?exchg_rate=${exRate}`);
+                const updatedData = await getSavings(`?exchg_rate=${exchangeRate}`);
                 setDataMonths(updatedData);
             } catch (error) {
                 console.error('Error patching saving:', error);
@@ -79,20 +78,13 @@ const SavingScreen = () => {
         }
     };
 
-    const handleApply = (rate) => {
-        setExRate(rate);
-    };
-
     return (
         <div className="dark bg-gray-900 min-h-screen py-4">
             <h1 className="text-center text-2xl font-bold text-white tracking-tight">Ahorros Invertidos</h1>
             <p className="italic text-center text-sm text-blue-200 mb-6">- Renta fija, pasiva y variable -</p>
             <div className="relative p-1">
-                <div className="text-center flex justify-center gap-10">
-                    <ExchangeRateComponent onApply={handleApply} />
-                    <div className='content-center'>
-                        <AddButtonComponent fromScreen="Ahorro" />
-                    </div>
+                <div className="text-center">
+                    <AddButtonComponent fromScreen="Ahorro" />
                 </div>
 
                 <CarouselComponent
@@ -103,7 +95,7 @@ const SavingScreen = () => {
                             monthData={monthData}
                             onDeleteSaving={handleDeleteSaving}
                             onPatchSaving={handlePatchSaving}
-                            exRate={exRate}
+                            exRate={exchangeRate}
                         />
                     )}
                 >
@@ -114,16 +106,17 @@ const SavingScreen = () => {
                                 onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
                                 className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                             />
-                            <div className="flex flex-grow justify-center items-center space-x-4 px-4">
+                            <div className="flex flex-grow justify-center items-center space-x-2">
                                 <ButtonComponent
-                                    text="Ver actual"
+                                    text="Actual"
                                     onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
-                                    className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
+                                    className="hover:bg-blue-500 bg-gray-600 px-1 border-gray-950 text-white"
                                 />
                                 <DropdownItemsPerPageComponent
                                     itemsPerPage={itemsPerPages}
                                     onItemsPerPageChange={handleItemsPerPageChange}
                                 />
+                                <ExchangeRateDisplay />
                             </div>
                             <ButtonComponent
                                 text="➡️"

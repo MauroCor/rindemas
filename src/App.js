@@ -9,51 +9,54 @@ import CardScreen from './pages/CardScreen';
 import SavingScreen from './pages/SavingScreen';
 import Login from './components/LoginComponent';
 import Footer from './components/FooterComponent';
+import { ExchangeRateProvider } from './context/ExchangeRateContext';
 
 const App = () => (
   <AuthProvider>
-    <BrowserRouter basename="/sm">
-      <NavbarComponent />
-      <Routes>
-        <Route path="/login" element={<Login />} />
+    <ExchangeRateProvider>
+      <BrowserRouter basename="/sm">
+        <NavbarComponent />
+        <Routes>
+          <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={<Navigate to="/fijos" />} />
+          <Route path="/" element={<Navigate to="/fijos" />} />
 
-        <Route
-          path="/fijos"
-          element={
-            <PrivateRoute>
-              <FijosScreen />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/agregar"
-          element={
-            <PrivateRoute>
-              <AddScreen />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/tarjetas"
-          element={
-            <PrivateRoute>
-              <CardScreen />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/ahorros"
-          element={
-            <PrivateRoute>
-              <SavingScreen />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+          <Route
+            path="/fijos"
+            element={
+              <PrivateRoute>
+                <FijosScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/agregar"
+            element={
+              <PrivateRoute>
+                <AddScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/tarjetas"
+            element={
+              <PrivateRoute>
+                <CardScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/ahorros"
+            element={
+              <PrivateRoute>
+                <SavingScreen />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </ExchangeRateProvider>
   </AuthProvider>
 );
 

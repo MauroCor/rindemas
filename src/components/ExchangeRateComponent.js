@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useExchangeRate } from "../context/ExchangeRateContext";
 
-const ExchangeRateComponent = ({ onApply }) => {
+const ExchangeRateComponent = () => {
+  const { updateExchangeRate } = useExchangeRate()
   const [rateType, setRateType] = useState("cripto");
   const [operation, setOperation] = useState("compra");
   const [exchangeRate, setExchangeRate] = useState("");
@@ -15,7 +17,7 @@ const ExchangeRateComponent = ({ onApply }) => {
       const data = await response.json();
       const rate = parseInt(data[op]);
       setExchangeRate(rate);
-      if (onApply) onApply(rate);
+      updateExchangeRate(rate)
     } catch (error) {
       console.error("Error fetching exchange rate:", error);
     }
@@ -26,7 +28,9 @@ const ExchangeRateComponent = ({ onApply }) => {
   }, [rateType, operation]);
 
   const handleApply = () => {
-    if (onApply) onApply(exchangeRate);
+    if (exchangeRate) {
+      updateExchangeRate(exchangeRate);
+    }
   };
 
   return (

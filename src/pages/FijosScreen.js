@@ -8,15 +8,16 @@ import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
 import { adjustMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
-import ExchangeRateComponent from '../components/ExchangeRateComponent';
+import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
+import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
 
 const FijosScreen = () => {
+  const { exchangeRate } = useExchangeRate();
   const [dataMonths, setDataMonths] = useState([]);
   const [itemsPerPages, setItemsPerPages] = useState(3);
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
-  const [exRate, setExRate] = useState('');
   const [loading, setLoading] = useState(true);
 
   const mergeData = (incomes, fixedCosts) => {
@@ -50,12 +51,12 @@ const FijosScreen = () => {
     return filteredData;
   };
 
-  const fetchAndMergeData = async (exRate = '') => {
+  const fetchAndMergeData = async () => {
     setLoading(true);
     try {
       const [incomes, fixedCosts] = await Promise.all([
-        getIncomes(exRate),
-        getFixedCosts(exRate),
+        getIncomes(`?exchg_rate=${exchangeRate}`),
+        getFixedCosts(`?exchg_rate=${exchangeRate}`),
       ]);
 
       const mergedData = mergeData(incomes, fixedCosts);
@@ -69,10 +70,8 @@ const FijosScreen = () => {
   };
 
   useEffect(() => {
-    if (exRate) {
-      fetchAndMergeData(`?exchg_rate=${exRate}`);
-    }
-  }, [exRate]);
+    fetchAndMergeData();
+  }, [exchangeRate]);
 
   useEffect(() => {
     setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
@@ -91,16 +90,11 @@ const FijosScreen = () => {
       try {
         const patchFunction = type === "fixedCost" ? patchFixedCost : patchIncome;
         await patchFunction(body);
-
-        fetchAndMergeData(`?exchg_rate=${exRate}`);
+        fetchAndMergeData();
       } catch (error) {
         console.error(`Error patching ${type}:`, error);
       }
     }
-  };
-
-  const handleApply = (rate) => {
-    setExRate(rate);
   };
 
   return (
@@ -108,11 +102,8 @@ const FijosScreen = () => {
       <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
       <p className="italic text-center text-sm text-blue-200 mb-6">- Ingresos y egresos fijos -</p>
       <div className="relative p-1">
-        <div className="text-center flex justify-center gap-10">
-          <ExchangeRateComponent onApply={handleApply} />
-          <div className='content-center'>
-            <AddButtonComponent fromScreen="Ingreso" />
-          </div>
+        <div className="text-center">
+          <AddButtonComponent fromScreen="Ingreso" />
         </div>
 
         <CarouselComponent
@@ -132,16 +123,17 @@ const FijosScreen = () => {
                 onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
                 className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
               />
-              <div className="flex flex-grow justify-center items-center space-x-4 px-4">
+              <div className="flex flex-grow justify-center items-center space-x-2">
                 <ButtonComponent
-                  text="Ver actual"
+                  text="Actual"
                   onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
-                  className="hover:bg-blue-500 bg-gray-600 px-3 border-gray-950 text-white"
+                  className="hover:bg-blue-500 bg-gray-600 px-1 border-gray-950 text-white"
                 />
                 <DropdownItemsPerPageComponent
                   itemsPerPage={itemsPerPages}
                   onItemsPerPageChange={handleItemsPerPageChange}
                 />
+                <ExchangeRateDisplay />
               </div>
               <ButtonComponent
                 text="➡️"

@@ -1,7 +1,7 @@
 import FinancialDropComponent from './FinancialDropComponent';
 import { formatPrice } from '../utils/numbers';
 
-const CardDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate }) => {
+const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate }) => {
 
   const getMonthName = (dateStr) => {
     const month = parseInt(dateStr.split('-')[1], 10) - 1;
@@ -30,4 +30,4 @@ const CardDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate })
   );
 };
 
-export default CardDataComponent;
+export default SavingDataComponent;
