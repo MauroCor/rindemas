@@ -51,7 +51,7 @@ const ExchangeRateComponent = () => {
         >
           <div className="w-4 h-4 bg-blue-400 rounded-full transition-transform" />
           <span
-            className={`absolute text-xs text-white transform -translate-x-1/2 top-[55%] -translate-y-1/2 ${operation === "compra" ? "left-[35%]" : "left-[66%]"
+            className={`absolute text-xs text-white transform -translate-x-1/2 top-[48%] -translate-y-1/2 ${operation === "compra" ? "left-[34%]" : "left-[66%]"
               }`}
           >
             {operation === "compra" ? "C" : "V"}

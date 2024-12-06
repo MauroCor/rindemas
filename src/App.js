@@ -10,6 +10,7 @@ import SavingScreen from './pages/SavingScreen';
 import Login from './components/LoginComponent';
 import Footer from './components/FooterComponent';
 import { ExchangeRateProvider } from './context/ExchangeRateContext';
+import InfoScreen from './pages/InfoScreen';
 
 const App = () => (
   <AuthProvider>
@@ -50,6 +51,14 @@ const App = () => (
             element={
               <PrivateRoute>
                 <SavingScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/info"
+            element={
+              <PrivateRoute>
+                <InfoScreen />
               </PrivateRoute>
             }
           />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ExchangeRateComponent from './ExchangeRateComponent';
+import { Link } from 'react-router-dom';
 
 const UserMenu = ({ userName, handleLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +17,7 @@ const UserMenu = ({ userName, handleLogout }) => {
 
   return (
     <div className="relative sm:pl-[71px]">
+
       {/* Botón para desplegar el menú */}
       <button
         onClick={toggleMenu}
@@ -30,16 +32,19 @@ const UserMenu = ({ userName, handleLogout }) => {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-36 bg-gray-800 text-white rounded-lg shadow-lg z-10">
           <ul className="py-1">
+
+            {/* Nombre del usuario */}
             <li className="px-4 py-2 text-sm text-center font-bold text-gray-400 border-b-2 border-b-gray-600">
               {userName}
             </li>
 
-            <li className="py-2 text-center text-gray-300 relative">
+            {/* Cotización */}
+            <li className="text-center text-gray-300 relative">
               <button
                 className="w-full p-1 text-center hover:bg-gray-700"
                 onClick={toggleExchgRate}
               >
-                Cotización
+                Dólar
               </button>
               {isOpenExRt && (
                 <div
@@ -55,6 +60,14 @@ const UserMenu = ({ userName, handleLogout }) => {
               )}
             </li>
 
+            {/* Información */}
+            <li className="text-center text-gray-300 relative">
+              <button className="w-full p-1 text-center hover:bg-gray-700">
+                <Link to='/info'>Info</Link>
+              </button>
+            </li>
+
+            {/* Cerrar sesión */}
             <li className='border-t-2 border-t-gray-600'>
               <button className="flex items-center justify-center p-1 w-full text-right hover:bg-gray-700 pl-6" onClick={handleLogout}>
                 <span className="text-gray-300 font-bold pr-2 pt-[2px]">Cerrar</span>
