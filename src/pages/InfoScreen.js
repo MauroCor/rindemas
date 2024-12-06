@@ -59,6 +59,14 @@ const InfoScreen = () => {
                         Para montos variables, ingresa el "peor escenario": el valor más bajo para ingresos y el más alto para egresos.
                         Esto garantizará que tus proyecciones sean realistas y evitará sorpresas financieras.
                     </p>
+
+                    <h4 className="text-md font-semibold text-blue-200 mb-2 mt-4">Aclaraciones:</h4>
+                    <ul className="list-disc list-inside text-gray-300 mb-4">
+                        <li>Al eliminar un registro, su historial se conserva. Por ejemplo, si eliminas "Gimnasio" de tus egresos a partir de febrero, el monto se mantendrá en los meses anteriores.</li>
+                        <li>Si no defines una "fecha hasta" al crear o actualizar un registro, este se proyectará automáticamente por un año desde la modificación.</li>
+                        <li>No es posible crear ingresos o egresos con nombres duplicados.</li>
+                        <li>El total de tarjeta que aparece en los egresos no se puede eliminar, ya que se calcula automáticamente desde la sección de tarjetas.</li>
+                    </ul>
                 </section>
 
                 <section className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg">
@@ -125,7 +133,7 @@ const InfoScreen = () => {
                         Puedes ajustar la cotización que desees para simular su impacto en todas las secciones.
                     </p>
                     <p className="text-gray-300 mb-4">
-                        Encontrarás la opción 'Dólar' en el icono de usuario.
+                        Encontrarás la opción "Dólar" en el icono de usuario.
                     </p>
                 </section>
             </div>

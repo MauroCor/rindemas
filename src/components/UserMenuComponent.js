@@ -62,9 +62,7 @@ const UserMenu = ({ userName, handleLogout }) => {
 
             {/* Información */}
             <li className="text-center text-gray-300 relative">
-              <button className="w-full p-1 text-center hover:bg-gray-700">
-                <Link to='/info'>Info</Link>
-              </button>
+              <Link to="/info" className="block w-full p-1 text-center hover:bg-gray-700">Info</Link>
             </li>
 
             {/* Cerrar sesión */}
