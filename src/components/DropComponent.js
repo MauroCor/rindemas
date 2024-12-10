@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { getFixedCosts } from '../services/fixedCost';
 import { getIncomes } from '../services/income';
 import { getSavings } from '../services/saving';
+import { getTicker } from '../services/ticker';
 
-const DropComponent = ({ plhdr, onChange, type, value }) => {
+const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
     const [options, setOptions] = useState([]);
+    const [searchResult, setSearchResult] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,6 +63,25 @@ const DropComponent = ({ plhdr, onChange, type, value }) => {
         fetchData();
     }, [type]);
 
+    const toggleSearch = async () => {
+        if (type !== 'savingVar') return;
+        setIsLoading(true);
+        try {
+            const tkr = cripto === 'SÍ' ? `CRY-${value}` : value
+            const response = await getTicker(`?tkr=${tkr}`);
+            if (JSON.stringify(response) !== '{}') {
+                setSearchResult(response);
+            } else {
+                setSearchResult(null);
+            }
+        } catch (error) {
+            console.error("Error fetching prices:", error);
+            setSearchResult(null);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="text-center rounded-lg mb-2">
             <div>
@@ -78,8 +100,20 @@ const DropComponent = ({ plhdr, onChange, type, value }) => {
                         <option key={index} value={opt} />
                     ))}
                 </datalist>
+                <button
+                    onClick={toggleSearch}
+                    className={`absolute p-2 ml-2 rounded-xl hover:bg-gray-600 bg-gray-700 text-white ${type !== 'savingVar' ? 'hidden' : ''
+                        }`}
+                >
+                    🔍
+                </button>
             </div>
-            <p className='text-blue-400 text-[12px] text-center !mt-1'>También puedes <span className='font-bold'>actualizar</span> uno existente.</p>
+            {searchResult != null ? (
+                <p className={`text-white text-[12px] text-center !mt-1`}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${searchResult.price}`}</p>
+            ) : (
+                <p className={`text-blue-400 text-[12px] text-center !mt-1`} >También puedes <span className='font-bold'>actualizar</span> uno existente.</p>
+
+            )}
         </div>
     );
 };

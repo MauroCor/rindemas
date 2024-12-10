@@ -15,6 +15,7 @@ import InputPercentComponent from '../components/InputPercentComponent';
 import InputPriceComponent from '../components/InputPriceComponent';
 import { useSearchParams } from 'react-router-dom';
 import InputQuantityComponent from '../components/InputQuantityComponent';
+import SwitchComponent from '../components/SwitchComponent';
 
 const AddScreen = () => {
   const [searchParams] = useSearchParams();
@@ -30,6 +31,7 @@ const AddScreen = () => {
   const [plazo, setPlazo] = useState('fijo');
   const [tna, setTna] = useState('');
   const [qty, setQty] = useState('');
+  const [cripto, setCripto] = useState("NO");
 
   const handleSubmit = async () => {
     let data = {};
@@ -117,7 +119,7 @@ const AddScreen = () => {
           break;
         case 'Ahorro':
           data = {
-            name,
+            name: cripto === 'SÌ' ? `CRY-${name}` : name,
             type: plazo,
             invested: parseInt(invested),
             ccy,
@@ -125,7 +127,7 @@ const AddScreen = () => {
             date_from: desdeValue,
             date_to: hastaValue === "" ? null : hastaValue,
             tna: parseFloat(tna),
-            qty
+            qty,
           };
           try {
             await postSaving(data);
@@ -139,6 +141,7 @@ const AddScreen = () => {
             const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
             setDesdeValue(fdate);
             setHastaValue('');
+            setCripto('NO');
             alert(`'${data.name}' agregado en Ahorro ✔️`);
           } catch {
             if (data.type === 'fijo') {
@@ -155,6 +158,7 @@ const AddScreen = () => {
               const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(fdate);
               setHastaValue('');
+              setCripto('NO');
               alert(`'${data.name}' actualizado en Ahorro ✔️`);
             }
           }
@@ -314,17 +318,32 @@ const AddScreen = () => {
                   <p className='text-blue-400 text-[12px] text-center !mt-1'>Interés variable (cedears, criptos).</p>
 
                   <div className="flex flex-col">
+                    <label className="text-xs text-left mb-1 ml-11 text-white">¿Criptomoneda?</label>
+                    <div className='flex justify-center'>
+                      <SwitchComponent
+                        value={cripto}
+                        onToggle={setCripto}
+                        optionA="NO"
+                        optionB="SÍ"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Ticker</label>
                     <DropComponent plhdr="Ej: AAPL"
                       onChange={(e) => setName(e.target.value)}
                       value={name}
+                      cripto={cripto}
                       type='savingVar' />
                   </div>
 
                   <div className="flex flex-col">
                     <label className="text-xs text-left mb-1 ml-11 text-white">Monto</label>
-                    <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)}
-                      currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} />
+                    <InputNumberComponent value={invested} onChange={(e) => setInvested(e.target.value)}
+                      placeholder='Ej: u$s 350' />
+                    <p className='text-blue-400 text-[12px] text-center !-mt-1'>Monto en dólares (USDT).</p>
+
                   </div>
 
                   <div className="flex flex-col">

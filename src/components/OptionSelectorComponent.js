@@ -8,7 +8,7 @@ const Option = ({ value, label, selected, onChange }) => (
       value={value}
       checked={selected === value}
       onChange={() => onChange(value)}
-      className="absolute inset-0 opacity-0"
+      className="absolute inset-0 opacity-0 cursor-pointer"
     />
     <div
       className={`w-full h-full rounded-full transition-all flex items-center justify-center ${
