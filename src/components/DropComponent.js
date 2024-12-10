@@ -109,7 +109,7 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
                 </button>
             </div>
             {searchResult != null ? (
-                <p className={`text-white text-[12px] text-center !mt-1`}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${searchResult.price}`}</p>
+                <p className={`text-white text-[12px] text-center !mt-1`}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${parseInt(searchResult.price)}`}</p>
             ) : (
                 <p className={`text-blue-400 text-[12px] text-center !mt-1`} >También puedes <span className='font-bold'>actualizar</span> uno existente.</p>
 
