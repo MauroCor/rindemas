@@ -31,7 +31,7 @@ const AddScreen = () => {
   const [plazo, setPlazo] = useState('fijo');
   const [tna, setTna] = useState('');
   const [qty, setQty] = useState('');
-  const [cripto, setCripto] = useState("NO");
+  const [cripto, setCripto] = useState(false);
 
   const handleSubmit = async () => {
     let data = {};
@@ -119,7 +119,7 @@ const AddScreen = () => {
           break;
         case 'Ahorro':
           data = {
-            name: cripto === 'SÌ' ? `CRY-${name}` : name,
+            name,
             type: plazo,
             invested: parseInt(invested),
             ccy,
@@ -128,6 +128,7 @@ const AddScreen = () => {
             date_to: hastaValue === "" ? null : hastaValue,
             tna: parseFloat(tna),
             qty,
+            crypto: cripto
           };
           try {
             await postSaving(data);
@@ -141,7 +142,7 @@ const AddScreen = () => {
             const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
             setDesdeValue(fdate);
             setHastaValue('');
-            setCripto('NO');
+            setCripto(false);
             alert(`'${data.name}' agregado en Ahorro ✔️`);
           } catch {
             if (data.type === 'fijo') {
@@ -158,7 +159,7 @@ const AddScreen = () => {
               const fdate = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
               setDesdeValue(fdate);
               setHastaValue('');
-              setCripto('NO');
+              setCripto(false);
               alert(`'${data.name}' actualizado en Ahorro ✔️`);
             }
           }

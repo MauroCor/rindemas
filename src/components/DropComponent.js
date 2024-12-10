@@ -67,8 +67,7 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
         if (type !== 'savingVar') return;
         setIsLoading(true);
         try {
-            const tkr = cripto === 'SÍ' ? `CRY-${value}` : value
-            const response = await getTicker(`?tkr=${tkr}`);
+            const response = await getTicker(`?tkr=${value}&cripto=${cripto}`);
             if (JSON.stringify(response) !== '{}') {
                 setSearchResult(response);
             } else {
@@ -108,7 +107,7 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
                     🔍
                 </button>
             </div>
-            {searchResult != null ? (
+            {(searchResult != null || isLoading) ? (
                 <p className={`text-white text-[12px] text-center !mt-1`}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${parseInt(searchResult.price)}`}</p>
             ) : (
                 <p className={`text-blue-400 text-[12px] text-center !mt-1`} >También puedes <span className='font-bold'>actualizar</span> uno existente.</p>

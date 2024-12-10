@@ -23,9 +23,11 @@ const SavingScreen = () => {
         setLoading(true);
         const fetchData = async () => {
             try {
-                const savings = await getSavings(`?exchg_rate=${exchangeRate}`);
-                setDataMonths(savings);
-                focusCurrentMonth(savings, setStartIndex);
+                if (exchangeRate != ''){
+                    const savings = await getSavings(`?exchg_rate=${exchangeRate}`);
+                    setDataMonths(savings);
+                    focusCurrentMonth(savings, setStartIndex);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
