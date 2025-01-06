@@ -10,6 +10,7 @@ import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../ut
 import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
 import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
+import PieChartComponent from '../components/PieChartCcyComponent';
 
 const SavingScreen = () => {
     const { exchangeRate } = useExchangeRate();
@@ -23,7 +24,7 @@ const SavingScreen = () => {
         setLoading(true);
         const fetchData = async () => {
             try {
-                if (exchangeRate != ''){
+                if (exchangeRate != '') {
                     const savings = await getSavings(`?exchg_rate=${exchangeRate}`);
                     setDataMonths(savings);
                     focusCurrentMonth(savings, setStartIndex);
@@ -132,6 +133,10 @@ const SavingScreen = () => {
 
             <div className="pt-10 text-center max-w-screen-sm mx-auto">
                 <GraphComponent data={dataMonths} />
+            </div>
+
+            <div className="pt-10 text-center max-w-screen-sm mx-auto">
+                <PieChartComponent title="Diversificación del Portafolio" data={dataMonths} />
             </div>
         </div>
     );

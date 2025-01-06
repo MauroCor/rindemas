@@ -122,7 +122,7 @@ const AddScreen = () => {
             name,
             type: plazo,
             invested: parseInt(invested),
-            ccy,
+            ccy: plazo === 'var'? 'USD' : ccy ,
             obtained: parseInt(obtained),
             date_from: desdeValue,
             date_to: hastaValue === "" ? null : hastaValue,
