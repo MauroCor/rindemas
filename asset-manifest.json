@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/sm/static/css/main.c347bb24.css",
-    "main.js": "/sm/static/js/main.91d71fa8.js",
-    "index.html": "/sm/index.html",
-    "main.c347bb24.css.map": "/sm/static/css/main.c347bb24.css.map",
-    "main.91d71fa8.js.map": "/sm/static/js/main.91d71fa8.js.map"
+    "main.css": "/stagemoney-fe/static/css/main.c347bb24.css",
+    "main.js": "/stagemoney-fe/static/js/main.2aba059d.js",
+    "index.html": "/stagemoney-fe/index.html",
+    "main.c347bb24.css.map": "/stagemoney-fe/static/css/main.c347bb24.css.map",
+    "main.2aba059d.js.map": "/stagemoney-fe/static/js/main.2aba059d.js.map"
   },
   "entrypoints": [
     "static/css/main.c347bb24.css",
-    "static/js/main.91d71fa8.js"
+    "static/js/main.2aba059d.js"
   ]
 }
