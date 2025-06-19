@@ -15,7 +15,7 @@ import InfoScreen from './pages/InfoScreen';
 const App = () => (
   <AuthProvider>
     <ExchangeRateProvider>
-      <BrowserRouter basename="/sm">
+      <BrowserRouter basename="/stagemoney-fe">
         <NavbarComponent />
         <Routes>
           <Route path="/login" element={<Login />} />

@@ -2,7 +2,7 @@
   "name": "stage-money-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://maurocor.github.io/sm",
+  "homepage": "https://maurocor.github.io/stagemoney-fe",
   "dependencies": {
     "chart.js": "^4.4.6",
     "react": "^18.3.1",
