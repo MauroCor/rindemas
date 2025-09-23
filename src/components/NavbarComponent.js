@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
-import logoRindePlus from '../images/logo-rinde-plus.png';
+import logoRindePlus from '../images/logo-rindemas.png';
+import logoRindePlusMobile from '../images/logo-rindemas-mobile.png';
 import { NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import UserMenu from './UserMenuComponent';
@@ -36,14 +37,28 @@ const NavbarComponent = () => {
         <img
           src={logoRindePlus}
           alt="Rinde+"
-          className="h-8"
+          className="h-6 hidden sm:block"
+        />
+      )}
+      {isLoginPage && (
+        <img
+          src={logoRindePlusMobile}
+          alt="Rinde+"
+          className="h-6 block sm:hidden"
         />
       )}
       {!isLoginPage && (
         <img
           src={logoRindePlus}
           alt="Rinde+"
-          className="h-8"
+          className="h-6 hidden sm:block"
+        />
+      )}
+      {!isLoginPage && (
+        <img
+          src={logoRindePlusMobile}
+          alt="Rinde+"
+          className="h-6 block sm:hidden"
         />
       )}
 

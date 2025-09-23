@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ExchangeRateComponent from './ExchangeRateComponent';
+import ExchangeRateModal from './ExchangeRateModal';
 import { Link } from 'react-router-dom';
 
 const UserMenu = ({ userName, handleLogout }) => {
@@ -20,10 +20,10 @@ const UserMenu = ({ userName, handleLogout }) => {
 
       <button
         onClick={toggleMenu}
-        className="flex items-center justify-center w-10 h-10 bg-gray-700 text-white rounded-full hover:bg-gray-600 focus:outline-none"
+        className="flex items-center justify-center w-8 h-8 bg-gray-700 text-white rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6">
-          <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-5.33 0-8 2.667-8 5v1h16v-1c0-2.333-2.67-5-8-5Z" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
         </svg>
       </button>
 
@@ -42,18 +42,6 @@ const UserMenu = ({ userName, handleLogout }) => {
               >
                 Dólar
               </button>
-              {isOpenExRt && (
-                <div
-                  className="absolute bg-gray-800 rounded-lg shadow-lg z-20"
-                  style={{
-                    top: "50%",
-                    right: "calc(100% + 8px)",
-                    transform: "translateY(-50%)",
-                  }}
-                >
-                  <ExchangeRateComponent />
-                </div>
-              )}
             </li>
 
             <li className="text-center text-gray-300 relative">
@@ -78,6 +66,11 @@ const UserMenu = ({ userName, handleLogout }) => {
           </ul>
         </div>
       )}
+      
+      <ExchangeRateModal 
+        isOpen={isOpenExRt} 
+        onClose={() => setIsOpenExRt(false)} 
+      />
     </div>
   );
 };

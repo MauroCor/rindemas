@@ -150,7 +150,7 @@ const ResultScreen = () => {
             />
           )}
         >
-          <div className="flex justify-center sticky top-[52px] z-10">
+          <div className="flex justify-center top-[52px] z-10">
             <div className="flex justify-between items-center mt-4 w-[48rem] px-3 py-2 rounded-full border" style={{background:'#0F172A', borderColor:'#1F2937'}}>
               <ButtonComponent
                 text={

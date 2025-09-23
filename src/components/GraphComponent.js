@@ -158,7 +158,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
         <h2 className="text-xl font-bold text-center">Evolución</h2>
       </div>
       <div className="mb-4 text-sm">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
+        <div className="flex flex-col items-center gap-4">
           <div className="flex flex-col items-center relative">
             <label className="mb-1" style={{color:'#D1D5DB'}}>Graficar:</label>
             <select
@@ -171,50 +171,51 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
               <option value="todo">Todo</option>
             </select>
           </div>
-          <div className="flex flex-col items-center relative">
-            <label className="mb-1" htmlFor="startMonth" style={{color:'#D1D5DB'}}>Desde:</label>
-            <div>
-              <button
-                type="button"
-                onClick={() => setStartMonth("")}
-                className="pr-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
-              >
-                x
-              </button>
-              <input
-                type="month"
-                id="startMonth"
-                value={startMonth}
-                onChange={(e) => setStartMonth(e.target.value)}
-                className="rounded-md p-1 w-36 text-center cursor-pointer pl-2"
-                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
-                onClick={(e) => e.target.showPicker && e.target.showPicker()}
-              />
+          <div className="flex gap-4">
+            <div className="flex flex-col items-center relative">
+              <label className="mb-1" htmlFor="startMonth" style={{color:'#D1D5DB'}}>Desde:</label>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setStartMonth("")}
+                  className="pr-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
+                >
+                  x
+                </button>
+                <input
+                  type="month"
+                  id="startMonth"
+                  value={startMonth}
+                  onChange={(e) => setStartMonth(e.target.value)}
+                  className="rounded-md p-1 w-36 text-center cursor-pointer pl-2"
+                  style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                  onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                />
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center relative">
-            <label className="mb-1" htmlFor="endMonth" style={{color:'#D1D5DB'}}>Hasta:</label>
-            <div>
-              <input
-                type="month"
-                id="endMonth"
-                value={endMonth}
-                onChange={(e) => setEndMonth(e.target.value)}
-                className="rounded-md p-1 w-36 text-center cursor-pointer pr-2"
-                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
-                onClick={(e) => e.target.showPicker && e.target.showPicker()}
-              />
-              <button
-                type="button"
-                onClick={() => setEndMonth("")}
-                className="pl-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
-              >
-                x
-              </button>
+            <div className="flex flex-col items-center relative">
+              <label className="mb-1" htmlFor="endMonth" style={{color:'#D1D5DB'}}>Hasta:</label>
+              <div>
+                <input
+                  type="month"
+                  id="endMonth"
+                  value={endMonth}
+                  onChange={(e) => setEndMonth(e.target.value)}
+                  className="rounded-md p-1 w-36 text-center cursor-pointer pr-2"
+                  style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                  onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                />
+                <button
+                  type="button"
+                  onClick={() => setEndMonth("")}
+                  className="pl-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
+                >
+                  x
+                </button>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
       <div style={{height: '300px'}}>
         <Line data={chartData} options={options} />

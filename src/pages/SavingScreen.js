@@ -172,7 +172,7 @@ const SavingScreen = () => {
                         />
                     )}
                 >
-                    <div className="flex justify-center sticky top-[52px] z-10">
+                    <div className="flex justify-center top-[52px] z-10">
                         <div className="flex justify-between items-center mt-4 w-[48rem] px-3 py-2 rounded-full border" style={{background:'#0F172A', borderColor:'#1F2937'}}>
                             <ButtonComponent
                                 text={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6"><path fill="#F3F4F6" d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>}
