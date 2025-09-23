@@ -3,16 +3,17 @@ const InputPriceComponent = ({ onChange, value, currency, onCurrencyChange }) =>
         <div className="text-center mb-2">
             <div className="flex items-center justify-center rounded-lg">
                 <select
-                    className="bg-gray-600 text-white p-[0.62rem] rounded-l-lg border-r border-gray-500 focus:outline-none"
+                    className="p-2 rounded-l-lg focus:outline-none"
                     value={currency}
                     onChange={onCurrencyChange}
+                    style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderRight:'none', height:'2.5rem'}}
                 >
                     <option value="ARS">ARS</option>
                     <option value="USD">USD</option>
                 </select>
                 
                 <input
-                    className="bg-gray-700 w-[10.4rem] p-[7px] text-center text-white rounded-r-lg"
+                    className="w-[10.4rem] p-2 text-center rounded-r-lg"
                     type="number"
                     name="drop1234"
                     autoComplete="off"
@@ -24,6 +25,7 @@ const InputPriceComponent = ({ onChange, value, currency, onCurrencyChange }) =>
                         onChange(e); 
                     }}
                     onChange={onChange}
+                    style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderLeft:'1px solid #1F2937', height:'2.5rem'}}
                 />
             </div>
         </div>

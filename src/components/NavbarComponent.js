@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import logoRindePlus from '../images/logo-rinde-plus.png';
 import { NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import UserMenu from './UserMenuComponent';
@@ -30,42 +31,53 @@ const NavbarComponent = () => {
   }, [isLoginPage]);
 
   return (
-    <nav className={`flex items-center ${isLoginPage ? 'justify-center' : 'justify-between'} bg-gray-800 px-4 py-2`}>
+    <nav className={`flex items-center ${isLoginPage ? 'justify-center' : 'justify-between'} px-4 py-2 sticky top-0 z-20`} style={{background:'#111827', boxShadow:'0 6px 24px rgba(0,0,0,0.25)'}}>
       {isLoginPage && (
-        <div className={'text-2xl font-bold text-green-200'}>Stage Money</div>
+        <img
+          src={logoRindePlus}
+          alt="Rinde+"
+          className="h-8"
+        />
       )}
       {!isLoginPage && (
-        <div
-          className='text-xl font-bold text-green-200 sm:text-left text-center pr-1'>
-          <span className="block sm:inline">Stage </span>
-          <span className="block sm:inline">Money</span>
-        </div>
+        <img
+          src={logoRindePlus}
+          alt="Rinde+"
+          className="h-8"
+        />
       )}
 
       {!isLoginPage && (
         <div className="flex-1 flex justify-center space-x-4">
           <NavLink
-            to="/fijos"
+            to="/balance"
             className={({ isActive }) =>
-              isActive ? "text-blue-500 font-bold text-lg" : "text-white"
+              isActive
+                ? "font-bold text-lg text-white border border-teal-500 rounded-full px-2 py-1"
+                : "text-white hover:text-gray-200 px-2 py-1"
             }
           >
-            Fijo
+            Balance
           </NavLink>
-
           <NavLink
-            to="/tarjetas"
+            to="/saldo"
             className={({ isActive }) =>
-              isActive ? "text-blue-500 font-bold text-lg" : "text-white"
+              isActive
+                ? "font-bold text-lg text-white border border-teal-500 rounded-full px-2 py-1"
+                : "text-white hover:text-gray-200 px-2 py-1"
             }
           >
-            Tarjeta
+            Saldo
           </NavLink>
 
+          
+
           <NavLink
-            to="/ahorros"
+            to="/ahorro"
             className={({ isActive }) =>
-              isActive ? "text-blue-500 font-bold text-lg" : "text-white"
+              isActive
+                ? "font-bold text-lg text-white border border-teal-500 rounded-full px-2 py-1"
+                : "text-white hover:text-gray-200 px-2 py-1"
             }
           >
             Ahorro

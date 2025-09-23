@@ -13,7 +13,7 @@ export const handleNext = (currentIndex, itemsPerPage, totalItems) => {
     return Math.min(currentIndex + itemsPerPage, totalItems - itemsPerPage);
 };
 
-export const focusCurrentMonth = (dataMonths, setStartIndex) => {
+export const focusCurrentMonth = (dataMonths, setStartIndex, itemsPerPage = 3) => {
     const currentDate = new Date();
     let currentIndex = dataMonths.findIndex((month) => {
         const monthDate = parse(month.date, 'yyyy-MM', new Date());
@@ -28,5 +28,10 @@ export const focusCurrentMonth = (dataMonths, setStartIndex) => {
             }
         }
     }
-    setStartIndex(currentIndex !== -1 ? Math.max(currentIndex - 1, 0) : 0);
+    const total = dataMonths.length;
+    const half = Math.floor(itemsPerPage / 2);
+    let start = currentIndex !== -1 ? currentIndex - half : 0;
+    start = Math.max(0, start);
+    start = Math.min(start, Math.max(0, total - itemsPerPage));
+    setStartIndex(start);
 }; 

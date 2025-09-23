@@ -1,33 +1,26 @@
 import React from 'react';
 
-const Option = ({ value, label, selected, onChange }) => (
-  <label className="relative w-24 h-8 rounded-full cursor-pointer mx-2 flex items-center justify-center">
-    <input
-      type="radio"
-      name="btn"
-      value={value}
-      checked={selected === value}
-      onChange={() => onChange(value)}
-      className="absolute inset-0 opacity-0 cursor-pointer"
-    />
-    <div
-      className={`w-full h-full rounded-full transition-all flex items-center justify-center ${
-        selected === value ? 'bg-blue-600' : 'bg-gray-700'
-      }`}
-    >
-      <span className={`text-sm font-medium transition-all ${selected === value ? 'text-gray-200' : 'text-gray-400'}`}>
-        {label}
-      </span>
-    </div>
-  </label>
+const Tab = ({ value, label, selected, onChange }) => (
+  <button
+    type="button"
+    onClick={() => onChange(value)}
+    className={`px-3 py-1 rounded-full text-sm transition-colors ${
+      selected === value
+        ? 'bg-teal-600 text-white border border-teal-400'
+        : 'bg-[#111827] text-gray-300 border border-[#1F2937] hover:bg-[#0f2030]'
+    }`}
+  >
+    {label}
+  </button>
 );
 
 const OptionSelectorComponent = ({ selectedOption, setSelectedOption }) => (
-  <div className="wrapper flex items-center w-[320px] h-9 bg-gray-900 border-2 border-black rounded-full shadow-[4px_4px_0px_0px] shadow-black mx-auto mb-4">
-    <Option value="Ingreso" label="Ingreso" selected={selectedOption} onChange={setSelectedOption} />
-    <Option value="Egreso" label="Egreso" selected={selectedOption} onChange={setSelectedOption} />
-    <Option value="Tarjeta" label="Tarjeta" selected={selectedOption} onChange={setSelectedOption} />
-    <Option value="Ahorro" label="Ahorro" selected={selectedOption} onChange={setSelectedOption} />
+  <div className="flex items-center justify-center gap-2 p-1 rounded-full mx-auto mb-4"
+       style={{ background:'#0B1220', border:'1px solid #1F2937' }}>
+    <Tab value="Ingreso" label="Ingreso" selected={selectedOption} onChange={setSelectedOption} />
+    <Tab value="Egreso" label="Egreso" selected={selectedOption} onChange={setSelectedOption} />
+    <Tab value="Tarjeta" label="Tarjeta" selected={selectedOption} onChange={setSelectedOption} />
+    <Tab value="Ahorro" label="Ahorro" selected={selectedOption} onChange={setSelectedOption} />
   </div>
 );
 

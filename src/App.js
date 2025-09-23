@@ -3,68 +3,70 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './navegation/PrivateRoute';
 
 import NavbarComponent from './components/NavbarComponent';
-import FijosScreen from './pages/FijosScreen';
-import AddScreen from './pages/AddScreen';
-import CardScreen from './pages/CardScreen';
+import ResultScreen from './pages/ResultScreen';
 import SavingScreen from './pages/SavingScreen';
 import Login from './components/LoginComponent';
 import Footer from './components/FooterComponent';
 import { ExchangeRateProvider } from './context/ExchangeRateContext';
-import InfoScreen from './pages/InfoScreen';
+import HelpScreen from './pages/HelpScreen';
+import BalanceScreen from './pages/BalanceScreen';
+import AddModal from './components/AddModal';
+import { AddModalProvider } from './components/AddModalContext';
 
 const App = () => (
   <AuthProvider>
     <ExchangeRateProvider>
-      <BrowserRouter basename="/stagemoney-fe">
-        <NavbarComponent />
+      <AddModalProvider>
+      <BrowserRouter basename="/rindemas">
         <Routes>
           <Route path="/login" element={<Login />} />
 
-          <Route path="/" element={<Navigate to="/fijos" />} />
+          <Route path="/" element={<Navigate to="/balance" />} />
+          <Route
+            path="/balance"
+            element={
+              <PrivateRoute>
+                <NavbarComponent />
+                <BalanceScreen />
+                <Footer />
+              </PrivateRoute>
+            }
+          />
 
           <Route
-            path="/fijos"
+            path="/saldo"
             element={
               <PrivateRoute>
-                <FijosScreen />
+                <NavbarComponent />
+                <ResultScreen />
+                <Footer />
               </PrivateRoute>
             }
           />
           <Route
-            path="/agregar"
+            path="/ahorro"
             element={
               <PrivateRoute>
-                <AddScreen />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/tarjetas"
-            element={
-              <PrivateRoute>
-                <CardScreen />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/ahorros"
-            element={
-              <PrivateRoute>
+                <NavbarComponent />
                 <SavingScreen />
+                <Footer />
               </PrivateRoute>
             }
           />
           <Route
-            path="/info"
+            path="/ayuda"
             element={
               <PrivateRoute>
-                <InfoScreen />
+                <NavbarComponent />
+                <HelpScreen />
+                <Footer />
               </PrivateRoute>
             }
           />
         </Routes>
-        <Footer />
+        <AddModal />
       </BrowserRouter>
+      </AddModalProvider>
     </ExchangeRateProvider>
   </AuthProvider>
 );

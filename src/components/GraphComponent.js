@@ -13,11 +13,10 @@ import { formatNumber } from '../utils/numbers';
 
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-const GraphComponent = ({ data }) => {
+const GraphComponent = ({ data, showAverage = false, showSavings = false, graphMode, onChangeGraphMode }) => {
   const [startMonth, setStartMonth] = useState('');
   const [endMonth, setEndMonth] = useState('');
 
-  // Procesar datos para incluir campo "amount"
   const datagraph = data.map((item) => ({
     ...item,
     saving: item.saving.map((saving) => {
@@ -29,7 +28,6 @@ const GraphComponent = ({ data }) => {
     }),
   }));
 
-  // Filtrar datos según el rango de meses
   const filteredData = datagraph.filter((item) => {
     if (!startMonth || !endMonth) return true;
     return item.date >= startMonth && item.date <= endMonth;
@@ -40,10 +38,9 @@ const GraphComponent = ({ data }) => {
   }
 
   const labels = filteredData.map((item) => item.date);
-  const totals = filteredData.map((item) => item.total);
+  const totals = filteredData.map((item) => Number(item.total) || 0);
   const average = totals.reduce((acc, val) => acc + val, 0) / (totals.length || 1);
 
-  // Agrupar ahorros por nombre
   const savingsGrouped = {};
   filteredData.forEach((item) => {
     item.saving.forEach((saving) => {
@@ -73,36 +70,42 @@ const GraphComponent = ({ data }) => {
     tension: 0.2,
   }));
 
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        label: 'Total',
-        data: totals,
-        borderColor: '#16a34a',
-        backgroundColor: 'rgba(22, 163, 74, 0.2)',
-        pointRadius: 3,
-        pointBackgroundColor: '#16a34a',
-        borderWidth: 2,
-        tension: 0.2,
-        fill: false,
-      },
-      {
-        label: 'Promedio',
-        data: Array(labels.length).fill(average),
-        borderColor: '#facc15',
-        borderDash: [5, 5],
-        borderWidth: 2,
-        pointRadius: 0,
-        fill: false,
-      },
-      ...savingsDatasets,
-    ],
-  };
+  const datasets = [
+    {
+      label: 'Total',
+      data: totals,
+      borderColor: '#14B8A6',
+      backgroundColor: 'rgba(20, 184, 166, 0.15)',
+      pointRadius: 3,
+      pointBackgroundColor: '#14B8A6',
+      borderWidth: 2,
+      tension: 0.2,
+      fill: false,
+    },
+  ];
+  if (showAverage) {
+    datasets.push({
+      label: 'Promedio',
+      data: Array(labels.length).fill(average),
+      borderColor: '#9CA3AF',
+      borderDash: [5, 5],
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+    });
+  }
+  if (showSavings) {
+    datasets.push(...savingsDatasets);
+  }
+
+  const chartData = { labels, datasets };
 
   const options = {
     responsive: true,
     plugins: {
+      title: {
+        display: false,
+      },
       tooltip: {
         callbacks: {
           label: function (context) {
@@ -117,46 +120,64 @@ const GraphComponent = ({ data }) => {
         display: true,
         labels: {
           color: '#d1d5db',
-          boxWidth: 1,
-          padding: 10,
+          boxWidth: 8,
+          padding: 12,
+          font: { size: 11 },
         },
       },
     },
     scales: {
       x: {
         grid: {
-          color: '#4b5563',
+          color: '#374151',
         },
         ticks: {
           color: '#d1d5db',
+          font: { size: 10 },
         },
       },
       y: {
         grid: {
-          color: '#4b5563',
+          color: '#374151',
         },
         ticks: {
           color: '#d1d5db',
           callback: function (value) {
             return formatNumber(value);
           },
+          font: { size: 10 },
         },
       },
     },
+    maintainAspectRatio: false,
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-      <h2 className="text-lg font-bold text-white mb-4">Evolución de Ahorros</h2>
+    <div className="p-4 rounded-lg shadow-lg" style={{background:'#1F2937', color:'#F3F4F6'}}>
+      <div className="flex items-center justify-center mb-3">
+        <h2 className="text-xl font-bold text-center">Evolución</h2>
+      </div>
       <div className="mb-4 text-sm">
-        <div className="grid grid-cols-2 gap-4 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
           <div className="flex flex-col items-center relative">
-            <label className="text-white mb-1" htmlFor="startMonth">Desde:</label>
+            <label className="mb-1" style={{color:'#D1D5DB'}}>Graficar:</label>
+            <select
+              className="bg-gray-800 text-white rounded px-3 py-1 border"
+              style={{background:'#2D3748',borderColor:'#374151'}}
+              value={graphMode}
+              onChange={(e) => onChangeGraphMode && onChangeGraphMode(e.target.value)}
+            >
+              <option value="total+avg">Total</option>
+              <option value="todo">Todo</option>
+            </select>
+          </div>
+          <div className="flex flex-col items-center relative">
+            <label className="mb-1" htmlFor="startMonth" style={{color:'#D1D5DB'}}>Desde:</label>
             <div>
               <button
                 type="button"
                 onClick={() => setStartMonth("")}
-                className="pr-2 text-gray-300 hover:text-gray-500 font-bold text-xl"
+                className="pr-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
               >
                 x
               </button>
@@ -165,28 +186,28 @@ const GraphComponent = ({ data }) => {
                 id="startMonth"
                 value={startMonth}
                 onChange={(e) => setStartMonth(e.target.value)}
-                className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer pl-6"
-                style={{ colorScheme: 'dark' }}
+                className="rounded-md p-1 w-36 text-center cursor-pointer pl-2"
+                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
               />
             </div>
           </div>
           <div className="flex flex-col items-center relative">
-            <label className="text-white mb-1" htmlFor="endMonth">Hasta:</label>
+            <label className="mb-1" htmlFor="endMonth" style={{color:'#D1D5DB'}}>Hasta:</label>
             <div>
               <input
                 type="month"
                 id="endMonth"
                 value={endMonth}
                 onChange={(e) => setEndMonth(e.target.value)}
-                className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer pr-6"
-                style={{ colorScheme: 'dark' }}
+                className="rounded-md p-1 w-36 text-center cursor-pointer pr-2"
+                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
               />
               <button
                 type="button"
                 onClick={() => setEndMonth("")}
-                className="pl-2 text-gray-300 hover:text-gray-500 font-bold text-xl"
+                className="pl-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
               >
                 x
               </button>
@@ -195,7 +216,9 @@ const GraphComponent = ({ data }) => {
         </div>
 
       </div>
-      <Line data={chartData} options={options} />
+      <div style={{height: '300px'}}>
+        <Line data={chartData} options={options} />
+      </div>
     </div>
   );
 };

@@ -22,23 +22,29 @@ const PieChartCcyComponent = ({ title, data }) => {
 
   const total = Object.values(currencyTotals).reduce((sum, value) => sum + value, 0);
 
+  const labels = Object.keys(currencyTotals);
+  const values = Object.values(currencyTotals);
+  // Paleta consistente con la app (Tailwind-like): ARS celeste (sky), USD verde (emerald)
+  const backgroundColor = labels.map(l => l === 'ARS' ? '#60A5FA' : '#10B981');
+  const hoverBackgroundColor = labels.map(l => l === 'ARS' ? '#93C5FD' : '#34D399');
+
   const chartData = {
-    labels: Object.keys(currencyTotals),
+    labels,
     datasets: [{
-      data: Object.values(currencyTotals),
-      backgroundColor: ['#4A90E2', '#E94E77', '#F5A623'],
-      hoverBackgroundColor: ['#4A90E2', '#E94E77', '#F5A623'],
+      data: values,
+      backgroundColor,
+      hoverBackgroundColor,
     }],
   };
 
   const options = {
     responsive: true,
     plugins: {
-      legend: { position: 'top', labels: { color: '#ffffff' } },
+      legend: { position: 'top', labels: { color: '#F3F4F6' } },
       tooltip: {
-        backgroundColor: '#333',
-        titleColor: '#ffffff',
-        bodyColor: '#ffffff',
+        backgroundColor: '#1F2937',
+        titleColor: '#F3F4F6',
+        bodyColor: '#F3F4F6',
         callbacks: {
           title: (tooltipItem) => {
             const label = tooltipItem[0].label;
@@ -59,8 +65,8 @@ const PieChartCcyComponent = ({ title, data }) => {
   };
 
   return (
-    <div className="flex flex-col items-center p-4 rounded-lg shadow-md dark:bg-gray-800">
-      <h2 className="text-lg font-bold text-white mb-4">{title} ({currentMonth})</h2>
+    <div className="flex flex-col items-center p-4 rounded-lg shadow-md" style={{background:'#1F2937', color:'#F3F4F6'}}>
+      <h2 className="text-xl font-bold mb-4">{title} ({currentMonth})</h2>
       <div className="h-52">
         <Pie data={chartData} options={options} />
       </div>
