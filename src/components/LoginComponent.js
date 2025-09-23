@@ -35,7 +35,7 @@ const Login = () => {
             style={{height:'56px'}}
           />
           <h2 className="sr-only">Rinde+</h2>
-          <p className="mt-2 text-sm" style={{color:'#9CA3AF'}}>Gestiona tus finanzas de forma inteligente</p>
+          <p className="mt-2 text-sm" style={{color:'#9CA3AF'}}>Proyectá tu evolución.</p>
         </div>
         
         <form onSubmit={handleLogin} className="space-y-6">

@@ -22,12 +22,18 @@ const PieChartCcyComponent = ({ title, data }) => {
 
   const total = Object.values(currencyTotals).reduce((sum, value) => sum + value, 0);
 
+  const labels = Object.keys(currencyTotals);
+  const values = Object.values(currencyTotals);
+  // Paleta consistente con la app (Tailwind-like): ARS celeste (sky), USD verde (emerald)
+  const backgroundColor = labels.map(l => l === 'ARS' ? '#60A5FA' : '#10B981');
+  const hoverBackgroundColor = labels.map(l => l === 'ARS' ? '#93C5FD' : '#34D399');
+
   const chartData = {
-    labels: Object.keys(currencyTotals),
+    labels,
     datasets: [{
-      data: Object.values(currencyTotals),
-      backgroundColor: ['#14B8A6', '#9CA3AF', '#F3F4F6'],
-      hoverBackgroundColor: ['#14B8A6', '#9CA3AF', '#F3F4F6'],
+      data: values,
+      backgroundColor,
+      hoverBackgroundColor,
     }],
   };
 
@@ -60,7 +66,7 @@ const PieChartCcyComponent = ({ title, data }) => {
 
   return (
     <div className="flex flex-col items-center p-4 rounded-lg shadow-md" style={{background:'#1F2937', color:'#F3F4F6'}}>
-      <h2 className="text-lg font-bold mb-4">{title} ({currentMonth})</h2>
+      <h2 className="text-xl font-bold mb-4">{title} ({currentMonth})</h2>
       <div className="h-52">
         <Pie data={chartData} options={options} />
       </div>

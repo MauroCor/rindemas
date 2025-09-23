@@ -33,17 +33,13 @@ const AddModal = () => {
   const [tna, setTna] = useState('');
   const [qty, setQty] = useState('');
   const [cripto, setCripto] = useState(false);
-  const [saving, setSaving] = useState(false);
+  
 
   useEffect(() => {
     if (isOpen) {
       setTab(selectedOption || 'Ingreso');
     }
   }, [isOpen, selectedOption]);
-
-  useEffect(() => {
-    console.log('plazo changed to:', plazo);
-  }, [plazo]);
 
   const iconFor = (t) => (t === 'Ingreso' ? '💸' : t === 'Egreso' ? '🧾' : t === 'Tarjeta' ? '💳' : '📈');
   const titleFor = (t) => (t === 'Tarjeta' ? 'Agregar gasto con tarjeta' : `Agregar ${t}`);
@@ -70,7 +66,6 @@ const AddModal = () => {
   if (!isOpen) return null;
 
   const onClose = () => {
-    // Limpiar todos los campos al cerrar
     setName(''); 
     setPrice(''); 
     setCcy('ARS'); 
@@ -135,6 +130,12 @@ const AddModal = () => {
       const action = isUpdate ? 'actualizado' : 'agregado';
       setSuccessMessage(`${name} fue ${action} en ${sectionName}`);
       setTimeout(() => setSuccessMessage(''), 3000);
+      // Notificar a la app para refrescar datos sin F5
+      try {
+        window.dispatchEvent(new CustomEvent('app:data-updated', { detail: { sectionName } }));
+      } catch (e) {
+        // noop
+      }
       
       // Limpiar campos pero NO cerrar modal
       setName(''); setPrice(''); setCcy('ARS'); setInvested(''); setObtained(''); setDesdeValue(''); setHastaValue(''); setCuotas('1'); setTna(''); setQty(''); setCripto(false);

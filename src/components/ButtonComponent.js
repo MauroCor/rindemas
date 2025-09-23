@@ -1,8 +1,9 @@
-const ButtonComponent = ({ onClick, text, className }) => {
+const ButtonComponent = ({ onClick, text, className, ariaLabel }) => {
     return (
         <button
             onClick={onClick}
-            className={className}>
+            className={className}
+            aria-label={ariaLabel || text}>
             {text}
         </button>
     );

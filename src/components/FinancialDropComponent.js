@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { formatPrice } from '../utils/numbers';
 
-const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false }) => {
+const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false, readOnly = false }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
     const toggleDropdown = () => setShowDetails(!showDetails);
     const contentType = Array.isArray(data?.cardSpend)
@@ -28,7 +28,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
                             <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy != 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
                             <span className="w-[33%] text-left text-sm">{formatPrice(item.price, 'ARS')}</span>
-                            {item.name !== 'Tarjeta' && (
+                            {!readOnly && item.name !== 'Tarjeta' && onDelete && (
                                 <button
                                     onClick={() => onDelete(item)}
                                     className="w-[5%] text-red-400 text-lg hover:text-red-500"
@@ -36,7 +36,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                     &#10005;
                                 </button>
                             )}
-                            {item.name == 'Tarjeta' && (
+                            {!readOnly && item.name == 'Tarjeta' && (
                                 <button
                                     className="w-[5%] text-gray-600 text-lg cursor-default"
                                 >
@@ -50,12 +50,14 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             <span className="w-[44%] text-left text-sm whitespace-normal">{item.name}</span>
                             <span className="w-[30%] text-center text-sm">{formatPrice(item.price, 'ARS')}</span>
                             <span className="w-[13%] text-right text-xs" style={{color:'#9CA3AF'}}>{item.installment}</span>
+                            {!readOnly && (
                             <button
                                 onClick={() => onDelete(item)}
                                 className="text-red-400 text-lg ml-2 hover:text-red-500"
                             >
                                 &#10005;
                             </button>
+                            )}
                         </div>
                     ))}
                     {contentType === 'saving' && Array.isArray(data?.saving) && data.saving.map((item, index) => (
@@ -71,14 +73,14 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.type === 'var' ? 'USD' : item.ccy)}
                             </span>
                             <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>
-                            {item.type === 'fijo' && (
+                            {!readOnly && item.type === 'fijo' && onDelete && (
                                 <button
-                                    onClick={() => onDelete(item.id)}
+                                    onClick={() => onDelete(item)}
                                     className="w-[30%] text-right text-red-400 text-lg hover:text-red-500"
                                 > &#10005;
                                 </button>
                             )}
-                            {(item.type === 'flex' || item.type === 'var') && (
+                            {!readOnly && (item.type === 'flex' || item.type === 'var') && onPatch && (
                                 <button
                                     onClick={() => onPatch(item.id, item)}
                                     className="w-[30%] text-right pb-1"

@@ -9,6 +9,7 @@ import { getCardSpends, deleteCardSpend } from '../services/cardSpend';
 import { adjustMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import ConfirmDialog from '../components/ConfirmDialog';
 import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
 import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
@@ -20,6 +21,7 @@ const ResultScreen = () => {
   const [currentsMonths, setCurrentsMonths] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [confirm, setConfirm] = useState({ open: false, message: '', onConfirm: null });
 
   const mergeData = (incomes, fixedCosts) => {
     const allMonths = [
@@ -75,6 +77,9 @@ const ResultScreen = () => {
 
   useEffect(() => {
     fetchAndMergeData();
+    const onDataUpdated = () => fetchAndMergeData();
+    window.addEventListener('app:data-updated', onDataUpdated);
+    return () => window.removeEventListener('app:data-updated', onDataUpdated);
   }, [exchangeRate]);
 
   useEffect(() => {
@@ -88,30 +93,38 @@ const ResultScreen = () => {
 
   const handleDeleteFijos = async (data, monthName, type) => {
     const body = { ...data, date_to: adjustMonths(monthName, -1) };
-    const isConfirmed = window.confirm(`¿Quiere eliminar '${data.name}' a partir de ${monthName}?`);
-
-    if (isConfirmed) {
-      try {
-        const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
-        await patchFunction(body);
-        fetchAndMergeData();
-      } catch (error) {
-        console.error(`Error patching ${type}:`, error);
+    setConfirm({
+      open: true,
+      message: `¿Eliminar '${data.name}' a partir de ${monthName}?`,
+      onConfirm: async () => {
+        try {
+          const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
+          await patchFunction(body);
+          setConfirm({ open: false, message: '', onConfirm: null });
+          fetchAndMergeData();
+        } catch (error) {
+          console.error(`Error patching ${type}:`, error);
+          setConfirm({ open: false, message: '', onConfirm: null });
+        }
       }
-    }
+    });
   };
 
   const handleDeleteCardSpend = async (cardSpend) => {
-    const isConfirmed = window.confirm(`¿Quiere eliminar el gasto '${cardSpend.name || 'sin nombre'}'?`);
-
-    if (isConfirmed) {
-      try {
-        await deleteCardSpend(cardSpend.id);
-        fetchAndMergeData();
-      } catch (error) {
-        console.error('Error deleting card spend:', error);
+    setConfirm({
+      open: true,
+      message: `¿Eliminar el gasto con tarjeta '${cardSpend.name || 'sin nombre'}'?`,
+      onConfirm: async () => {
+        try {
+          await deleteCardSpend(cardSpend.id);
+          setConfirm({ open: false, message: '', onConfirm: null });
+          fetchAndMergeData();
+        } catch (error) {
+          console.error('Error deleting card spend:', error);
+          setConfirm({ open: false, message: '', onConfirm: null });
+        }
       }
-    }
+    });
   };
 
   return (
@@ -137,19 +150,27 @@ const ResultScreen = () => {
             />
           )}
         >
-          <div className="flex justify-center sticky top-[52px] z-10" style={{ background: '#111827' }}>
-            <div className="flex justify-between items-center mt-4 w-[48rem]">
+          <div className="flex justify-center sticky top-[52px] z-10">
+            <div className="flex justify-between items-center mt-4 w-[48rem] px-3 py-2 rounded-full border" style={{background:'#0F172A', borderColor:'#1F2937'}}>
               <ButtonComponent
-                text="⬅️"
+                text={
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6"><path fill="#F3F4F6" d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                }
+                ariaLabel="Anterior"
                 onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
-                className="hover:bg-gray-700 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                className="hover:bg-gray-700 rounded-full p-1 flex-shrink-0"
               />
               <div className="flex flex-grow justify-center items-center space-x-2">
-                <ButtonComponent
-                  text="Actual"
-                  onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
-                  className="bg-teal-600 hover:bg-teal-500 px-2 rounded text-white"
-                />
+                <div className="flex items-center rounded-full border overflow-hidden" style={{background:'#1F2937', borderColor:'#374151'}}>
+                  <ButtonComponent
+                    text="Actual"
+                    ariaLabel="Ir al mes actual"
+                    onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
+                    className={`px-3 py-1 text-xs ${(
+                      Array.isArray(currentsMonths) && currentsMonths.some(m => m.date === new Date().toISOString().slice(0,7))
+                    ) ? 'text-[#D1D5DB]' : 'bg-teal-600 hover:bg-teal-500 text-white'}`}
+                  />
+                </div>
                 <DropdownItemsPerPageComponent
                   itemsPerPage={itemsPerPages}
                   onItemsPerPageChange={handleItemsPerPageChange}
@@ -157,18 +178,28 @@ const ResultScreen = () => {
                 <ExchangeRateDisplay />
               </div>
               <ButtonComponent
-                text="➡️"
+                text={
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-6 h-6"><path fill="#F3F4F6" d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+                }
+                ariaLabel="Siguiente"
                 onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
-                className="hover:bg-gray-700 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                className="hover:bg-gray-700 rounded-full p-1 flex-shrink-0"
               />
             </div>
           </div>
         </CarouselComponent>
+        <ConfirmDialog
+          open={confirm.open}
+          message={confirm.message}
+          onConfirm={confirm.onConfirm}
+          onCancel={()=> setConfirm({ open:false, message:'', onConfirm:null })}
+        />
       </div>
     </div>
   );
 };
 
 export default ResultScreen;
+
 
 
