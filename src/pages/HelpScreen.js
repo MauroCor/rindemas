@@ -1,15 +1,15 @@
-const InfoScreen = () => {
+const HelpScreen = () => {
     return (
-        <div className="dark bg-gray-900 min-h-screen py-6 px-4">
+        <div className="min-h-screen py-6 px-4" style={{background:'#111827', color:'#F3F4F6'}}>
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-center text-3xl font-extrabold text-white mb-4">
-                    STAGE MONEY
+                    AYUDA
                 </h1>
                 <p className="italic text-center text-sm text-blue-300 mb-8">
                     - Fijo, Tarjeta y Ahorro -
                 </p>
 
-                <section className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg">
+                <section className="rounded-lg p-6 mb-6 shadow-lg" style={{background:'#1F2937'}}>
                     <h2 className="text-center text-xl font-semibold text-blue-400 mb-4">
                         OBJETIVO
                     </h2>
@@ -21,7 +21,7 @@ const InfoScreen = () => {
                     </p>
                 </section>
 
-                <section className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg">
+                <section className="rounded-lg p-6 mb-6 shadow-lg" style={{background:'#1F2937'}}>
                     <h2 className="text-center text-xl font-semibold text-blue-400 mb-4">
                         MODO DE USO
                     </h2>
@@ -32,13 +32,13 @@ const InfoScreen = () => {
                     </p>
                 </section>
 
-                <section className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg">
+                <section className="rounded-lg p-6 mb-6 shadow-lg" style={{background:'#1F2937'}}>
                     <h3 className="text-center text-lg font-bold text-blue-300 mb-4">
-                        Fijo
+                        Balance
                     </h3>
                     <p className="text-gray-300 mb-4">
-                        En esta sección, podrás visualizar un balance mensual basado en tus ingresos y egresos recurrentes.
-                        Consideramos "fijos" aquellos montos que ocurren regularmente con poca o ninguna variación.
+                        En esta sección, ves el balance mensual basado en tus ingresos y egresos recurrentes y el total de tarjeta del mes (como sección aparte).
+                        Mostramos “Tarjeta” por fuera de egresos fijos para que puedas ver su detalle sin bloquear el egreso.
                     </p>
 
                     <h4 className="text-md font-semibold text-blue-200 mb-2">Ejemplos:</h4>
@@ -69,13 +69,12 @@ const InfoScreen = () => {
                     </ul>
                 </section>
 
-                <section className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg">
+                <section className="rounded-lg p-6 mb-6 shadow-lg" style={{background:'#1F2937'}}>
                     <h3 className="text-center text-lg font-bold text-blue-300 mb-4">
-                        Tarjeta
+                        Tarjeta (eliminada como pestaña)
                     </h3>
                     <p className="text-gray-300 mb-4">
-                        En esta sección, puedes gestionar tus gastos con tarjeta, incluyendo el detalle de cuotas,
-                        fechas de vencimiento y montos totales mensuales.
+                        El total mensual de tarjeta ahora se visualiza dentro de Balance, como bloque propio con su detalle desplegable.
                     </p>
                     <h4 className="text-md font-semibold text-blue-200 mb-2">Aclaraciones:</h4>
                     <ul className="list-disc list-inside text-gray-300 mb-4">
@@ -84,7 +83,7 @@ const InfoScreen = () => {
                     </ul>
                 </section>
 
-                <section className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg">
+                <section className="rounded-lg p-6 mb-6 shadow-lg" style={{background:'#1F2937'}}>
                     <h3 className="text-center text-lg font-bold text-blue-300 mb-4">
                         Ahorro
                     </h3>
@@ -141,4 +140,6 @@ const InfoScreen = () => {
     );
 };
 
-export default InfoScreen;
+export default HelpScreen;
+
+

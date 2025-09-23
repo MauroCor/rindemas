@@ -1,13 +1,16 @@
-import { Link } from "react-router-dom";
+import { useAddModal } from './AddModalContext';
 
 const AddButtonComponent = ({ fromScreen }) => {
+    const { openAddModal } = useAddModal();
     return (
-        <Link
-            to={`/agregar?selectedOption=${fromScreen}`}
-            className="text-white bg-gradient-to-br from-[#4b76c8] to-[#1f4691] rounded-[45px] text-[15px] p-[10px] border-4 border-[#252525] shadow-[ -6px_-5px_18px_rgba(255,255,255,0.1)] cursor-pointer"
+        <button
+            onClick={() => openAddModal(fromScreen)}
+            aria-label={`Agregar en ${fromScreen}`}
+            className="inline-flex items-center gap-2 text-white bg-teal-600 hover:bg-teal-500 active:bg-teal-700 rounded-full text-sm px-4 py-2 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-0 transition"
         >
-            + Agregar
-        </Link>
+            <span className="inline-block w-5 h-5 rounded-full bg-white/20 text-center leading-5">+</span>
+            Agregar
+        </button>
     );
 };
 

@@ -79,10 +79,10 @@ const GraphComponent = ({ data }) => {
       {
         label: 'Total',
         data: totals,
-        borderColor: '#16a34a',
-        backgroundColor: 'rgba(22, 163, 74, 0.2)',
+        borderColor: '#14B8A6',
+        backgroundColor: 'rgba(20, 184, 166, 0.15)',
         pointRadius: 3,
-        pointBackgroundColor: '#16a34a',
+        pointBackgroundColor: '#14B8A6',
         borderWidth: 2,
         tension: 0.2,
         fill: false,
@@ -90,7 +90,7 @@ const GraphComponent = ({ data }) => {
       {
         label: 'Promedio',
         data: Array(labels.length).fill(average),
-        borderColor: '#facc15',
+        borderColor: '#9CA3AF',
         borderDash: [5, 5],
         borderWidth: 2,
         pointRadius: 0,
@@ -146,17 +146,17 @@ const GraphComponent = ({ data }) => {
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-      <h2 className="text-lg font-bold text-white mb-4">Evolución de Ahorros</h2>
+    <div className="p-4 rounded-lg shadow-lg" style={{background:'#1F2937', color:'#F3F4F6'}}>
+      <h2 className="text-lg font-bold mb-4">Evolución de Ahorros</h2>
       <div className="mb-4 text-sm">
         <div className="grid grid-cols-2 gap-4 relative">
           <div className="flex flex-col items-center relative">
-            <label className="text-white mb-1" htmlFor="startMonth">Desde:</label>
+            <label className="mb-1" htmlFor="startMonth">Desde:</label>
             <div>
               <button
                 type="button"
                 onClick={() => setStartMonth("")}
-                className="pr-2 text-gray-300 hover:text-gray-500 font-bold text-xl"
+                className="pr-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
               >
                 x
               </button>
@@ -165,28 +165,28 @@ const GraphComponent = ({ data }) => {
                 id="startMonth"
                 value={startMonth}
                 onChange={(e) => setStartMonth(e.target.value)}
-                className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer pl-6"
-                style={{ colorScheme: 'dark' }}
+                className="rounded-md p-1 w-36 text-center cursor-pointer pl-6"
+                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
               />
             </div>
           </div>
           <div className="flex flex-col items-center relative">
-            <label className="text-white mb-1" htmlFor="endMonth">Hasta:</label>
+            <label className="mb-1" htmlFor="endMonth">Hasta:</label>
             <div>
               <input
                 type="month"
                 id="endMonth"
                 value={endMonth}
                 onChange={(e) => setEndMonth(e.target.value)}
-                className="bg-gray-700 text-white rounded-md p-1 w-36 text-center cursor-pointer pr-6"
-                style={{ colorScheme: 'dark' }}
+                className="rounded-md p-1 w-36 text-center cursor-pointer pr-6"
+                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
               />
               <button
                 type="button"
                 onClick={() => setEndMonth("")}
-                className="pl-2 text-gray-300 hover:text-gray-500 font-bold text-xl"
+                className="pl-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
               >
                 x
               </button>

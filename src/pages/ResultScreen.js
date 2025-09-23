@@ -5,6 +5,7 @@ import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageCom
 import FixedDataComponent from '../components/FixedDataComponent';
 import { getIncomes, patchIncome } from '../services/income';
 import { getFixedCosts, patchFixedCost } from '../services/fixedCost';
+import { getCardSpends, deleteCardSpend } from '../services/cardSpend';
 import { adjustMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
@@ -12,7 +13,7 @@ import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
 import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
 
-const FijosScreen = () => {
+const ResultScreen = () => {
   const { exchangeRate } = useExchangeRate();
   const [dataMonths, setDataMonths] = useState([]);
   const [itemsPerPages, setItemsPerPages] = useState(3);
@@ -46,7 +47,7 @@ const FijosScreen = () => {
       (month) => month.income.items.length > 0 || month.fixedCost.items.length > 0
     );
 
-    filteredData.sort((a, b) => compareAsc(parse(a.date, "yyyy-MM", new Date()), parse(b.date, "yyyy-MM", new Date())));
+    filteredData.sort((a, b) => compareAsc(parse(a.date, 'yyyy-MM', new Date()), parse(b.date, 'yyyy-MM', new Date())));
 
     return filteredData;
   };
@@ -54,16 +55,19 @@ const FijosScreen = () => {
   const fetchAndMergeData = async () => {
     setLoading(true);
     try {
-      const [incomes, fixedCosts] = await Promise.all([
+      const [incomes, fixedCosts, cardSpends] = await Promise.all([
         getIncomes(`?exchg_rate=${exchangeRate}`),
         getFixedCosts(`?exchg_rate=${exchangeRate}`),
+        getCardSpends(),
       ]);
 
       const mergedData = mergeData(incomes, fixedCosts);
-      setDataMonths(mergedData);
-      focusCurrentMonth(mergedData, setStartIndex);
+      const cardByDate = new Map(cardSpends.map(m => [m.date, m]));
+      const withCard = mergedData.map(m => ({...m, cardMonth: cardByDate.get(m.date) || { total: 0, cardSpend: [] }}));
+      setDataMonths(withCard);
+      focusCurrentMonth(mergedData, setStartIndex, itemsPerPages);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -71,6 +75,7 @@ const FijosScreen = () => {
 
   useEffect(() => {
     fetchAndMergeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate]);
 
   useEffect(() => {
@@ -79,7 +84,7 @@ const FijosScreen = () => {
 
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPages(newItemsPerPage);
-    setStartIndex(0);
+    focusCurrentMonth(dataMonths, setStartIndex, newItemsPerPage);
   };
 
   const handleDeleteFijos = async (data, monthName, type) => {
@@ -88,7 +93,7 @@ const FijosScreen = () => {
 
     if (isConfirmed) {
       try {
-        const patchFunction = type === "fixedCost" ? patchFixedCost : patchIncome;
+        const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
         await patchFunction(body);
         fetchAndMergeData();
       } catch (error) {
@@ -97,37 +102,55 @@ const FijosScreen = () => {
     }
   };
 
+  const handleDeleteCardSpend = async (cardSpend) => {
+    console.log('cardSpend object:', cardSpend); // Para debug
+    const isConfirmed = window.confirm(`¿Quiere eliminar el gasto '${cardSpend.name || 'sin nombre'}'?`);
+
+    if (isConfirmed) {
+      try {
+        await deleteCardSpend(cardSpend.id);
+        fetchAndMergeData();
+      } catch (error) {
+        console.error('Error deleting card spend:', error);
+      }
+    }
+  };
+
   return (
-    <div className="dark bg-gray-900 min-h-screen py-4">
-      <h1 className="text-center text-2xl font-bold text-white tracking-tight">Balances Mensuales</h1>
-      <p className="italic text-center text-sm text-blue-200 mb-6">- Ingresos y egresos fijos -</p>
+    <div className="min-h-screen py-4" style={{ background: '#111827', color: '#F3F4F6' }}>
+      <h1 className="text-center text-2xl font-bold tracking-tight">Saldos Mensuales</h1>
+      <p className="italic text-center text-sm mb-6" style={{ color: '#9CA3AF' }}>¿Cuánto me queda cada mes?</p>
       <div className="relative p-1">
         <div className="text-center">
           <AddButtonComponent fromScreen="Ingreso" />
         </div>
 
         <CarouselComponent
-          data={currentsMonths}
+          data={dataMonths}
           loading={loading}
+          startIndex={startIndex}
+          itemsPerPages={itemsPerPages}
           renderItem={(monthData) => (
             <FixedDataComponent
               monthData={monthData}
               onDeleteFijos={handleDeleteFijos}
+              onDeleteCardSpend={handleDeleteCardSpend}
+              cardMonth={monthData.cardMonth}
             />
           )}
         >
-          <div className="flex justify-center">
+          <div className="flex justify-center sticky top-[52px] z-10" style={{ background: '#111827' }}>
             <div className="flex justify-between items-center mt-4 w-[48rem]">
               <ButtonComponent
                 text="⬅️"
                 onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
-                className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                className="hover:bg-gray-700 text-2xl rounded-full px-3 py-1 flex-shrink-0"
               />
               <div className="flex flex-grow justify-center items-center space-x-2">
                 <ButtonComponent
                   text="Actual"
-                  onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
-                  className="hover:bg-blue-500 bg-gray-600 px-1 border-gray-950 text-white"
+                  onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
+                  className="bg-teal-600 hover:bg-teal-500 px-2 rounded text-white"
                 />
                 <DropdownItemsPerPageComponent
                   itemsPerPage={itemsPerPages}
@@ -138,7 +161,7 @@ const FijosScreen = () => {
               <ButtonComponent
                 text="➡️"
                 onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
-                className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                className="hover:bg-gray-700 text-2xl rounded-full px-3 py-1 flex-shrink-0"
               />
             </div>
           </div>
@@ -148,4 +171,6 @@ const FijosScreen = () => {
   );
 };
 
-export default FijosScreen;
+export default ResultScreen;
+
+

@@ -60,9 +60,9 @@ const UserMenu = ({ userName, handleLogout }) => {
               )}
             </li>
 
-            {/* Información */}
+            {/* Ayuda */}
             <li className="text-center text-gray-300 relative">
-              <Link to="/info" className="block w-full p-1 text-center hover:bg-gray-700">Info</Link>
+              <Link to="/ayuda" className="block w-full p-1 text-center hover:bg-gray-700">Ayuda</Link>
             </li>
 
             {/* Cerrar sesión */}

@@ -82,10 +82,11 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
     };
 
     return (
-        <div className="text-center rounded-lg mb-2">
-            <div>
+        <div className="text-center rounded-lg mb-2 relative">
+            <div className="flex items-center justify-center">
                 <input
-                    className='text-center bg-gray-700 w-60 p-2 rounded-lg text-white'
+                    className={`text-center p-2 rounded-l-lg ${type === 'savingVar' ? 'w-48' : 'w-60'}`}
+                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
                     type="text"
                     name="drop"
                     list="drop"
@@ -99,20 +100,19 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
                         <option key={index} value={opt} />
                     ))}
                 </datalist>
-                <button
-                    onClick={toggleSearch}
-                    className={`absolute p-2 ml-2 rounded-xl hover:bg-gray-600 bg-gray-700 text-white ${type !== 'savingVar' ? 'hidden' : ''
-                        }`}
-                >
-                    🔍
-                </button>
+                {type === 'savingVar' && (
+                    <button
+                        onClick={toggleSearch}
+                        className="p-2 rounded-r-lg"
+                        style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderLeft:'none' }}
+                    >
+                        🔍
+                    </button>
+                )}
             </div>
             {(searchResult != null || isLoading) ? (
-                <p className={`text-white text-[12px] text-center !mt-1`}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${parseInt(searchResult.price)}`}</p>
-            ) : (
-                <p className={`text-blue-400 text-[12px] text-center !mt-1`} >También puedes <span className='font-bold'>actualizar</span> uno existente.</p>
-
-            )}
+                <p className={`text-[12px] text-center !mt-1`} style={{ color:'#9CA3AF' }}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${parseInt(searchResult.price)}`}</p>
+            ) : null}
         </div>
     );
 };

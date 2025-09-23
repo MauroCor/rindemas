@@ -27,7 +27,7 @@ const SavingScreen = () => {
                 if (exchangeRate != '') {
                     const savings = await getSavings(`?exchg_rate=${exchangeRate}`);
                     setDataMonths(savings);
-                    focusCurrentMonth(savings, setStartIndex);
+                    focusCurrentMonth(savings, setStartIndex, itemsPerPages);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -44,7 +44,7 @@ const SavingScreen = () => {
 
     const handleItemsPerPageChange = (newItemsPerPage) => {
         setItemsPerPages(newItemsPerPage);
-        setStartIndex(0);
+        focusCurrentMonth(dataMonths, setStartIndex, newItemsPerPage);
     };
 
     const handleDeleteSaving = async (id) => {
@@ -82,17 +82,19 @@ const SavingScreen = () => {
     };
 
     return (
-        <div className="dark bg-gray-900 min-h-screen py-4">
-            <h1 className="text-center text-2xl font-bold text-white tracking-tight">Ahorros Invertidos</h1>
-            <p className="italic text-center text-sm text-blue-200 mb-6">- Renta fija, pasiva y variable -</p>
+        <div className="min-h-screen py-4" style={{background:'#111827', color:'#F3F4F6'}}>
+            <h1 className="text-center text-2xl font-bold tracking-tight">Ahorros Invertidos</h1>
+            <p className="italic text-center text-sm mb-6" style={{color:'#9CA3AF'}}>¿Cuánto crecen mis ahorros?</p>
             <div className="relative p-1">
                 <div className="text-center">
                     <AddButtonComponent fromScreen="Ahorro" />
                 </div>
 
                 <CarouselComponent
-                    data={currentsMonths}
+                    data={dataMonths}
                     loading={loading}
+                    startIndex={startIndex}
+                    itemsPerPages={itemsPerPages}
                     renderItem={(monthData) => (
                         <SavingDataComponent
                             monthData={monthData}
@@ -102,18 +104,18 @@ const SavingScreen = () => {
                         />
                     )}
                 >
-                    <div className="flex justify-center">
+                    <div className="flex justify-center sticky top-[52px] z-10" style={{background:'#111827'}}>
                         <div className="flex justify-between items-center mt-4 w-[48rem]">
                             <ButtonComponent
                                 text="⬅️"
                                 onClick={() => setStartIndex(handlePrev(startIndex, itemsPerPages))}
-                                className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                                className="hover:bg-gray-700 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                             />
                             <div className="flex flex-grow justify-center items-center space-x-2">
                                 <ButtonComponent
                                     text="Actual"
-                                    onClick={() => focusCurrentMonth(dataMonths, setStartIndex)}
-                                    className="hover:bg-blue-500 bg-gray-600 px-1 border-gray-950 text-white"
+                                    onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
+                                    className="bg-teal-600 hover:bg-teal-500 px-2 rounded text-white"
                                 />
                                 <DropdownItemsPerPageComponent
                                     itemsPerPage={itemsPerPages}
@@ -124,7 +126,7 @@ const SavingScreen = () => {
                             <ButtonComponent
                                 text="➡️"
                                 onClick={() => setStartIndex(handleNext(startIndex, itemsPerPages, dataMonths.length))}
-                                className="hover:bg-blue-500 text-2xl rounded-full px-3 py-1 flex-shrink-0"
+                                className="hover:bg-gray-700 text-2xl rounded-full px-3 py-1 flex-shrink-0"
                             />
                         </div>
                     </div>

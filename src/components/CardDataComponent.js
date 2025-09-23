@@ -8,17 +8,17 @@ const CardDataComponent = ({ monthData, onDeleteCardSpend}) => {
     return monthName.charAt(0).toUpperCase() + monthName.slice(1);
   };
   
-  function getCurrentMonthName() {
-    const date = new Date();
-    return date.toLocaleString('es-ES', { month: 'long' }).charAt(0).toUpperCase() + date.toLocaleString('es-ES', { month: 'long' }).slice(1);
+  function isCurrentYearMonth(ym) {
+    const current = new Date().toISOString().slice(0, 7);
+    return ym === current;
   };
 
   const monthName = getMonthName(monthData.date);
-  const currentMonthName = getCurrentMonthName()
+  const currentMonth = isCurrentYearMonth(monthData.date)
   
   return (
-    <div className={`w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center ${monthName === currentMonthName ? 'border-2 border-yellow-500' : ''}`}>
-      <h3 className="font-bold text-2xl mb-4 text-white">{monthName}</h3>
+    <div className={`w-60 rounded-xl p-4 shadow-lg text-center ${currentMonth ? 'border border-teal-500' : 'border border-gray-700'}`} style={{background:'#1F2937', color:'#F3F4F6'}}>
+      <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
       <FinancialDropComponent title="Total" data={monthData} isIncome={false} initialOpen onDelete={(id) => onDeleteCardSpend(id)} />
     </div>
   );

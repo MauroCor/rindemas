@@ -9,23 +9,28 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
     return monthName.charAt(0).toUpperCase() + monthName.slice(1);
   };
 
-  function getCurrentMonthName() {
-    const date = new Date();
-    return date.toLocaleString('es-ES', { month: 'long' }).charAt(0).toUpperCase() + date.toLocaleString('es-ES', { month: 'long' }).slice(1);
+  function isCurrentYearMonth(ym) {
+    const current = new Date().toISOString().slice(0, 7);
+    return ym === current;
   };
 
   const monthName = getMonthName(monthData.date);
-  const currentMonthName = getCurrentMonthName()
+  const currentMonth = isCurrentYearMonth(monthData.date)
 
   const monthLiquid = monthData.saving
     .filter((saving) => saving.liquid)
     .reduce((total, saving) => total + (saving.ccy == 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
 
   return (
-    <div className={`w-60 bg-gray-800 rounded-lg p-4 shadow-lg text-center ${monthName === currentMonthName ? 'border-2 border-yellow-500' : ''}`}>
-      <h3 className="font-bold text-2xl mb-4 text-white">{monthName}</h3>
-      <FinancialDropComponent title="Total" data={monthData} isIncome={true} initialOpen onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} />
-      <p className="text-white text-sm">💰 Liquidez: <span className='font-bold text-yellow-100 text-base'>{formatPrice(monthLiquid, 'ARS')}</span></p>
+    <div className={`w-60 rounded-xl p-4 shadow-lg text-center ${currentMonth ? 'border border-teal-500' : 'border border-gray-700'}`} style={{background:'#1F2937', color:'#F3F4F6'}}>
+      <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
+      <div className="mb-3">
+        <label>Liquidez</label>
+        <div>
+          <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice(monthLiquid, 'ARS')}</label>
+        </div>
+      </div>
+      <FinancialDropComponent title="Total" data={monthData} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} />
     </div>
   );
 };
