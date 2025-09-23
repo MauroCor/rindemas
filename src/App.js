@@ -17,7 +17,7 @@ const App = () => (
   <AuthProvider>
     <ExchangeRateProvider>
       <AddModalProvider>
-      <BrowserRouter basename="/stagemoney-fe">
+      <BrowserRouter basename="/rindemas">
         <Routes>
           <Route path="/login" element={<Login />} />
 

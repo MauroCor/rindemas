@@ -16,6 +16,6 @@ Rinde+ es una interfaz simple y enfocada para entender cómo evolucionan tus fin
 - Back-end: consume APIs alojadas en PythonAnywhere; el desarrollo del backend se encuentra en otro repositorio de mi perfil.
 
 
-Demo: `https://maurocor.github.io/stagemoney-fe`
+Demo: `https://maurocor.github.io/rindemas`
 
 — @maurocor · PRs y feedback bienvenidos.

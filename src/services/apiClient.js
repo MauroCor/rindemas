@@ -24,7 +24,7 @@ const apiRequest = async (endpoint, method = 'GET', data = null, login = false) 
       alert('Sesión vencida, vuelva a ingresar.');
       localStorage.removeItem('token');
       if (window.location.pathname !== '/login') {
-        window.location.href = '/stagemoney-fe/login';
+        window.location.href = '/rindemas/login';
       }
       throw new Error('Unauthorized or expired token');
     }
