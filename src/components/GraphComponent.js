@@ -17,7 +17,6 @@ const GraphComponent = ({ data }) => {
   const [startMonth, setStartMonth] = useState('');
   const [endMonth, setEndMonth] = useState('');
 
-  // Procesar datos para incluir campo "amount"
   const datagraph = data.map((item) => ({
     ...item,
     saving: item.saving.map((saving) => {
@@ -29,7 +28,6 @@ const GraphComponent = ({ data }) => {
     }),
   }));
 
-  // Filtrar datos según el rango de meses
   const filteredData = datagraph.filter((item) => {
     if (!startMonth || !endMonth) return true;
     return item.date >= startMonth && item.date <= endMonth;
@@ -43,7 +41,6 @@ const GraphComponent = ({ data }) => {
   const totals = filteredData.map((item) => item.total);
   const average = totals.reduce((acc, val) => acc + val, 0) / (totals.length || 1);
 
-  // Agrupar ahorros por nombre
   const savingsGrouped = {};
   filteredData.forEach((item) => {
     item.saving.forEach((saving) => {

@@ -34,7 +34,6 @@ const Login = () => {
             className="mx-auto mb-4"
             style={{height:'56px'}}
           />
-          {/* Si quieres mantener un texto accesible, puedes dejar el h2 oculto para screen readers */}
           <h2 className="sr-only">Rinde+</h2>
           <p className="mt-2 text-sm" style={{color:'#9CA3AF'}}>Gestiona tus finanzas de forma inteligente</p>
         </div>

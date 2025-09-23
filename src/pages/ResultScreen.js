@@ -75,7 +75,6 @@ const ResultScreen = () => {
 
   useEffect(() => {
     fetchAndMergeData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exchangeRate]);
 
   useEffect(() => {
@@ -103,7 +102,6 @@ const ResultScreen = () => {
   };
 
   const handleDeleteCardSpend = async (cardSpend) => {
-    console.log('cardSpend object:', cardSpend); // Para debug
     const isConfirmed = window.confirm(`¿Quiere eliminar el gasto '${cardSpend.name || 'sin nombre'}'?`);
 
     if (isConfirmed) {

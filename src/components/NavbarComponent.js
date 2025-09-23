@@ -70,7 +70,7 @@ const NavbarComponent = () => {
             Saldo
           </NavLink>
 
-          {/* Tarjeta eliminada del navbar */}
+          
 
           <NavLink
             to="/ahorro"
