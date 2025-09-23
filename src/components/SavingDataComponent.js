@@ -25,12 +25,12 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
     <div className={`w-60 rounded-xl p-4 shadow-lg text-center ${currentMonth ? 'border border-teal-500' : 'border border-gray-700'}`} style={{background:'#1F2937', color:'#F3F4F6'}}>
       <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
       <div className="mb-3">
-        <label>Liquidez</label>
+        <label>Total</label>
         <div>
-          <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice(monthLiquid, 'ARS')}</label>
+          <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice(monthData.total, 'ARS')}</label>
         </div>
       </div>
-      <FinancialDropComponent title="Total" data={monthData} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} />
+      <FinancialDropComponent title="Liquidez" data={{...monthData, total: monthLiquid}} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} />
     </div>
   );
 };
