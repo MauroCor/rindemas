@@ -17,17 +17,22 @@ const InputPriceComponent = ({ onChange, value, currency, onCurrencyChange, appe
                 
                 <input
                     className={`${appendButton ? 'p-2 text-center rounded-none' : 'w-[11.7rem] p-2 text-center rounded-r-lg'}`}
-                    type="number"
+                    type="text"
                     name="drop1234"
                     autoComplete="off"
                     placeholder={`${currency === 'ARS' ? 'Ej: $350.000' : 'Ej: u$s 350'}`}
-                    value={value}
+                    value={value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ''}
                     onInput={(e) => {
-                        const value = e.target.value.slice(0, 9);
-                        e.target.value = value.replace(/\D/g, '');
-                        onChange(e); 
+                        const cleanValue = e.target.value.replace(/\./g, '').slice(0, 9);
+                        e.target.value = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        const syntheticEvent = { target: { value: cleanValue } };
+                        onChange(syntheticEvent); 
                     }}
-                    onChange={onChange}
+                    onChange={(e) => {
+                        const cleanValue = e.target.value.replace(/\./g, '');
+                        const syntheticEvent = { target: { value: cleanValue } };
+                        onChange(syntheticEvent);
+                    }}
                     style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderLeft:'1px solid #1F2937', height:'2.5rem', width: appendButton ? '9.9rem' : undefined}}
                 />
                 {appendButton && (

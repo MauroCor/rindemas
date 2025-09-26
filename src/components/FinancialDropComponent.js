@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { formatPrice } from '../utils/numbers';
 
-const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false, readOnly = false }) => {
+const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false, readOnly = false, notes = [] }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
     const toggleDropdown = () => setShowDetails(!showDetails);
     const contentType = Array.isArray(data?.cardSpend)
@@ -60,19 +60,33 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             )}
                         </div>
                     ))}
-                    {contentType === 'saving' && Array.isArray(data?.saving) && data.saving.map((item, index) => (
-                        <div key={index} className="flex justify-between items-center border-b" style={{borderColor:'#374151', color:'#E5E7EB'}}>
-                            <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : 'text-yellow-400'}`}>
+                    {contentType === 'saving' && Array.isArray(data?.saving) && (
+                        <>
+                            <div className="flex justify-between items-center border-b mb-2 pb-1" style={{borderColor:'#4B5563'}}>
+                                <span className="text-left text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>TIPO</span>
+                                <span className="w-[95%] text-center text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>NOMBRE</span>
+                                <span className="w-[45%] text-center text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>MONTO</span>
+                                <span className="w-[40%] text-right text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>TNA</span>
+                                <span className="w-[35%] text-right text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}></span>
+                            </div>
+                            {data.saving.map((item, index) => {
+                                const hasReinvestmentNote = notes.some(note => note.reference === item.name);
+                                return (
+                        <div key={index} className={`flex justify-between items-center border-b ${hasReinvestmentNote ? 'opacity-50 relative' : ''}`} style={{borderColor:'#374151', color:'#E5E7EB'}}>
+                            {hasReinvestmentNote && (
+                                <div className="absolute top-1/2 left-0 h-px bg-gray-400 z-10" style={{width: 'calc(100% - 10%)'}}></div>
+                            )}
+                            <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''}`}>
                                 {item.type === 'fijo' ? 'RF' : item.type === 'flex' ? 'RP' : 'RV'}
                             </span>
-                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''}`}>
+                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''} ${hasReinvestmentNote ? 'relative z-20' : ''}`}>
                                 {item.name}
                                 {item.type === 'var' && <sup className="text-[10px] ml-1">{parseFloat(item.qty)}</sup>}
                             </span>
-                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold' : ''}`} style={{color: item.liquid ? '#14B8A6' : undefined}}>
+                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold' : ''} ${hasReinvestmentNote ? 'relative z-20' : ''}`} style={{color: item.liquid ? '#14B8A6' : undefined}}>
                                 {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.type === 'var' ? 'USD' : item.ccy)}
                             </span>
-                            <span className="w-[40%] text-right text-[10px] font-extrabold font-sans">{`${Math.round(item.tna)}%`}</span>
+                            <span className={`w-[40%] text-right text-[10px] font-extrabold font-sans ${hasReinvestmentNote ? 'relative z-20' : ''}`}>{`${Math.round(item.tna)}%`}</span>
                             {!readOnly && item.type === 'fijo' && onDelete && (
                                 <button
                                     onClick={() => onDelete(item)}
@@ -88,7 +102,10 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 </button>
                             )}
                         </div>
-                    ))}
+                                );
+                            })}
+                        </>
+                    )}
                 </div>
             )}
         </div>

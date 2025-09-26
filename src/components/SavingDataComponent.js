@@ -36,6 +36,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [newNoteAmount, setNewNoteAmount] = useState('');
   const [newNoteText, setNewNoteText] = useState('');
+  const [newNoteReference, setNewNoteReference] = useState('');
   const [notes, setNotes] = useState(Array.isArray(stored) ? stored : []);
 
   const totalNotesAmount = Array.isArray(notes)
@@ -48,12 +49,18 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
   const addNote = () => {
     const amt = Number(String(newNoteAmount).replace(/[^0-9]/g, ''));
     if (!amt || amt <= 0) return;
-    const note = { id: Date.now(), amount: amt, text: (newNoteText || '').slice(0, 60) };
+    const note = { 
+      id: Date.now(), 
+      amount: amt, 
+      text: (newNoteText || '').slice(0, 60),
+      reference: newNoteReference || null
+    };
     const next = [...notes, note];
     localStorage.setItem(notesKey, JSON.stringify(next));
     setNotes(next);
     setNewNoteAmount('');
     setNewNoteText('');
+    setNewNoteReference('');
   };
 
   const deleteNote = (id) => {
@@ -71,7 +78,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
           <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice(monthData.total, 'ARS')}</label>
         </div>
       </div>
-      <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} />
+      <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} />
       {(monthLiquid > 0) && (
         <div className="mt-2 text-[11px] relative flex items-center justify-center" style={{color:'#9CA3AF'}}>
           <div className="text-center w-full">
@@ -91,9 +98,9 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
         <div className="fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black/60" onClick={()=>setShowNotesModal(false)} />
           <div className="absolute inset-0 flex items-start justify-center pt-20 px-4">
-            <div className="w-full max-w-md rounded-2xl shadow-2xl" style={{ background: '#0F172A', color: '#F3F4F6', border: '1px solid #1F2937' }}>
+            <div className="w-full max-w-md md:max-w-lg rounded-2xl shadow-2xl" style={{ background: '#0F172A', color: '#F3F4F6', border: '1px solid #1F2937' }}>
               <div className="px-6 py-4 border-b text-center" style={{ borderColor: '#1F2937' }}>
-                <h3 className="text-lg font-semibold">Dinero no invertido</h3>
+                <h3 className="text-lg font-semibold">Registro del dinero no invertido</h3>
               </div>
               <div className="px-6 py-5 space-y-3">
                 <div className="text-center text-base font-semibold" style={{color:'#D1D5DB'}}>Anotaciones</div>
@@ -101,9 +108,16 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
                   {Array.isArray(notes) && notes.length > 0 && (
                     notes.map(n => (
                       <div key={n.id} className="flex items-center justify-between px-2 py-1 rounded border" style={{background:'#111827', borderColor:'#374151', color:'#D1D5DB'}}>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-sm">
                           <span className="font-semibold" style={{color:'#F3F4F6'}}>{formatPrice(n.amount, 'ARS')}</span>
-                          {n.text && <span className="italic text-xs">{n.text}</span>}
+                          <span className="text-gray-300">-</span>
+                          <span className="italic">{n.text || 'Sin descripción'}</span>
+                          {n.reference && (
+                            <>
+                              <span className="text-gray-300">-</span>
+                              <span className="text-xs px-1 py-0.5 rounded" style={{background:'#374151', color:'#9CA3AF'}}>{n.reference}</span>
+                            </>
+                          )}
                         </div>
                         <button className="w-5 h-5 rounded hover:bg-gray-700 flex items-center justify-center" onClick={()=>deleteNote(n.id)} title="Eliminar">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-3 h-3"><path fill="#93C5FD" d="M18.3 5.71 12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.3 6.3 1.41-1.41-6.3-6.3 6.3-6.3z"/></svg>
@@ -112,26 +126,55 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
                     ))
                   )}
                 </div>
-                <div className="flex items-center justify-center gap-2 pt-2">
-                  <input
-                    type="text"
-                    value={newNoteAmount}
-                    onChange={(e)=>setNewNoteAmount(e.target.value)}
-                    placeholder="$ ..."
-                    className="rounded px-2 py-1 text-sm w-28 text-center"
-                    style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
-                  />
-                  <input
-                    type="text"
-                    value={newNoteText}
-                    onChange={(e)=>setNewNoteText(e.target.value)}
-                    placeholder="Anotación"
-                    className="rounded px-2 py-1 text-sm w-44"
-                    style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
-                  />
-                  <button className="w-7 h-7 rounded text-white flex items-center justify-center" style={{background:'#14B8A6'}} onClick={addNote}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><path fill="#fff" d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                  </button>
+                <div className="pt-2">
+                  <div className="grid gap-2 mb-2 pb-1 border-b" style={{gridTemplateColumns: '20% 40% 25% 10%', borderColor:'#4B5563'}}>
+                    <span className="text-[10px] font-bold uppercase text-center" style={{color:'#9CA3AF'}}>MONTO</span>
+                    <span className="text-[10px] font-bold uppercase text-center" style={{color:'#9CA3AF'}}>DEFINICIÓN</span>
+                    <span className="text-[10px] font-bold uppercase text-center" style={{color:'#9CA3AF'}}>REFERENCIA</span>
+                    <span></span>
+                  </div>
+                  <div className="grid gap-2" style={{gridTemplateColumns: '23% 40% 23% 7%'}}>
+                    <input
+                      type="text"
+                      value={newNoteAmount ? newNoteAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ''}
+                      onChange={(e) => {
+                        const cleanValue = e.target.value.replace(/\./g, '').slice(0, 9);
+                        setNewNoteAmount(cleanValue);
+                      }}
+                      onInput={(e) => {
+                        const cleanValue = e.target.value.replace(/\./g, '').slice(0, 9);
+                        e.target.value = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        setNewNoteAmount(cleanValue);
+                      }}
+                      placeholder="Ej: $ 100"
+                      className="rounded px-2 py-1 text-[12px] text-center"
+                      style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
+                    />
+                    <input
+                      type="text"
+                      value={newNoteText}
+                      onChange={(e)=>setNewNoteText(e.target.value)}
+                      placeholder="Ej: Reinvertido"
+                      className="rounded px-2 py-1 text-[12px]"
+                      style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
+                    />
+                    <select
+                      value={newNoteReference}
+                      onChange={(e)=>setNewNoteReference(e.target.value)}
+                      className="rounded px-1 py-1 text-[9px]"
+                      style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
+                    >
+                      <option value=""></option>
+                      {monthData.saving && monthData.saving.map((saving, index) => (
+                        <option key={index} value={saving.name}>
+                          {saving.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button className="w-6 h-6 my-1 rounded text-white flex items-center justify-center mx-auto" style={{background:'#14B8A6'}} onClick={addNote}>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><path fill="#fff" d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center gap-2 px-6 py-4 border-t" style={{ borderColor: '#1F2937' }}>
