@@ -5,8 +5,8 @@ const DropdownSavingComponent = ({ value, onChange }) => {
       <select
         value={value}
         onChange={onChange}
-        className="mx-10 p-2 rounded-lg text-center"
-        style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+        className="p-2 rounded-lg text-center w-56 mx-auto"
+        style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', height:'2.5rem' }}
       >
         <option value="fijo">Renta fija</option>
         <option value="flex">Renta pasiva</option>

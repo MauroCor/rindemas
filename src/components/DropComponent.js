@@ -85,15 +85,15 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
         <div className="text-center rounded-lg mb-2 relative">
             <div className="flex items-center justify-center">
                 <input
-                    className={`text-center p-2 rounded-l-lg ${type === 'savingVar' ? 'w-48' : 'w-60'}`}
-                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                    className={`text-center p-2 ${type === 'savingVar' ? 'rounded-l-lg w-44' : 'rounded-lg w-56'}`}
+                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', height:'2.5rem' }}
                     type="text"
                     name="drop"
                     list="drop"
                     value={value}
                     autoComplete='off'
                     placeholder={plhdr}
-                    maxLength={20}
+                    maxLength={16}
                     onChange={onChange} />
                 <datalist id="drop">
                     {options.map((opt, index) => (
@@ -104,7 +104,7 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
                     <button
                         onClick={toggleSearch}
                         className="p-2 rounded-r-lg"
-                        style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderLeft:'none' }}
+                        style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderLeft:'none', height:'2.5rem' }}
                     >
                         🔍
                     </button>

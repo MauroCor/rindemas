@@ -10,6 +10,7 @@ import DropdownSavingComponent from './DropdownSavingComponent';
 import InputPercentComponent from './InputPercentComponent';
 import InputPriceComponent from './InputPriceComponent';
 import InputQuantityComponent from './InputQuantityComponent';
+import FixedIncomeCalculatorModal from './FixedIncomeCalculatorModal';
 import SwitchComponent from './SwitchComponent';
 import { postFixedCost, putFixedCost } from '../services/fixedCost';
 import { postIncome, putIncome } from '../services/income';
@@ -33,6 +34,8 @@ const AddModal = () => {
   const [tna, setTna] = useState('');
   const [qty, setQty] = useState('');
   const [cripto, setCripto] = useState(false);
+  const [showCalc, setShowCalc] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
 
   useEffect(() => {
@@ -40,6 +43,13 @@ const AddModal = () => {
       setTab(selectedOption || 'Ingreso');
     }
   }, [isOpen, selectedOption]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const iconFor = (t) => (t === 'Ingreso' ? '💸' : t === 'Egreso' ? '🧾' : t === 'Tarjeta' ? '💳' : '📈');
   const titleFor = (t) => (t === 'Tarjeta' ? 'Agregar gasto con tarjeta' : `Agregar ${t}`);
@@ -78,6 +88,7 @@ const AddModal = () => {
     setQty(''); 
     setCripto(false);
     setPlazo('fijo');
+    setShowCalc(false);
     closeAddModal();
   };
 
@@ -150,7 +161,8 @@ const AddModal = () => {
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div className="absolute inset-0 flex items-start justify-center pt-12 px-4">
-        <div className="w-full max-w-2xl rounded-2xl shadow-2xl" style={{ background: '#0F172A', color: '#F3F4F6', border: '1px solid #1F2937' }}>
+        <div className="flex items-start gap-3">
+          <div className="w-full max-w-2xl rounded-2xl shadow-2xl" style={{ background: '#0F172A', color: '#F3F4F6', border: '1px solid #1F2937' }}>
           <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#1F2937' }}>
             <div className="flex items-center gap-2">
               <span className="text-xl" aria-hidden>{iconFor(tab)}</span>
@@ -179,7 +191,7 @@ const AddModal = () => {
                   </div>
                   <div className="flex flex-col">
                     <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto</label>
-                    <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} />
+                    <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} compactCurrency={true} />
                   </div>
                   <div className="flex flex-col">
                     <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
@@ -235,11 +247,20 @@ const AddModal = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="flex flex-col">
                         <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto inicial</label>
-                        <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} />
+                        <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} compactCurrency={true} />
                       </div>
                       <div className="flex flex-col">
                         <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto final</label>
-                        <InputPriceComponent value={obtained} onChange={(e) => setObtained(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} />
+                        <InputPriceComponent 
+                          value={obtained} 
+                          onChange={(e) => setObtained(e.target.value)} 
+                          currency={ccy} 
+                          onCurrencyChange={(e) => setCcy(e.target.value)} 
+                          appendButton={true}
+                          appendContent={'📟'}
+                          onAppendClick={() => setShowCalc(true)}
+                          compactCurrency={true}
+                        />
                       </div>
                       <div className="flex flex-col">
                         <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
@@ -257,7 +278,7 @@ const AddModal = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="flex flex-col">
                         <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto inicial</label>
-                        <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} />
+                        <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} compactCurrency={true} />
                       </div>
                       <div className="flex flex-col">
                         <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>TNA</label>
@@ -305,6 +326,16 @@ const AddModal = () => {
             <button onClick={onClose} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
             <button onClick={() => handleSubmit(false)} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6', opacity: validate()?1:0.6 }}>Guardar</button>
           </div>
+          </div>
+          {showCalc && tab === 'Ahorro' && plazo === 'fijo' && (
+            <FixedIncomeCalculatorModal
+              isOpen={true}
+              onClose={() => setShowCalc(false)}
+              initialAmount={invested || ''}
+              onApply={(finalAmount) => setObtained(String(finalAmount))}
+              inline={!isMobile}
+            />
+          )}
         </div>
       </div>
     </div>

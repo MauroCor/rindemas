@@ -9,9 +9,9 @@ const InputComponent = ({ name, value, onChange, placeholder, className }) => {
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    maxLength={20} 
-                    className={`text-center w-60 rounded-lg p-2 ${className}`}
-                    style={{background:'#2D3748', color:'#F3F4F6', outline:'none', border:'1px solid #1F2937'}}
+                    maxLength={16}
+                    className={`text-center w-56 rounded-lg p-2 ${className}`}
+                    style={{background:'#2D3748', color:'#F3F4F6', outline:'none', border:'1px solid #1F2937', height:'2.5rem'}}
                 />
             </div>
         </div>

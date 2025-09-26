@@ -1,7 +1,7 @@
 const InputQuantityComponent = ({ onChange, value, placeholder = "Ej: 15.005" }) => (
     <div className="text-center mb-2">
         <input
-            className="text-center w-60 p-2 rounded-lg"
+            className="text-center w-56 p-2 rounded-lg"
             type="text"
             autoComplete="off"
             placeholder={placeholder}
@@ -13,7 +13,7 @@ const InputQuantityComponent = ({ onChange, value, placeholder = "Ej: 15.005" })
                     .slice(0, 12);
                 onChange(e);
             }}
-            style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
+            style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', height:'2.5rem'}}
         />
     </div>
 );

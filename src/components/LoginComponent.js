@@ -28,16 +28,16 @@ const Login = () => {
   return (
     <div className="h-screen flex flex-col overflow-y-auto" style={{background:'#111827'}}>
       <div className="flex-1 flex items-start justify-center pt-32 pb-32">
-        <div className="max-w-md w-full p-8 rounded-2xl shadow-2xl" style={{background:'#1F2937', border:'1px solid #374151'}}>
+        <div className="max-w-md p-8 rounded-2xl shadow-2xl" style={{background:'#1F2937', border:'1px solid #374151'}}>
           <div className="text-center mb-8">
             <img
               src={logoRindePlus}
               alt="Rinde+"
-              className="mx-auto mb-4"
+              className="mx-auto mb-1"
               style={{height:'56px'}}
             />
             <h2 className="sr-only">Rinde+</h2>
-            <p className="mt-2 text-sm" style={{color:'#9CA3AF'}}>Proyectá tu evolución.</p>
+            <p className="mt-1 text-sm" style={{color:'#9CA3AF'}}>- Proyecta tu evolución -</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
@@ -88,7 +88,7 @@ const Login = () => {
           
           <div className="mt-8 text-center">
             <p className="text-xs" style={{color:'#6B7280'}}>
-              ¿Primera vez? Contacta al administrador para obtener acceso
+              ¿Primera vez? Contacta al administrador para obtener acceso.
             </p>
           </div>
         </div>

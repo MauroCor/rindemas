@@ -27,8 +27,8 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 value={value}
                 onChange={(e) => onChange && onChange(e.target.value)}
                 lang="es"
-                className="text-center w-60 p-2 focus:outline-none rounded-lg"
-                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                className="text-center w-56 p-2 focus:outline-none rounded-lg"
+                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', height:'2.5rem' }}
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
             />
             {type === "Hasta" && value && (
