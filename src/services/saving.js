@@ -1,7 +1,9 @@
 import apiRequest from './apiClient';
 
-export const getSavings = (queryParam = '') => {
-  return apiRequest(`/api/saving/${queryParam}`)
+export const getSavings = (queryParam = '', includeProjections = false) => {
+  const projectionParam = includeProjections ? '?projection=true' : '?projection=false';
+  const fullQuery = queryParam ? `${queryParam}&projection=${includeProjections}` : projectionParam;
+  return apiRequest(`/api/saving/${fullQuery}`)
     .then(data => data.json());
 };
 

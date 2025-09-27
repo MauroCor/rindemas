@@ -5,6 +5,4 @@ export const handleApiError = (error, context = '') => {
     alert('Error de conexión. Verifique su internet.');
     return;
   }
-  
-  alert('Error inesperado. Intente nuevamente.');
 };

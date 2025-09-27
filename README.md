@@ -15,7 +15,7 @@ Rinde+ es una interfaz simple y enfocada para entender cómo evolucionan tus fin
 - Deploy en GitHub Pages
 - Back-end: consume APIs alojadas en PythonAnywhere; el desarrollo del backend se encuentra en otro repositorio de mi perfil.
 
+---
+**Demo:** `https://maurocor.github.io/rindemas`
 
-Demo: `https://maurocor.github.io/rindemas`
-
-— @maurocor · PRs y feedback bienvenidos.
+*[@maurocor](https://github.com/mauro) · PRs y feedback bienvenidos.*

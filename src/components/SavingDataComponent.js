@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FinancialDropComponent from './FinancialDropComponent';
 import { formatPrice } from '../utils/numbers';
 import { getMonthName, isCurrentYearMonth } from '../utils/dateUtils';
 import { getCardClassName, getCardStyle, TEXT_COLORS, BACKGROUND_COLORS, MODAL_STYLES, MODAL_BORDER_STYLES } from '../utils/styles';
+import { getNotes, postNote, deleteNote } from '../services/notes';
+import { handleApiError } from '../utils/errorHandler';
 
 const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate }) => {
 
@@ -17,46 +19,71 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
     .filter((saving) => saving.liquid && saving.type !== 'fijo' && saving.date_to !== monthData.date)
     .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
 
-  const notesKey = `savings_notes_${monthData.date}`;
-  const stored = (() => {
-    try { return JSON.parse(localStorage.getItem(notesKey) || '[]'); } catch { return []; }
-  })();
-  
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [newNoteAmount, setNewNoteAmount] = useState('');
   const [newNoteText, setNewNoteText] = useState('');
   const [newNoteReference, setNewNoteReference] = useState('');
-  const [notes, setNotes] = useState(Array.isArray(stored) ? stored : []);
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const totalNotesAmount = Array.isArray(notes)
-    ? notes.reduce((sum, n) => sum + (Number(n.amount) || 0), 0)
-    : 0;
+  // Cargar notas al montar el componente
+  useEffect(() => {
+    const loadNotes = async () => {
+      try {
+        setLoading(true);
+        const notesData = await getNotes(monthData.date);
+        setNotes(notesData || []);
+      } catch (error) {
+        handleApiError(error, 'loadNotes');
+        setNotes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadNotes();
+  }, [monthData.date]);
+
+  const totalNotesAmount = notes.reduce((sum, note) => {
+    const amount = Number(note.amount) || 0;
+    return sum + amount;
+  }, 0);
+
 
   const notInvestedRemaining = Math.max(0, (Number(monthLiquid) || 0) - totalNotesAmount);
   const availableTotal = availableLiquidInfo + notInvestedRemaining;
 
-  const addNote = () => {
+  const addNote = async () => {
     if (!newNoteText.trim()) return;
     
-    const amt = Number(String(newNoteAmount).replace(/[^0-9]/g, '')) || 0;
-    const note = { 
-      id: Date.now(), 
-      amount: amt, 
-      text: newNoteText.trim().slice(0, 60),
-      reference: newNoteReference || null
-    };
-    const next = [...notes, note];
-    localStorage.setItem(notesKey, JSON.stringify(next));
-    setNotes(next);
-    setNewNoteAmount('');
-    setNewNoteText('');
-    setNewNoteReference('');
+    try {
+      const amount = Number(String(newNoteAmount).replace(/[^0-9]/g, '')) || 0;
+      const noteData = {
+        amount,
+        text: newNoteText.trim().slice(0, 60),
+        reference: newNoteReference || null,
+        month_date: monthData.date
+      };
+      
+      const newNote = await postNote(noteData);
+      setNotes(prev => [...prev, newNote]);
+      
+      // Limpiar formulario
+      setNewNoteAmount('');
+      setNewNoteText('');
+      setNewNoteReference('');
+    } catch (error) {
+      handleApiError(error, 'addNote');
+    }
   };
 
-  const deleteNote = (id) => {
-    const next = notes.filter(n => n.id !== id);
-    localStorage.setItem(notesKey, JSON.stringify(next));
-    setNotes(next);
+  const handleDeleteNote = async (id) => {
+    try {
+      await deleteNote(id);
+      setNotes(prev => prev.filter(n => n.id !== id));
+    } catch (error) {
+      handleApiError(error, 'deleteNote');
+    }
   };
 
   return (
@@ -68,7 +95,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
           <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(monthData.total, 'ARS')}</label>
         </div>
       </div>
-      <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} />
+      <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={true} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} />
       <div className="mt-2 text-[11px] relative flex items-center justify-center" style={{color: TEXT_COLORS.secondary}}>
         <div className="text-center w-full">
           {monthLiquid > 0 ? (
@@ -118,7 +145,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
                             </>
                           )}
                         </div>
-                        <button className="w-5 h-5 rounded hover:bg-gray-700 flex items-center justify-center" onClick={()=>deleteNote(n.id)} title="Eliminar">
+                        <button className="w-5 h-5 rounded hover:bg-gray-700 flex items-center justify-center" onClick={()=>handleDeleteNote(n.id)} title="Eliminar">
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-3 h-3"><path fill="#93C5FD" d="M18.3 5.71 12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.3 6.3 1.41-1.41-6.3-6.3 6.3-6.3z"/></svg>
                         </button>
                       </div>

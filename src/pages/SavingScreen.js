@@ -29,7 +29,7 @@ const SavingScreen = () => {
         const fetchData = async () => {
             try {
                 if (exchangeRate != '') {
-                    const savings = await getSavings(`?exchg_rate=${exchangeRate}`);
+                    const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
                     setDataMonths(savings);
                     focusCurrentMonth(savings, setStartIndex, itemsPerPages);
                 }
@@ -47,23 +47,24 @@ const SavingScreen = () => {
         return () => window.removeEventListener('app:data-updated', onDataUpdated);
     }, [exchangeRate, itemsPerPages]);
 
-
-    // Filtrar ahorros según el modo proyección
-    const filteredDataMonths = useMemo(() => {
-        if (!Array.isArray(dataMonths)) return dataMonths;
-        
-        return dataMonths.map(month => ({
-            ...month,
-            saving: month.saving.filter(saving => {
-                // Si el modo proyección está activado, mostrar todos los ahorros
-                if (includeFutureLiquidity) {
-                    return true;
+    // Refrescar datos cuando cambie el modo de proyección
+    useEffect(() => {
+        if (exchangeRate !== '') {
+            const fetchData = async () => {
+                try {
+                    const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
+                    setDataMonths(savings);
+                    focusCurrentMonth(savings, setStartIndex, itemsPerPages);
+                } catch (error) {
+                    logFetchError('data', error);
                 }
-                // Si el modo proyección está desactivado, ocultar ahorros con projection: true
-                return !saving.projection;
-            })
-        }));
-    }, [dataMonths, includeFutureLiquidity]);
+            };
+            fetchData();
+        }
+    }, [includeFutureLiquidity, exchangeRate, itemsPerPages]);
+
+    // Los datos ya vienen filtrados del backend según el modo de proyección
+    const filteredDataMonths = dataMonths;
 
     useEffect(() => {
         setCurrentsMonths(getMonthlyData(filteredDataMonths, startIndex, itemsPerPages));
@@ -115,7 +116,7 @@ const SavingScreen = () => {
             onConfirm: async () => {
                 try {
                     await patchSaving(id, body);
-                    const updatedData = await getSavings(`?exchg_rate=${exchangeRate}`);
+                    const updatedData = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
                     setDataMonths(updatedData);
                     setConfirm({ open: false, message: '', onConfirm: null });
                 } catch (error) {

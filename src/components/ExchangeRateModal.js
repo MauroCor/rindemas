@@ -46,15 +46,15 @@ const ExchangeRateModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4" style={{background:'#1F2937', border:'1px solid #374151'}}>
+      <div className="bg-gray-800 rounded-2xl shadow-2xl max-w-sm w-full mx-4" style={{background:'#1F2937', border:'1px solid #374151'}}>
         <div className="p-6">
-          <h2 className="text-xl font-bold text-white text-center mb-6">Cotización del Dólar</h2>
+          <h2 className="text-lg font-bold text-white text-center mb-6">Cotización del Dólar</h2>
           
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Tipo de cotización</label>
+          <div className="space-y-5 flex flex-col items-center">
+            <div className="w-40">
+              <label className="block text-xs font-medium text-gray-300 mb-1 text-center">Tipo de cotización</label>
               <select
-                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-1 focus:ring-teal-500 text-center text-sm"
                 value={rateType}
                 onChange={(e) => setRateType(e.target.value)}
               >
@@ -64,11 +64,11 @@ const ExchangeRateModal = ({ isOpen, onClose }) => {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Operación</label>
-              <div className="flex items-center space-x-4">
+            <div className="w-40">
+              <label className="block text-xs font-medium text-gray-300 mb-1 text-center">Operación</label>
+              <div className="flex items-center justify-center space-x-2">
                 <button
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  className={`px-3 py-1.5 rounded font-medium transition-all duration-200 text-sm ${
                     operation === "compra"
                       ? "bg-teal-500 text-white"
                       : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -78,7 +78,7 @@ const ExchangeRateModal = ({ isOpen, onClose }) => {
                   Compra
                 </button>
                 <button
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  className={`px-3 py-1.5 rounded font-medium transition-all duration-200 text-sm ${
                     operation === "venta"
                       ? "bg-teal-500 text-white"
                       : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -90,11 +90,11 @@ const ExchangeRateModal = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Cotización</label>
+            <div className="w-40">
+              <label className="block text-xs font-medium text-gray-300 mb-1 text-center">Cotización</label>
               <input
                 type="text"
-                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full px-3 py-1 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-1 focus:ring-teal-500 text-center text-sm"
                 value={tempExchangeRate ? `$ ${tempExchangeRate.toLocaleString()}` : ""}
                 onChange={(e) => {
                   const value = e.target.value.replace(/[^\d]/g, "");
@@ -106,16 +106,16 @@ const ExchangeRateModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 p-6 pt-0">
+        <div className="flex justify-center space-x-3 p-6 pt-0">
           <button
             onClick={handleClose}
-            className="px-6 py-2 rounded-lg font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition-all duration-200"
+            className="px-4 py-1.5 rounded font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition-all duration-200 text-sm"
           >
             Cerrar
           </button>
           <button
             onClick={handleAccept}
-            className="px-6 py-2 rounded-lg font-medium text-white bg-teal-500 hover:bg-teal-600 transition-all duration-200"
+            className="px-4 py-1.5 rounded font-medium text-white bg-teal-500 hover:bg-teal-600 transition-all duration-200 text-sm"
           >
             Aceptar
           </button>
