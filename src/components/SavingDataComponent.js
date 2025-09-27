@@ -1,38 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import FinancialDropComponent from './FinancialDropComponent';
 import { formatPrice } from '../utils/numbers';
+import { getMonthName, isCurrentYearMonth } from '../utils/dateUtils';
+import { getCardClassName, getCardStyle, TEXT_COLORS, BACKGROUND_COLORS, MODAL_STYLES, MODAL_BORDER_STYLES } from '../utils/styles';
 
 const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate }) => {
 
-  const getMonthName = (dateStr) => {
-    const month = parseInt(dateStr.split('-')[1], 10) - 1;
-    const monthName = new Date(2024, month).toLocaleString('es-ES', { month: 'long' });
-    return monthName.charAt(0).toUpperCase() + monthName.slice(1);
-  };
-
-  function isCurrentYearMonth(ym) {
-    const current = new Date().toISOString().slice(0, 7);
-    return ym === current;
-  };
-
   const monthName = getMonthName(monthData.date);
-  const currentMonth = isCurrentYearMonth(monthData.date)
+  const currentMonth = isCurrentYearMonth(monthData.date);
 
-  // Liquidez proyectable: solo vencimientos del mes (no RP/RV en curso)
   const monthLiquid = monthData.saving
     .filter((saving) => saving.date_to === monthData.date)
-    .reduce((total, saving) => total + (saving.ccy == 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
+    .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
 
-  // Disponible informativo (RP/RV líquidos en curso) — no entra al carry del modo proyección
   const availableLiquidInfo = monthData.saving
     .filter((saving) => saving.liquid && saving.type !== 'fijo' && saving.date_to !== monthData.date)
-    .reduce((total, saving) => total + (saving.ccy == 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
+    .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
 
-  // Notas locales (solo restan del No invertido del mes)
   const notesKey = `savings_notes_${monthData.date}`;
   const stored = (() => {
     try { return JSON.parse(localStorage.getItem(notesKey) || '[]'); } catch { return []; }
   })();
+  
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [newNoteAmount, setNewNoteAmount] = useState('');
   const [newNoteText, setNewNoteText] = useState('');
@@ -47,12 +36,13 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
   const availableTotal = availableLiquidInfo + notInvestedRemaining;
 
   const addNote = () => {
-    const amt = Number(String(newNoteAmount).replace(/[^0-9]/g, ''));
-    if (!amt || amt <= 0) return;
+    if (!newNoteText.trim()) return;
+    
+    const amt = Number(String(newNoteAmount).replace(/[^0-9]/g, '')) || 0;
     const note = { 
       id: Date.now(), 
       amount: amt, 
-      text: (newNoteText || '').slice(0, 60),
+      text: newNoteText.trim().slice(0, 60),
       reference: newNoteReference || null
     };
     const next = [...notes, note];
@@ -70,46 +60,55 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
   };
 
   return (
-    <div className={`w-60 rounded-xl p-4 shadow-lg text-center ${currentMonth ? 'border border-teal-500' : 'border border-gray-700'}`} style={{background:'#1F2937', color:'#F3F4F6'}}>
+    <div className={`${getCardClassName(currentMonth)} px-4 pt-4 pb-2`} style={getCardStyle()}>
       <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
       <div className="mb-3">
         <label>Total</label>
         <div>
-          <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice(monthData.total, 'ARS')}</label>
+          <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(monthData.total, 'ARS')}</label>
         </div>
       </div>
       <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={false} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} />
-      {(monthLiquid > 0) && (
-        <div className="mt-2 text-[11px] relative flex items-center justify-center" style={{color:'#9CA3AF'}}>
-          <div className="text-center w-full">
-            No invertido: <span className='font-semibold' style={{color:'#F3F4F6'}}>{formatPrice(notInvestedRemaining, 'ARS')}</span>
-          </div>
+      <div className="mt-2 text-[11px] relative flex items-center justify-center" style={{color: TEXT_COLORS.secondary}}>
+        <div className="text-center w-full">
+          {monthLiquid > 0 ? (
+            <>
+              No invertido: <span className='font-semibold' style={{color: TEXT_COLORS.primary}}>{formatPrice(notInvestedRemaining, 'ARS')}</span>
+            </>
+          ) : (
+            <span className="invisible">No invertido: $0</span>
+          )}
+        </div>
+        {monthLiquid > 0 && (
           <button
-            className="absolute right-2 -mt-1 rounded p-1 hover:bg-gray-700"
+            className="absolute right-6 rounded p-1 hover:bg-gray-700"
             title="Agregar/Ver anotaciones"
-            onClick={()=> setShowNotesModal(true)}
+            onClick={()=> {
+              setNewNoteAmount(notInvestedRemaining.toString());
+              setShowNotesModal(true);
+            }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><path fill="#D1D5DB" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {showNotesModal && (
         <div className="fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black/60" onClick={()=>setShowNotesModal(false)} />
           <div className="absolute inset-0 flex items-start justify-center pt-20 px-4">
-            <div className="w-full max-w-md md:max-w-lg rounded-2xl shadow-2xl" style={{ background: '#0F172A', color: '#F3F4F6', border: '1px solid #1F2937' }}>
-              <div className="px-6 py-4 border-b text-center" style={{ borderColor: '#1F2937' }}>
+            <div className="w-full max-w-md md:max-w-lg rounded-2xl shadow-2xl" style={MODAL_STYLES}>
+              <div className="px-6 py-4 border-b text-center" style={MODAL_BORDER_STYLES}>
                 <h3 className="text-lg font-semibold">Registro del dinero no invertido</h3>
               </div>
               <div className="px-6 py-5 space-y-3">
-                <div className="text-center text-base font-semibold" style={{color:'#D1D5DB'}}>Anotaciones</div>
+                <div className="text-center text-base font-semibold" style={{color: TEXT_COLORS.muted}}>Anotaciones</div>
                 <div className="space-y-2 max-h-48 overflow-auto pr-1">
                   {Array.isArray(notes) && notes.length > 0 && (
                     notes.map(n => (
-                      <div key={n.id} className="flex items-center justify-between px-2 py-1 rounded border" style={{background:'#111827', borderColor:'#374151', color:'#D1D5DB'}}>
+                      <div key={n.id} className="flex items-center justify-between px-2 py-1 rounded border" style={{background: BACKGROUND_COLORS.primary, borderColor:'#374151', color: TEXT_COLORS.muted}}>
                         <div className="flex items-center gap-2 text-sm">
-                          <span className="font-semibold" style={{color:'#F3F4F6'}}>{formatPrice(n.amount, 'ARS')}</span>
+                          <span className="font-semibold" style={{color: TEXT_COLORS.primary}}>{formatPrice(n.amount, 'ARS')}</span>
                           <span className="text-gray-300">-</span>
                           <span className="italic">{n.text || 'Sin descripción'}</span>
                           {n.reference && (
@@ -178,7 +177,12 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
                 </div>
               </div>
               <div className="flex justify-center gap-2 px-6 py-4 border-t" style={{ borderColor: '#1F2937' }}>
-                <button onClick={()=>setShowNotesModal(false)} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
+                <button onClick={()=>{
+                  setShowNotesModal(false);
+                  setNewNoteAmount('');
+                  setNewNoteText('');
+                  setNewNoteReference('');
+                }} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
               </div>
             </div>
           </div>

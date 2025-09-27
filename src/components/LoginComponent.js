@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import logoRindePlus from '../images/logo-rindemas.png';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -9,19 +9,28 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setMessage('');
+    setIsLoading(true);
+    
     try {
       const token = await postToken(username, password);
 
       if (token) {
+        setMessage('Ingresando...');
         login(token);  // Guarda token context y localStorage
-        navigate('/balance');
+        setTimeout(() => {
+          navigate('/balance');
+        }, 1000);
       }
     } catch (error) {
-      alert('Error: Revisa tus credenciales.');
+      setMessage('Credenciales incorrectas.');
+      setIsLoading(false);
     }
   };
 
@@ -78,11 +87,22 @@ const Login = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+                disabled={isLoading}
+                className="w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{background:'#14B8A6'}}
               >
-                Iniciar Sesión
+                {isLoading ? 'Verificando...' : 'Iniciar Sesión'}
               </button>
+              
+              {message && (
+                <p 
+                  className={`mt-3 text-sm text-center font-medium ${
+                    message.includes('incorrectas') ? 'text-red-400' : 'text-green-400'
+                  }`}
+                >
+                  {message}
+                </p>
+              )}
             </div>
           </form>
           

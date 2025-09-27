@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
@@ -8,6 +8,7 @@ import GraphComponent from '../components/GraphComponent';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { adjustMonths } from '../utils/numbers';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import { logFetchError } from '../utils/logger';
 import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
 import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
@@ -33,7 +34,7 @@ const SavingScreen = () => {
                     focusCurrentMonth(savings, setStartIndex, itemsPerPages);
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                logFetchError('data', error);
             } finally {
                 setLoading(false);
             }
@@ -46,13 +47,31 @@ const SavingScreen = () => {
         return () => window.removeEventListener('app:data-updated', onDataUpdated);
     }, [exchangeRate, itemsPerPages]);
 
+
+    // Filtrar ahorros según el modo proyección
+    const filteredDataMonths = useMemo(() => {
+        if (!Array.isArray(dataMonths)) return dataMonths;
+        
+        return dataMonths.map(month => ({
+            ...month,
+            saving: month.saving.filter(saving => {
+                // Si el modo proyección está activado, mostrar todos los ahorros
+                if (includeFutureLiquidity) {
+                    return true;
+                }
+                // Si el modo proyección está desactivado, ocultar ahorros con projection: true
+                return !saving.projection;
+            })
+        }));
+    }, [dataMonths, includeFutureLiquidity]);
+
     useEffect(() => {
-        setCurrentsMonths(getMonthlyData(dataMonths, startIndex, itemsPerPages));
-    }, [dataMonths, startIndex, itemsPerPages]);
+        setCurrentsMonths(getMonthlyData(filteredDataMonths, startIndex, itemsPerPages));
+    }, [filteredDataMonths, startIndex, itemsPerPages]);
 
     const handleItemsPerPageChange = (newItemsPerPage) => {
         setItemsPerPages(newItemsPerPage);
-        focusCurrentMonth(dataMonths, setStartIndex, newItemsPerPage);
+        focusCurrentMonth(filteredDataMonths, setStartIndex, newItemsPerPage);
     };
 
     const [confirm, setConfirm] = useState({ open: false, message: '', onConfirm: null });
@@ -64,15 +83,24 @@ const SavingScreen = () => {
                 try {
                     await deleteSaving(saving.id);
                     setDataMonths((prevData) =>
-                        prevData.map((month) => ({
-                            ...month,
-                            saving: month.saving.filter((item) => item.id !== saving.id),
-                        }))
+                        prevData.map((month) => {
+                            const updatedSaving = month.saving.filter((item) => item.id !== saving.id);
+                            // Recalcular el total del mes basado en los ahorros restantes
+                            const newTotal = updatedSaving.reduce((total, item) => {
+                                const value = item.ccy === 'ARS' ? (Number(item.obtained) || 0) : ((Number(item.obtained) || 0) * (Number(exchangeRate) || 0));
+                                return total + value;
+                            }, 0);
+                            return {
+                                ...month,
+                                saving: updatedSaving,
+                                total: newTotal
+                            };
+                        })
                     );
                     setDataMonths((prevData) => prevData.filter((month) => month.saving.length > 0));
                     setConfirm({ open: false, message: '', onConfirm: null });
                 } catch (error) {
-                    console.error('Error deleting saving:', error);
+                    logFetchError('deleting saving', error);
                     setConfirm({ open: false, message: '', onConfirm: null });
                 }
             }
@@ -91,7 +119,7 @@ const SavingScreen = () => {
                     setDataMonths(updatedData);
                     setConfirm({ open: false, message: '', onConfirm: null });
                 } catch (error) {
-                    console.error('Error patching saving:', error);
+                    logFetchError('patching saving', error);
                     setConfirm({ open: false, message: '', onConfirm: null });
                 }
             }
@@ -121,14 +149,14 @@ const SavingScreen = () => {
     }, [dataMonths, exchangeRate]);
 
     const graphDataMonths = useMemo(() => {
-        if (!Array.isArray(dataMonths)) return [];
-        return dataMonths.map(m => ({
+        if (!Array.isArray(filteredDataMonths)) return [];
+        return filteredDataMonths.map(m => ({
             ...m,
             total: includeFutureLiquidity
                 ? ((Number(m.total) || 0) + (cumulativeLiquidityBeforeByMonth.get(m.date) || 0))
                 : (Number(m.total) || 0)
         }));
-    }, [dataMonths, includeFutureLiquidity, cumulativeLiquidityBeforeByMonth]);
+    }, [filteredDataMonths, includeFutureLiquidity, cumulativeLiquidityBeforeByMonth]);
 
     return (
         <>
@@ -154,7 +182,7 @@ const SavingScreen = () => {
                 </div>
 
                 <CarouselComponent
-                    data={dataMonths}
+                    data={filteredDataMonths}
                     loading={loading}
                     startIndex={startIndex}
                     itemsPerPages={itemsPerPages}
@@ -219,7 +247,7 @@ const SavingScreen = () => {
             </div>
 
             <div className="pt-10 text-center max-w-screen-sm mx-auto">
-                <PieChartComponent title="Divisas" data={dataMonths} />
+                <PieChartComponent title="Divisas" data={filteredDataMonths} />
             </div>
         </div>
         <ConfirmDialog

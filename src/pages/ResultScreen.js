@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
@@ -9,6 +9,7 @@ import { getCardSpends, deleteCardSpend } from '../services/cardSpend';
 import { adjustMonths } from '../utils/numbers';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import { logFetchError } from '../utils/logger';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
@@ -69,7 +70,7 @@ const ResultScreen = () => {
       setDataMonths(withCard);
       focusCurrentMonth(mergedData, setStartIndex, itemsPerPages);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      logFetchError('data', error);
     } finally {
       setLoading(false);
     }
@@ -103,7 +104,7 @@ const ResultScreen = () => {
           setConfirm({ open: false, message: '', onConfirm: null });
           fetchAndMergeData();
         } catch (error) {
-          console.error(`Error patching ${type}:`, error);
+          logFetchError(`patching ${type}`, error);
           setConfirm({ open: false, message: '', onConfirm: null });
         }
       }
@@ -120,7 +121,7 @@ const ResultScreen = () => {
           setConfirm({ open: false, message: '', onConfirm: null });
           fetchAndMergeData();
         } catch (error) {
-          console.error('Error deleting card spend:', error);
+          logFetchError('deleting card spend', error);
           setConfirm({ open: false, message: '', onConfirm: null });
         }
       }

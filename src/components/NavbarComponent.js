@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import logoRindePlus from '../images/logo-rindemas.png';
 import logoRindePlusMobile from '../images/logo-rindemas-mobile.png';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -84,8 +84,6 @@ const NavbarComponent = () => {
           >
             Saldo
           </NavLink>
-
-          
 
           <NavLink
             to="/ahorro"

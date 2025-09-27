@@ -16,6 +16,12 @@ import { postFixedCost, putFixedCost } from '../services/fixedCost';
 import { postIncome, putIncome } from '../services/income';
 import { postCardSpend } from '../services/cardSpend';
 import { postSaving, putSaving } from '../services/saving';
+import { handleApiError } from '../utils/errorHandler';
+import { MODAL_STYLES, MODAL_BORDER_STYLES, LABEL_STYLES, INPUT_STYLES, TEXT_COLORS } from '../utils/styles';
+
+const Label = ({ children, className = "text-sm text-center mb-1" }) => (
+  <label className={className} style={LABEL_STYLES}>{children}</label>
+);
 
 const AddModal = () => {
   const { isOpen, closeAddModal, selectedOption } = useAddModal();
@@ -34,6 +40,7 @@ const AddModal = () => {
   const [tna, setTna] = useState('');
   const [qty, setQty] = useState('');
   const [cripto, setCripto] = useState(false);
+  const [projection, setProjection] = useState(false);
   const [showCalc, setShowCalc] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -101,13 +108,11 @@ const AddModal = () => {
       switch (tab) {
         case 'Egreso':
           data = { name, price: parseInt(price), ccy, date_from: desdeValue, date_to: hastaValue || null };
-          if (data.date_to < data.date_from) { alert('Error: La fecha fin debe ser mayor a la fecha inicio.'); return; }
           sectionName = 'Egresos';
           try { await postFixedCost(data); } catch { await putFixedCost(data); isUpdate = true; }
           break;
         case 'Ingreso':
           data = { name, price: parseInt(price), ccy, date_from: desdeValue, date_to: hastaValue || null };
-          if (data.date_to < data.date_from) { alert('Error: La fecha fin debe ser mayor a la fecha inicio.'); return; }
           sectionName = 'Ingresos';
           try { await postIncome(data); } catch { await putIncome(data); isUpdate = true; }
           break;
@@ -127,7 +132,8 @@ const AddModal = () => {
             date_to: hastaValue === '' ? null : hastaValue,
             tna: parseFloat(tna),
             qty,
-            crypto: cripto
+            crypto: cripto,
+            projection: projection
           };
           sectionName = 'Ahorros';
           try { await postSaving(data); }
@@ -137,7 +143,6 @@ const AddModal = () => {
           throw new Error('Opción no válida');
       }
       
-      // Mostrar mensaje de éxito
       const action = isUpdate ? 'actualizado' : 'agregado';
       setSuccessMessage(`${name} fue ${action} en ${sectionName}`);
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -152,8 +157,7 @@ const AddModal = () => {
       setName(''); setPrice(''); setCcy('ARS'); setInvested(''); setObtained(''); setDesdeValue(''); setHastaValue(''); setCuotas('1'); setTna(''); setQty(''); setCripto(false);
       
     } catch (error) {
-      console.error('Error al enviar los datos:', error);
-      alert('Error: Revise los datos ingresados 🧐');
+      handleApiError(error, 'handleSubmit');
     }
   };
 
@@ -162,8 +166,8 @@ const AddModal = () => {
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div className="absolute inset-0 flex items-start justify-center pt-12 px-4">
         <div className="flex items-start gap-3">
-          <div className="w-full max-w-2xl rounded-2xl shadow-2xl" style={{ background: '#0F172A', color: '#F3F4F6', border: '1px solid #1F2937' }}>
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: '#1F2937' }}>
+          <div className="w-full max-w-2xl rounded-2xl shadow-2xl" style={MODAL_STYLES}>
+          <div className="flex items-center justify-between px-6 py-4 border-b" style={MODAL_BORDER_STYLES}>
             <div className="flex items-center gap-2">
               <span className="text-xl" aria-hidden>{iconFor(tab)}</span>
               <div>
@@ -186,19 +190,19 @@ const AddModal = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="flex flex-col">
-                    <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Nombre</label>
+                    <Label>Nombre</Label>
                     <DropComponent plhdr={tab === 'Ingreso' ? 'Ej: Sueldo' : 'Ej: Alquiler'} onChange={(e) => setName(e.target.value)} value={name} type={tab === 'Ingreso' ? 'income' : 'fixedCost'} />
                   </div>
                   <div className="flex flex-col">
-                    <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto</label>
+                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto</label>
                     <InputPriceComponent value={price} onChange={(e) => setPrice(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} compactCurrency={true} />
                   </div>
                   <div className="flex flex-col">
-                    <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
+                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
                     <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
                   </div>
                   <div className="flex flex-col">
-                    <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
+                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
                     <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
                   </div>
                 </div>
@@ -210,12 +214,12 @@ const AddModal = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <InputComponent name="Nombre" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ej: Heladera" />
                   <div className="flex flex-col">
-                    <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto</label>
+                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto</label>
                     <InputNumberComponent value={price} onChange={(e) => setPrice(e.target.value)} />
                   </div>
                   <DropdownComponent value={cuotas} onChange={(e) => setCuotas(e.target.value)} />
                   <div className="flex flex-col">
-                    <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
+                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
                     <MonthDropComponent type='DesdeTarj' value={desdeValue} onChange={setDesdeValue} />
                   </div>
                 </div>
@@ -228,7 +232,7 @@ const AddModal = () => {
                   <DropdownSavingComponent value={plazo} onChange={(e) => setPlazo(e.target.value)} />
                   {plazo === 'var' ? (
                     <div className="flex flex-col">
-                      <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>¿Criptomoneda?</label>
+                      <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>¿Criptomoneda?</label>
                       <div className='flex justify-center'>
                         <SwitchComponent value={cripto} onToggle={setCripto} optionA="NO" optionB="SÍ" />
                       </div>
@@ -246,11 +250,11 @@ const AddModal = () => {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto inicial</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto inicial</label>
                         <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} compactCurrency={true} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto final</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto final</label>
                         <InputPriceComponent 
                           value={obtained} 
                           onChange={(e) => setObtained(e.target.value)} 
@@ -263,11 +267,11 @@ const AddModal = () => {
                         />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
                         <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
                         <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
                       </div>
                     </div>
@@ -277,19 +281,19 @@ const AddModal = () => {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto inicial</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto inicial</label>
                         <InputPriceComponent value={invested} onChange={(e) => setInvested(e.target.value)} currency={ccy} onCurrencyChange={(e) => setCcy(e.target.value)} compactCurrency={true} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>TNA</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>TNA</label>
                         <InputPercentComponent value={tna} onChange={(e) => setTna(e.target.value)} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
                         <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
                         <MonthDropComponent type='Hasta' value={hastaValue} onChange={setHastaValue} />
                       </div>
                     </div>
@@ -299,32 +303,40 @@ const AddModal = () => {
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Ticker</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Ticker</label>
                         <DropComponent plhdr="Ej: AAPL" onChange={(e) => setName(e.target.value)} value={name} cripto={cripto} type='savingVar' />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Monto</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto</label>
                         <InputNumberComponent value={invested} onChange={(e) => setInvested(e.target.value)} placeholder='Ej: u$s 350' />
                         <p className='text-[12px] text-center !-mt-1' style={{ color: '#9CA3AF' }}>Monto en dólares (USDT).</p>
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Cantidad</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Cantidad</label>
                         <InputQuantityComponent value={qty} onChange={(e) => setQty(e.target.value)} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Desde</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
                         <MonthDropComponent type='Desde' value={desdeValue} onChange={setDesdeValue} />
                       </div>
                     </div>
                   </>
                 )}
+                
+                {/* Switch de proyección para todos los tipos de ahorro */}
+                <div className="flex flex-col">
+                  <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>¿Proyección?</label>
+                  <div className='flex justify-center'>
+                    <SwitchComponent value={projection} onToggle={setProjection} optionA="NO" optionB="SÍ" />
+                  </div>
+                </div>
               </>
             )}
           </div>
 
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={{ borderColor: '#1F2937' }}>
             <button onClick={onClose} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
-            <button onClick={() => handleSubmit(false)} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6', opacity: validate()?1:0.6 }}>Guardar</button>
+            <button onClick={() => handleSubmit(false)} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6', opacity: validate()?1:0.6 }}>Agregar</button>
           </div>
           </div>
           {showCalc && tab === 'Ahorro' && plazo === 'fijo' && (

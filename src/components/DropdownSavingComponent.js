@@ -1,7 +1,7 @@
 const DropdownSavingComponent = ({ value, onChange }) => {
   return (
     <div className="flex flex-col">
-      <label className="text-sm text-left mb-1 ml-11" style={{color:'#FFFFFF'}}>Tipo</label>
+      <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Tipo</label>
       <select
         value={value}
         onChange={onChange}

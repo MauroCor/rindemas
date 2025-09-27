@@ -6,10 +6,16 @@ export const getMonthlyData = (data, startIndex, itemsPerPage) => {
 };
 
 export const handlePrev = (currentIndex, itemsPerPage) => {
+    if (itemsPerPage === 5 || itemsPerPage === 3) {
+        return Math.max(currentIndex - 1, 0);
+    }
     return Math.max(currentIndex - itemsPerPage, 0);
 };
 
 export const handleNext = (currentIndex, itemsPerPage, totalItems) => {
+    if (itemsPerPage === 5 || itemsPerPage === 3) {
+        return Math.min(currentIndex + 1, totalItems - itemsPerPage);
+    }
     return Math.min(currentIndex + itemsPerPage, totalItems - itemsPerPage);
 };
 
@@ -29,8 +35,15 @@ export const focusCurrentMonth = (dataMonths, setStartIndex, itemsPerPage = 3) =
         }
     }
     const total = dataMonths.length;
-    const half = Math.floor(itemsPerPage / 2);
-    let start = currentIndex !== -1 ? currentIndex - half : 0;
+    
+    let start;
+    if (itemsPerPage === 5) {
+        start = currentIndex !== -1 ? currentIndex : 0;
+    } else {
+        const half = Math.floor(itemsPerPage / 2);
+        start = currentIndex !== -1 ? currentIndex - half : 0;
+    }
+    
     start = Math.max(0, start);
     start = Math.min(start, Math.max(0, total - itemsPerPage));
     setStartIndex(start);

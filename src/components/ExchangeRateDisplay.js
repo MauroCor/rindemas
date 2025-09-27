@@ -1,4 +1,3 @@
-import React from 'react';
 import { useExchangeRate } from '../context/ExchangeRateContext';
 
 const ExchangeRateDisplay = () => {

@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Tab = ({ value, label, selected, onChange }) => (
   <button

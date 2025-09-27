@@ -1,31 +1,19 @@
 import FinancialDropComponent from './FinancialDropComponent';
 import { formatPrice } from '../utils/numbers';
+import { getMonthName, isCurrentYearMonth } from '../utils/dateUtils';
+import { getCardClassName, getCardStyle, TEXT_COLORS } from '../utils/styles';
 
 const FixedDataComponent = ({ monthData, onDeleteFijos, onDeleteCardSpend, cardMonth }) => {
   const { date, income, fixedCost } = monthData;
-
-  const getMonthName = (dateStr) => {
-    const month = parseInt(dateStr.split('-')[1], 10) - 1;
-    const monthName = new Date(2024, month).toLocaleString('es-ES', { month: 'long' });
-    return monthName.charAt(0).toUpperCase() + monthName.slice(1);
-  };
-
-  function isCurrentYearMonth(ym) {
-    const current = new Date().toISOString().slice(0, 7);
-    return ym === current;
-  };
-
   const monthName = getMonthName(date);
   const currentMonth = isCurrentYearMonth(date);
 
-  
-
   return (
-    <div className={`w-60 rounded-xl p-4 shadow-lg text-center ${currentMonth ? 'border border-teal-500' : 'border border-gray-700'}`} style={{background:'#1F2937', color:'#F3F4F6'}}>
+    <div className={getCardClassName(currentMonth)} style={getCardStyle()}>
       <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
       <label>Saldo</label>
       <div>
-        <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice(income.total - fixedCost.total, 'ARS')}</label>
+        <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(income.total - fixedCost.total, 'ARS')}</label>
       </div>
       <FinancialDropComponent title="Ingresos" data={income} isIncome={true} onDelete={(data) => onDeleteFijos(data, date, 'income')}/>
       <FinancialDropComponent title="Egresos" data={{...fixedCost, items: fixedCost.items.filter(i => i.name !== 'Tarjeta'), total: fixedCost.items.filter(i => i.name !== 'Tarjeta').reduce((s,i)=> s + i.price, 0)}} isIncome={false} onDelete={(data) => onDeleteFijos(data, date, 'fixedCost')} />

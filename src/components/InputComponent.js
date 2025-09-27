@@ -1,7 +1,7 @@
 const InputComponent = ({ name, value, onChange, placeholder, className }) => {
     return (
         <div className="flex flex-col">
-            <label className="text-sm text-left mb-1 ml-10" style={{color:'#FFFFFF'}}>{name}</label>
+            <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>{name}</label>
             <div className="text-center mb-2">
                 <input
                     type="text"

@@ -1,6 +1,11 @@
 import { base_url } from "./config";
 
 let sessionExpired = false;
+let sessionExpiredCallback = null;
+
+export const setSessionExpiredCallback = (callback) => {
+  sessionExpiredCallback = callback;
+};
 
 const apiRequest = async (endpoint, method = 'GET', data = null, login = false) => {
   const url = `${base_url}${endpoint}`;
@@ -19,13 +24,14 @@ const apiRequest = async (endpoint, method = 'GET', data = null, login = false) 
 
     const response = await fetch(url, options);
 
-    if (response.status === 401 && !sessionExpired  && !login) {
+    if (response.status === 401 && !sessionExpired && !login) {
       sessionExpired = true;
-      alert('Sesión vencida, vuelva a ingresar.');
       localStorage.removeItem('token');
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/rindemas/login';
+      
+      if (sessionExpiredCallback) {
+        sessionExpiredCallback();
       }
+      
       throw new Error('Unauthorized or expired token');
     }
 

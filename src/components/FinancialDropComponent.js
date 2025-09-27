@@ -31,7 +31,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             {!readOnly && item.name !== 'Tarjeta' && onDelete && (
                                 <button
                                     onClick={() => onDelete(item)}
-                                    className="w-[5%] text-red-400 text-lg hover:text-red-500"
+                                    className="w-[5%] text-red-400 text-sm hover:text-red-500"
                                 >
                                     &#10005;
                                 </button>
@@ -53,7 +53,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             {!readOnly && (
                             <button
                                 onClick={() => onDelete(item)}
-                                className="text-red-400 text-lg ml-2 hover:text-red-500"
+                                className="text-red-400 text-sm ml-2 hover:text-red-500"
                             >
                                 &#10005;
                             </button>
@@ -62,7 +62,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                     ))}
                     {contentType === 'saving' && Array.isArray(data?.saving) && (
                         <>
-                            <div className="flex justify-between items-center border-b mb-2 pb-1" style={{borderColor:'#4B5563'}}>
+                            <div className="flex justify-between items-center border-b mb-1" style={{borderColor:'#4B5563'}}>
                                 <span className="text-left text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>TIPO</span>
                                 <span className="w-[95%] text-center text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>NOMBRE</span>
                                 <span className="w-[45%] text-center text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>MONTO</span>
@@ -71,34 +71,35 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             </div>
                             {data.saving.map((item, index) => {
                                 const hasReinvestmentNote = notes.some(note => note.reference === item.name);
+                                const isProjection = item.projection === true;
                                 return (
-                        <div key={index} className={`flex justify-between items-center border-b ${hasReinvestmentNote ? 'opacity-50 relative' : ''}`} style={{borderColor:'#374151', color:'#E5E7EB'}}>
+                        <div key={index} className={`flex justify-between items-center border-b ${hasReinvestmentNote ? 'opacity-50 relative' : ''} ${isProjection ? 'bg-gradient-to-r from-purple-900/20 to-indigo-900/20 border-purple-400' : ''}`} style={{borderColor:'#374151', color:'#E5E7EB'}}>
                             {hasReinvestmentNote && (
                                 <div className="absolute top-1/2 left-0 h-px bg-gray-400 z-10" style={{width: 'calc(100% - 10%)'}}></div>
                             )}
-                            <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''}`}>
+                            <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-300' : ''}`}>
                                 {item.type === 'fijo' ? 'RF' : item.type === 'flex' ? 'RP' : 'RV'}
                             </span>
-                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''} ${hasReinvestmentNote ? 'relative z-20' : ''}`}>
+                            <span className={`w-[100%] text-center text-sm whitespace-normal ${item.liquid ? 'font-bold' : ''} ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200 font-semibold' : ''}`}>
                                 {item.name}
                                 {item.type === 'var' && <sup className="text-[10px] ml-1">{parseFloat(item.qty)}</sup>}
                             </span>
-                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold' : ''} ${hasReinvestmentNote ? 'relative z-20' : ''}`} style={{color: item.liquid ? '#14B8A6' : undefined}}>
+                            <span className={`w-[50%] text-center text-sm ${item.liquid ? 'font-bold' : ''} ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`} style={{color: item.liquid && !isProjection ? '#14B8A6' : undefined}}>
                                 {formatPrice(item.type === 'var' || item.liquid ? item.obtained : item.invested, item.type === 'var' ? 'USD' : item.ccy)}
                             </span>
-                            <span className={`w-[40%] text-right text-[10px] font-extrabold font-sans ${hasReinvestmentNote ? 'relative z-20' : ''}`}>{`${Math.round(item.tna)}%`}</span>
+                            <span className={`w-[40%] text-right text-[10px] font-extrabold font-sans ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`}>{`${Math.round(item.tna)}%`}</span>
                             {!readOnly && item.type === 'fijo' && onDelete && (
                                 <button
                                     onClick={() => onDelete(item)}
-                                    className="w-[30%] text-right text-red-400 text-lg hover:text-red-500"
+                                    className="w-[30%] text-right text-red-400 text-sm hover:text-red-500 h-5 flex items-center justify-end"
                                 > &#10005;
                                 </button>
                             )}
                             {!readOnly && (item.type === 'flex' || item.type === 'var') && onPatch && (
                                 <button
                                     onClick={() => onPatch(item.id, item)}
-                                    className="w-[30%] text-right pb-1"
-                                > <span className='text-[12px]'>&#9209; </span>
+                                    className="w-[30%] text-right text-sm h-5 flex items-center justify-end"
+                                > <span className='text-[8px] leading-none'>&#9209;</span>
                                 </button>
                             )}
                         </div>
