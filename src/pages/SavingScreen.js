@@ -21,18 +21,25 @@ const SavingScreen = () => {
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [includeFutureLiquidity, setIncludeFutureLiquidity] = useState(true);
+    const [includeFutureLiquidity, setIncludeFutureLiquidity] = useState(false);
     const [graphMode, setGraphMode] = useState('total+avg');
 
     useEffect(() => {
         setLoading(true);
         const fetchData = async () => {
-            try {
-                if (exchangeRate != '') {
-                    const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
-                    setDataMonths(savings);
-                    focusCurrentMonth(savings, setStartIndex, itemsPerPages);
-                }
+                try {
+                    if (exchangeRate != '') {
+                        const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
+                        const processedSavings = savings.map(month => ({
+                            ...month,
+                            saving: month.saving.map(item => ({
+                                ...item,
+                                liquid: item.type === 'flex' ? true : item.liquid
+                            }))
+                        }));
+                        setDataMonths(processedSavings);
+                        focusCurrentMonth(processedSavings, setStartIndex, itemsPerPages);
+                    }
             } catch (error) {
                 logFetchError('data', error);
             } finally {
@@ -45,7 +52,7 @@ const SavingScreen = () => {
         };
         window.addEventListener('app:data-updated', onDataUpdated);
         return () => window.removeEventListener('app:data-updated', onDataUpdated);
-    }, [exchangeRate, itemsPerPages]);
+    }, [exchangeRate, itemsPerPages, includeFutureLiquidity]);
 
     // Refrescar datos cuando cambie el modo de proyección
     useEffect(() => {
@@ -53,8 +60,15 @@ const SavingScreen = () => {
             const fetchData = async () => {
                 try {
                     const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
-                    setDataMonths(savings);
-                    focusCurrentMonth(savings, setStartIndex, itemsPerPages);
+                    const processedSavings = savings.map(month => ({
+                        ...month,
+                        saving: month.saving.map(item => ({
+                            ...item,
+                            liquid: item.type === 'flex' ? true : item.liquid
+                        }))
+                    }));
+                    setDataMonths(processedSavings);
+                    focusCurrentMonth(processedSavings, setStartIndex, itemsPerPages);
                 } catch (error) {
                     logFetchError('data', error);
                 }
@@ -63,7 +77,6 @@ const SavingScreen = () => {
         }
     }, [includeFutureLiquidity, exchangeRate, itemsPerPages]);
 
-    // Los datos ya vienen filtrados del backend según el modo de proyección
     const filteredDataMonths = dataMonths;
 
     useEffect(() => {
@@ -86,7 +99,6 @@ const SavingScreen = () => {
                     setDataMonths((prevData) =>
                         prevData.map((month) => {
                             const updatedSaving = month.saving.filter((item) => item.id !== saving.id);
-                            // Recalcular el total del mes basado en los ahorros restantes
                             const newTotal = updatedSaving.reduce((total, item) => {
                                 const value = item.ccy === 'ARS' ? (Number(item.obtained) || 0) : ((Number(item.obtained) || 0) * (Number(exchangeRate) || 0));
                                 return total + value;
@@ -117,7 +129,14 @@ const SavingScreen = () => {
                 try {
                     await patchSaving(id, body);
                     const updatedData = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
-                    setDataMonths(updatedData);
+                    const processedData = updatedData.map(month => ({
+                        ...month,
+                        saving: month.saving.map(item => ({
+                            ...item,
+                            liquid: item.type === 'flex' ? true : item.liquid
+                        }))
+                    }));
+                    setDataMonths(processedData);
                     setConfirm({ open: false, message: '', onConfirm: null });
                 } catch (error) {
                     logFetchError('patching saving', error);
@@ -127,9 +146,6 @@ const SavingScreen = () => {
         });
     };
 
-    // (toggle OFF) mostrará el total puro del mes (sin running max)
-
-    // Suma acumulada de liquidez previa a cada mes (para proyección pasiva)
     const cumulativeLiquidityBeforeByMonth = useMemo(() => {
         const map = new Map();
         if (!Array.isArray(dataMonths)) return map;
@@ -137,7 +153,6 @@ const SavingScreen = () => {
         let prefix = 0;
         for (let i = 0; i < sorted.length; i++) {
             const m = sorted[i];
-            // Solo vencimientos del mes (no RP/RV en curso) para el carry de proyección
             const monthLiquid = Array.isArray(m.saving)
                 ? m.saving
                     .filter(s => s.date_to === m.date)
@@ -153,11 +168,9 @@ const SavingScreen = () => {
         if (!Array.isArray(filteredDataMonths)) return [];
         return filteredDataMonths.map(m => ({
             ...m,
-            total: includeFutureLiquidity
-                ? ((Number(m.total) || 0) + (cumulativeLiquidityBeforeByMonth.get(m.date) || 0))
-                : (Number(m.total) || 0)
+            total: (Number(m.total) || 0)
         }));
-    }, [filteredDataMonths, includeFutureLiquidity, cumulativeLiquidityBeforeByMonth]);
+    }, [filteredDataMonths]);
 
     return (
         <>
@@ -191,9 +204,7 @@ const SavingScreen = () => {
                         <SavingDataComponent
                             monthData={{
                                 ...monthData,
-                                total: includeFutureLiquidity
-                                    ? ((Number(monthData.total) || 0) + (cumulativeLiquidityBeforeByMonth.get(monthData.date) || 0))
-                                    : (Number(monthData.total) || 0)
+                                total: (Number(monthData.total) || 0)
                             }}
                             onDeleteSaving={handleDeleteSaving}
                             onPatchSaving={handlePatchSaving}

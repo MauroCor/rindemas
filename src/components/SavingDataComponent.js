@@ -95,7 +95,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
           <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(monthData.total, 'ARS')}</label>
         </div>
       </div>
-      <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={true} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} />
+      <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={true} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} monthDate={monthData.date} />
       <div className="mt-2 text-[11px] relative flex items-center justify-center" style={{color: TEXT_COLORS.secondary}}>
         <div className="text-center w-full">
           {monthLiquid > 0 ? (

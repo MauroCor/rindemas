@@ -4,7 +4,7 @@ import { getIncomes } from '../services/income';
 import { getSavings } from '../services/saving';
 import { getTicker } from '../services/ticker';
 
-const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
+const DropComponent = ({ plhdr, onChange, type, value, cripto, onSearchResult }) => {
     const [options, setOptions] = useState([]);
     const [searchResult, setSearchResult] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +56,7 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
                 names = names.filter(name => name !== "Tarjeta");
                 setOptions(names);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                // Error fetching data
             }
         };
 
@@ -70,11 +70,16 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
             const response = await getTicker(`?tkr=${value}&cripto=${cripto}`);
             if (JSON.stringify(response) !== '{}') {
                 setSearchResult(response);
+                try {
+                    if (typeof onSearchResult === 'function') {
+                        onSearchResult(response);
+                    }
+                } catch (_) {}
             } else {
                 setSearchResult(null);
+                try { if (typeof onSearchResult === 'function') onSearchResult(null); } catch (_) {}
             }
         } catch (error) {
-            console.error("Error fetching prices:", error);
             setSearchResult(null);
         } finally {
             setIsLoading(false);
@@ -111,7 +116,14 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto }) => {
                 )}
             </div>
             {(searchResult != null || isLoading) ? (
-                <p className={`text-[12px] text-center !mt-1`} style={{ color:'#9CA3AF' }}>{isLoading ? 'Cargando...' : `${searchResult.name ? searchResult.name : ''} (${searchResult.ticker}) - U$S ${parseInt(searchResult.price)}`}</p>
+                <p className={`text-[12px] text-center !mt-1`} style={{ color:'#9CA3AF' }}>{isLoading ? 'Cargando...' : (()=>{
+                    const raw = String(searchResult.price ?? '');
+                    const normalized = raw.replace(/\s+/g,'').replace(/,/g,'');
+                    const priceNum = Number(normalized);
+                    const priceStr = Number.isFinite(priceNum) ? priceNum.toLocaleString('es-AR') : '-';
+                    const name = searchResult.name ? searchResult.name : '';
+                    return `${name} (${searchResult.ticker}) - U$S ${priceStr}`;
+                })()}</p>
             ) : null}
         </div>
     );
