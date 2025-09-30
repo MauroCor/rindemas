@@ -1,10 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ExchangeRateModal from './ExchangeRateModal';
 import { Link } from 'react-router-dom';
+import UserProfileModal from './UserProfileModal';
+import ChangePasswordModal from './ChangePasswordModal';
+import InfoModal from './InfoModal';
+import { getUser } from '../services/user';
 
 const UserMenu = ({ userName, handleLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenExRt, setIsOpenExRt] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
+  const [openChangePass, setOpenChangePass] = useState(false);
+  const [openInfo, setOpenInfo] = useState(false);
+  const [infoMessage, setInfoMessage] = useState('');
+  const [user, setUser] = useState(null);
 
 
   const toggleMenu = () => {
@@ -14,6 +23,18 @@ const UserMenu = ({ userName, handleLogout }) => {
   const toggleExchgRate = () => {
     setIsOpenExRt(!isOpenExRt);
   };
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchUser = async () => {
+      try {
+        const data = await getUser();
+        if (mounted) setUser(data);
+      } catch (_) {}
+    };
+    if (openProfile && !user) fetchUser();
+    return () => { mounted = false; };
+  }, [openProfile]);
 
   return (
     <div className="relative sm:pl-[71px]">
@@ -33,6 +54,15 @@ const UserMenu = ({ userName, handleLogout }) => {
 
             <li className="px-4 py-2 text-sm text-center font-bold text-gray-400 border-b-2 border-b-gray-600">
               {userName}
+            </li>
+
+            <li className="text-center text-gray-300 relative">
+              <button
+                className="w-full p-1 text-center hover:bg-gray-700"
+                onClick={() => { setOpenProfile(true); setIsOpen(false); }}
+              >
+                Perfil
+              </button>
             </li>
 
             <li className="text-center text-gray-300 relative">
@@ -70,6 +100,23 @@ const UserMenu = ({ userName, handleLogout }) => {
       <ExchangeRateModal 
         isOpen={isOpenExRt} 
         onClose={() => setIsOpenExRt(false)} 
+      />
+      <UserProfileModal
+        isOpen={openProfile}
+        onClose={() => setOpenProfile(false)}
+        user={user}
+        onChangePassword={() => { setOpenProfile(false); setOpenChangePass(true); }}
+      />
+      <ChangePasswordModal
+        isOpen={openChangePass}
+        onClose={() => setOpenChangePass(false)}
+        onSuccess={(msg) => { setOpenChangePass(false); setInfoMessage('Se ha cambiado la contraseña. Recuerde utilizarla en su próximo inicio de sesión.'); setOpenInfo(true); }}
+      />
+      <InfoModal
+        isOpen={openInfo}
+        onClose={() => setOpenInfo(false)}
+        title={'Información'}
+        message={infoMessage}
       />
     </div>
   );

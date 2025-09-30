@@ -9,6 +9,7 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -71,17 +72,30 @@ const Login = () => {
               <label className="block text-sm font-medium mb-2" style={{color:'#F3F4F6'}}>
                 Contraseña
               </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete='off'
-                placeholder="Ingresa tu contraseña"
-                className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
-                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete='off'
+                  placeholder="Ingresa tu contraseña"
+                  className="w-full px-4 py-3 rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
+                  style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-2 my-auto h-9 px-2 rounded hover:bg-gray-700"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-gray-300">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z" stroke="currentColor" strokeWidth="1.5"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <div className="pt-2">
