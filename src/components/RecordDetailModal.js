@@ -44,8 +44,8 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
       
       if (record.type === 'flex') {
         const manualFromText = editedRecord.manual_obtained_text ? parseFloat(parseNumber(editedRecord.manual_obtained_text)) : null;
-        const manualCandidate = editedRecord.manual_obtained != null ? editedRecord.manual_obtained : manualFromText;
-        const manualOrObtained = (manualCandidate == null || Number.isNaN(parseFloat(manualCandidate))) ? editedRecord.obtained : manualCandidate;
+        const manualCandidate = editedRecord.manual_obtained !== null && editedRecord.manual_obtained !== undefined ? editedRecord.manual_obtained : manualFromText;
+        const manualOrObtained = (manualCandidate === null || manualCandidate === undefined || Number.isNaN(parseFloat(manualCandidate))) ? editedRecord.obtained : manualCandidate;
         updateData = {
           id: record.id,
           type: 'flex',
@@ -69,9 +69,9 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
         delete updateData.month_date;
       } else if (record.type === 'var') {
         const manualFromText = editedRecord.manual_obtained_text ? parseFloat(parseNumber(editedRecord.manual_obtained_text)) : null;
-        const manualCandidate = editedRecord.manual_obtained != null ? editedRecord.manual_obtained : manualFromText;
+        const manualCandidate = editedRecord.manual_obtained !== null && editedRecord.manual_obtained !== undefined ? editedRecord.manual_obtained : manualFromText;
         const manualOrObtained = (
-          manualCandidate == null || Number.isNaN(parseFloat(manualCandidate))
+          manualCandidate === null || manualCandidate === undefined || Number.isNaN(parseFloat(manualCandidate))
         ) ? editedRecord.obtained : manualCandidate;
         updateData = {
           id: record.id,

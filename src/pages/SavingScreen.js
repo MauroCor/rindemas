@@ -28,7 +28,7 @@ const SavingScreen = () => {
         setLoading(true);
         const fetchData = async () => {
                 try {
-                    if (exchangeRate != '') {
+                    if (exchangeRate !== '') {
                         const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
                         const processedSavings = savings.map(month => ({
                             ...month,

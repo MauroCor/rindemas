@@ -9,18 +9,15 @@ import InputComponent from './InputComponent';
 import DropdownSavingComponent from './DropdownSavingComponent';
 import InputPercentComponent from './InputPercentComponent';
 import InputPriceComponent from './InputPriceComponent';
-import InputQuantityComponent from './InputQuantityComponent';
 import FixedIncomeCalculatorModal from './FixedIncomeCalculatorModal';
 import SwitchComponent from './SwitchComponent';
-import FormField from './FormField';
-import { postFixedCost, putFixedCost } from '../services/fixedCost';
-import { postIncome, putIncome } from '../services/income';
+import { postFixedCost } from '../services/fixedCost';
+import { postIncome } from '../services/income';
 import { postCardSpend } from '../services/cardSpend';
-import { postSaving, putSaving } from '../services/saving';
+import { postSaving } from '../services/saving';
 import { handleApiError } from '../utils/errorHandler';
 import { MODAL_STYLES, MODAL_BORDER_STYLES, LABEL_STYLES, TEXT_COLORS } from '../utils/styles';
 import { useForm } from '../hooks/useForm';
-import { useApi } from '../hooks/useApi';
 import { useNumberFormat } from '../hooks/useNumberFormat';
 
 const Label = ({ children, className = "text-sm text-center mb-1" }) => (
@@ -51,7 +48,6 @@ const AddModal = () => {
     projection: false
   });
 
-  const { execute: executeApi } = useApi();
   const { cleanNumberInput } = useNumberFormat();
   
 
@@ -139,9 +135,8 @@ const AddModal = () => {
     closeAddModal();
   };
 
-  const handleSubmit = async (keepOpen = false) => {
+  const handleSubmit = async () => {
     let data = {};
-    let isUpdate = false;
     let sectionName = '';
     
     try {
@@ -149,12 +144,12 @@ const AddModal = () => {
         case 'Egreso':
           data = { name: values.name, price: parseInt(values.price), ccy: values.ccy, date_from: values.desdeValue, date_to: values.hastaValue || null };
           sectionName = 'Egresos';
-          try { await postFixedCost(data); } catch { await putFixedCost(data); isUpdate = true; }
+          await postFixedCost(data);
           break;
         case 'Ingreso':
           data = { name: values.name, price: parseInt(values.price), ccy: values.ccy, date_from: values.desdeValue, date_to: values.hastaValue || null };
           sectionName = 'Ingresos';
-          try { await postIncome(data); } catch { await putIncome(data); isUpdate = true; }
+          await postIncome(data);
           break;
         case 'Tarjeta':
           data = { name: values.name, price: parseInt(values.price), fees: parseInt(values.cuotas), date_from: values.desdeValue };
@@ -176,15 +171,13 @@ const AddModal = () => {
             projection: values.projection
           };
           sectionName = 'Ahorros';
-          try { await postSaving(data); }
-          catch { if (data.type !== 'fijo') { await putSaving(data); isUpdate = true; } else { console.error('Error creando ahorro fijo'); } }
+          await postSaving(data);
           break;
         default:
           throw new Error('Opción no válida');
       }
       
-      const action = isUpdate ? 'actualizado' : 'agregado';
-      setSuccessMessage(`${values.name} fue ${action} en ${sectionName}`);
+      setSuccessMessage(`${values.name} fue agregado en ${sectionName}.`);
       setTimeout(() => setSuccessMessage(''), 3000);
       
       try {
@@ -355,7 +348,7 @@ const AddModal = () => {
                           type='savingVar'
                           onSearchResult={(res) => {
                             try {
-                              if (res && res.price != null) {
+                              if (res && res.price !== null && res.price !== undefined) {
                                 const raw = String(res.price);
                                 const normalized = raw.replace(/\s+/g,'').replace(/,/g,'');
                                 const priceNum = Number(normalized);
@@ -432,7 +425,7 @@ const AddModal = () => {
 
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={{ borderColor: '#1F2937' }}>
             <button onClick={onClose} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
-            <button onClick={() => handleSubmit(false)} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6', opacity: validate()?1:0.6 }}>Agregar</button>
+            <button onClick={() => handleSubmit()} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6', opacity: validate()?1:0.6 }}>Agregar</button>
           </div>
           </div>
           {showCalc && tab === 'Ahorro' && values.plazo === 'fijo' && (

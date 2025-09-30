@@ -3,7 +3,7 @@ import { formatPrice } from '../utils/numbers';
 import { putIncome } from '../services/income';
 import { putFixedCost } from '../services/fixedCost';
 import { putCardSpend } from '../services/cardSpend';
-import { MODAL_STYLES, MODAL_BORDER_STYLES, LABEL_STYLES, INPUT_STYLES, TEXT_COLORS } from '../utils/styles';
+import { MODAL_STYLES, MODAL_BORDER_STYLES, INPUT_STYLES, TEXT_COLORS } from '../utils/styles';
 
 const BalanceDetailModal = ({ isOpen, onClose, record, onUpdate, recordType }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -56,7 +56,6 @@ const BalanceDetailModal = ({ isOpen, onClose, record, onUpdate, recordType }) =
           date_from: record.monthDate,
           price: parseFloat(parseNumber(editedRecord.amount_text))
         };
-        console.log('Enviando a putFixedCost:', { id: record.id, ...updateData });
         await putFixedCost(record.id, updateData);
       } else if (recordType === 'card') {
         const monthdate = record.monthDate || record.monthdate || '';
@@ -65,7 +64,6 @@ const BalanceDetailModal = ({ isOpen, onClose, record, onUpdate, recordType }) =
           monthdate,
           price: parseFloat(parseNumber(editedRecord.amount_text)) || 0
         };
-        console.log('Enviando a putCardSpend:', { id: record.id, ...updateData });
         await putCardSpend(record.id, updateData);
       }
       

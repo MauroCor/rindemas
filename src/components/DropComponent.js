@@ -115,7 +115,7 @@ const DropComponent = ({ plhdr, onChange, type, value, cripto, onSearchResult })
                     </button>
                 )}
             </div>
-            {(searchResult != null || isLoading) ? (
+            {(searchResult !== null || isLoading) ? (
                 <p className={`text-[12px] text-center !mt-1`} style={{ color:'#9CA3AF' }}>{isLoading ? 'Cargando...' : (()=>{
                     const raw = String(searchResult.price ?? '');
                     const normalized = raw.replace(/\s+/g,'').replace(/,/g,'');

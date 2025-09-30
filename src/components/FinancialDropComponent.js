@@ -83,7 +83,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 onClick={() => !readOnly && item.name !== 'Tarjeta' && handleRecordClick(item, isIncome ? 'income' : 'expense')}
                             >
                                 <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
-                                <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy != 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
+                                <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy !== 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
                                 <span className="w-[33%] text-left text-sm">{formatPrice(item.price, 'ARS')}</span>
                                 {!readOnly && item.name !== 'Tarjeta' && onDelete && (
                                     <button
@@ -93,7 +93,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                         &#10005;
                                     </button>
                                 )}
-                                {!readOnly && item.name == 'Tarjeta' && (
+                                {!readOnly && item.name === 'Tarjeta' && (
                                     <button
                                         className="w-[5%] text-gray-600 text-lg cursor-default"
                                     >
