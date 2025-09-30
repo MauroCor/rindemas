@@ -15,6 +15,21 @@ const ChangePasswordModal = ({ isOpen, onClose, onSuccess }) => {
 
   if (!isOpen) return null;
 
+  const resetFields = () => {
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setError('');
+    setShowOld(false);
+    setShowNew(false);
+    setShowConfirm(false);
+  };
+
+  const handleClose = () => {
+    resetFields();
+    onClose();
+  };
+
   const apply = async () => {
     setError('');
     if (!oldPassword || !newPassword) {
@@ -37,7 +52,7 @@ const ChangePasswordModal = ({ isOpen, onClose, onSuccess }) => {
       } else {
         onSuccess('Password updated.');
       }
-      onClose();
+      handleClose();
     } catch (e) {
       const msg = (e && e.message) ? String(e.message) : '';
       if (msg.includes('Status: 400')) {
@@ -53,7 +68,7 @@ const ChangePasswordModal = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-40">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60" onClick={handleClose} />
       <div className="absolute inset-0 flex items-start justify-center pt-4 px-4 overflow-y-auto">
         <div className="w-full max-w-sm rounded-2xl shadow-2xl my-4" style={MODAL_STYLES}>
           <div className="flex items-center justify-center px-6 py-4 border-b" style={MODAL_BORDER_STYLES}>
@@ -126,7 +141,7 @@ const ChangePasswordModal = ({ isOpen, onClose, onSuccess }) => {
             {error && (<div className="text-sm" style={{color:'#FCA5A5'}}>{error}</div>)}
           </div>
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={MODAL_BORDER_STYLES}>
-            <button onClick={onClose} className="px-3 py-2 rounded hover:bg-gray-700" style={{color: TEXT_COLORS.primary}}>Cancelar</button>
+            <button onClick={handleClose} className="px-3 py-2 rounded hover:bg-gray-700" style={{color: TEXT_COLORS.primary}}>Cancelar</button>
             <button onClick={apply} disabled={loading} className="px-3 py-2 rounded text-white" style={{background:'#14B8A6', opacity: loading?0.6:1}}>Aplicar</button>
           </div>
         </div>
