@@ -108,7 +108,10 @@ const Login = () => {
           
           <div className="mt-8 text-center">
             <p className="text-xs" style={{color:'#6B7280'}}>
-              ¿Primera vez? Contacta al administrador para obtener acceso.
+              ¿Primera vez? Contacta al <a
+                href="mailto:maurocorrales4@gmail.com?subject=Rinde%2B%20Solicitud%20Usuario&body=Hola!%20Solicito%20una%20cuenta%20personal%20para%20Rinde%2B.%0A%0AMis%20datos%20son:%0ANombre:%20%0AApellido%20(Opcional):%20%0AEmail%20(Opcional):%0ANombre%20de%20usuario%20deseado%20(Opcional):%0AMe%20gustaria%20recibir%20asesoramiento%20personalizado:%20S%C3%8D%20/%20No.%0A%0AGracias.%20Saludos!"
+                className="text-teal-400 underline hover:text-teal-300"
+              >administrador</a> para obtener acceso.
             </p>
           </div>
         </div>
