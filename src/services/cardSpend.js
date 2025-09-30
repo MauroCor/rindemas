@@ -12,3 +12,7 @@ export const postCardSpend = (data) => {
 export const deleteCardSpend = (id) => {
   return apiRequest(`/api/card-spend/${id}/`, 'DELETE');
 };
+
+export const putCardSpend = (id, data) => {
+  return apiRequest(`/api/card-spend/${id}/`, 'PUT', data);
+};

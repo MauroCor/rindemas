@@ -111,7 +111,7 @@ const AddModal = () => {
     };
   }, [tab, values.plazo]);
 
-  const iconFor = (t) => (t === 'Ingreso' ? '💸' : t === 'Egreso' ? '🧾' : t === 'Tarjeta' ? '💳' : '📈');
+  const iconFor = (t) => (t === 'Ingreso' ? '💰' : t === 'Egreso' ? '🧾' : t === 'Tarjeta' ? '💳' : '📈');
   const titleFor = (t) => (t === 'Tarjeta' ? 'Agregar gasto con tarjeta' : `Agregar ${t}`);
 
   const validate = () => {

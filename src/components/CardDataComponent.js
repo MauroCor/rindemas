@@ -9,7 +9,7 @@ const CardDataComponent = ({ monthData, onDeleteCardSpend}) => {
   return (
     <div className={getCardClassName(currentMonth)} style={getCardStyle()}>
       <h3 className="font-bold text-2xl mb-4">{monthName}</h3>
-      <FinancialDropComponent title="Total" data={monthData} isIncome={false} initialOpen onDelete={(id) => onDeleteCardSpend(id)} />
+      <FinancialDropComponent title="Total" data={monthData} isIncome={false} initialOpen onDelete={(id) => onDeleteCardSpend(id)} monthDate={monthData.date} />
     </div>
   );
 };

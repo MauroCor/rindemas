@@ -15,10 +15,10 @@ const FixedDataComponent = ({ monthData, onDeleteFijos, onDeleteCardSpend, cardM
       <div>
         <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(income.total - fixedCost.total, 'ARS')}</label>
       </div>
-      <FinancialDropComponent title="Ingresos" data={income} isIncome={true} onDelete={(data) => onDeleteFijos(data, date, 'income')}/>
-      <FinancialDropComponent title="Egresos" data={{...fixedCost, items: fixedCost.items.filter(i => i.name !== 'Tarjeta'), total: fixedCost.items.filter(i => i.name !== 'Tarjeta').reduce((s,i)=> s + i.price, 0)}} isIncome={false} onDelete={(data) => onDeleteFijos(data, date, 'fixedCost')} />
+      <FinancialDropComponent title="Ingresos" data={income} isIncome={true} onDelete={(data) => onDeleteFijos(data, date, 'income')} monthDate={date}/>
+      <FinancialDropComponent title="Egresos" data={{...fixedCost, items: fixedCost.items.filter(i => i.name !== 'Tarjeta'), total: fixedCost.items.filter(i => i.name !== 'Tarjeta').reduce((s,i)=> s + i.price, 0)}} isIncome={false} onDelete={(data) => onDeleteFijos(data, date, 'fixedCost')} monthDate={date} />
       {cardMonth && (
-        <FinancialDropComponent title="Tarjeta" data={cardMonth} isIncome={false} initialOpen={false} onDelete={onDeleteCardSpend} />
+        <FinancialDropComponent title="Tarjeta" data={cardMonth} isIncome={false} initialOpen={false} onDelete={onDeleteCardSpend} monthDate={date} />
       )}
     </div>
   );

@@ -1,16 +1,28 @@
 import React, { useState } from 'react';
 import { formatPrice } from '../utils/numbers';
 import RecordDetailModal from './RecordDetailModal';
+import BalanceDetailModal from './BalanceDetailModal';
 
 const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false, readOnly = false, notes = [], monthDate }) => {
     const [showDetails, setShowDetails] = useState(initialOpen);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showBalanceModal, setShowBalanceModal] = useState(false);
+    const [recordType, setRecordType] = useState('');
     const toggleDropdown = () => setShowDetails(!showDetails);
     
-    const handleRecordClick = (record) => {
-        setSelectedRecord({...record, monthDate});
-        setShowModal(true);
+    const handleRecordClick = (record, type) => {
+        if (type === 'saving') {
+            setSelectedRecord({ ...record, monthDate });
+            setShowModal(true);
+        } else {
+            const cardFields = type === 'card' 
+                ? { price: record.price, pricePerInstallment: record.pricePerInstallment }
+                : {};
+            setSelectedRecord({ ...record, ...cardFields, monthDate });
+            setRecordType(type);
+            setShowBalanceModal(true);
+        }
     };
 
     const handleModalClose = () => {
@@ -18,9 +30,20 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
         setSelectedRecord(null);
     };
 
+    const handleBalanceModalClose = () => {
+        setShowBalanceModal(false);
+        setSelectedRecord(null);
+        setRecordType('');
+    };
+
     const handleRecordUpdate = (updatedRecord) => {
         // Forzar refresh respetando el modo de proyección actual
         window.dispatchEvent(new CustomEvent('app:data-updated', { detail: { sectionName: 'Ahorros' } }));
+    };
+
+    const handleBalanceRecordUpdate = (updatedRecord) => {
+        // Forzar refresh para balance
+        window.dispatchEvent(new CustomEvent('app:data-updated', { detail: { sectionName: 'Balance' } }));
     };
 
     const handleRecordConfirm = (confirmedRecord) => {
@@ -53,13 +76,18 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                 {showDetails && (
                     <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
                         {contentType === 'fixed' && Array.isArray(data?.items) && data.items.map((item, index) => (
-                            <div key={index} className="flex justify-between items-center border-b" style={{borderColor:'#374151', color:'#E5E7EB'}}>
+                            <div 
+                                key={index} 
+                                className="flex justify-between items-center border-b cursor-pointer hover:bg-gray-700" 
+                                style={{borderColor:'#374151', color:'#E5E7EB'}}
+                                onClick={() => !readOnly && item.name !== 'Tarjeta' && handleRecordClick(item, isIncome ? 'income' : 'expense')}
+                            >
                                 <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
                                 <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy != 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
                                 <span className="w-[33%] text-left text-sm">{formatPrice(item.price, 'ARS')}</span>
                                 {!readOnly && item.name !== 'Tarjeta' && onDelete && (
                                     <button
-                                        onClick={() => onDelete(item)}
+                                        onClick={(e) => { e.stopPropagation(); onDelete(item); }}
                                         className="w-[5%] text-red-400 text-sm hover:text-red-500"
                                     >
                                         &#10005;
@@ -75,13 +103,18 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             </div>
                         ))}
                         {contentType === 'card' && Array.isArray(data?.cardSpend) && data.cardSpend.map((item, index) => (
-                            <div key={index} className="flex -ml-1 justify-between items-center border-b" style={{borderColor:'#374151', color:'#E5E7EB'}}>
+                            <div 
+                                key={index} 
+                                className="flex -ml-1 justify-between items-center border-b cursor-pointer hover:bg-gray-700" 
+                                style={{borderColor:'#374151', color:'#E5E7EB'}}
+                                onClick={() => !readOnly && handleRecordClick(item, 'card')}
+                            >
                                 <span className="w-[44%] text-center text-sm whitespace-normal">{item.name}</span>
-                                <span className="w-[30%] text-center text-sm">{formatPrice(item.price, 'ARS')}</span>
+                                <span className="w-[30%] text-center text-sm">{formatPrice(item.pricePerInstallment ?? item.price, 'ARS')}</span>
                                 <span className="w-[13%] text-right text-xs" style={{color:'#9CA3AF'}}>{item.installment}</span>
                                 {!readOnly && (
                                 <button
-                                    onClick={() => onDelete(item)}
+                                    onClick={(e) => { e.stopPropagation(); onDelete(item); }}
                                     className="text-red-400 text-sm ml-2 hover:text-red-500"
                                 >
                                     &#10005;
@@ -106,7 +139,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 key={index} 
                                 className={`flex justify-between items-center border-b cursor-pointer hover:bg-gray-700 ${hasReinvestmentNote ? 'opacity-50 relative' : ''} ${isProjection ? 'bg-gradient-to-r from-purple-900/20 to-indigo-900/20 border-purple-400' : ''}`} 
                                 style={{borderColor:'#374151', color:'#E5E7EB'}}
-                                onClick={() => !readOnly && handleRecordClick(item)}
+                                onClick={() => !readOnly && handleRecordClick(item, 'saving')}
                             >
                                 {hasReinvestmentNote && (
                                     <div className="absolute top-1/2 left-0 h-px bg-gray-400 z-10" style={{width: 'calc(100% - 10%)'}}></div>
@@ -158,6 +191,14 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                 record={selectedRecord}
                 onUpdate={handleRecordUpdate}
                 onConfirm={handleRecordConfirm}
+            />
+            
+            <BalanceDetailModal
+                isOpen={showBalanceModal}
+                onClose={handleBalanceModalClose}
+                record={selectedRecord}
+                onUpdate={handleBalanceRecordUpdate}
+                recordType={recordType}
             />
         </>
     );

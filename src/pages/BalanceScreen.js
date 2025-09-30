@@ -83,6 +83,33 @@ const BalanceScreen = () => {
     if (exchangeRate !== '') fetchData();
   }, [exchangeRate, itemsPerPages]);
 
+  // Escuchar eventos de actualización de datos
+  useEffect(() => {
+    const handleDataUpdate = () => {
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          const [incomes, fixedCosts, savings] = await Promise.all([
+            getIncomes(`?exchg_rate=${exchangeRate}`),
+            getFixedCosts(`?exchg_rate=${exchangeRate}`),
+            getSavings(`?exchg_rate=${exchangeRate}`),
+          ]);
+          const merged = mergeSummary(incomes, fixedCosts, savings, exchangeRate);
+          setDataMonths(merged);
+          focusCurrentMonth(merged, setStartIndex, itemsPerPages);
+        } catch (e) {
+          console.error('Error loading summary:', e);
+        } finally {
+          setLoading(false);
+        }
+      };
+      if (exchangeRate !== '') fetchData();
+    };
+
+    window.addEventListener('app:data-updated', handleDataUpdate);
+    return () => window.removeEventListener('app:data-updated', handleDataUpdate);
+  }, [exchangeRate, itemsPerPages]);
+
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPages(newItemsPerPage);
     focusCurrentMonth(dataMonths, setStartIndex, newItemsPerPage);
@@ -108,8 +135,8 @@ const BalanceScreen = () => {
                 <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice((monthData.balance?.total || 0) + (monthData.liquidez?.total || 0), 'ARS')}</label>
               </div>
             </div>
-            <FinancialDropComponent title="Saldo" data={monthData.balance} isIncome={true} initialOpen={false} readOnly />
-            <FinancialDropComponent title="Liquidez" data={monthData.liquidez} isIncome={true} initialOpen={false} readOnly />
+            <FinancialDropComponent title="Saldo" data={monthData.balance} isIncome={true} initialOpen={false} readOnly monthDate={monthData.date} />
+            <FinancialDropComponent title="Liquidez" data={monthData.liquidez} isIncome={true} initialOpen={false} readOnly monthDate={monthData.date} />
           </div>
         )}
       >
