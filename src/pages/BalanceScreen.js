@@ -46,10 +46,11 @@ const BalanceScreen = () => {
         { name: 'Egresos', ccy: 'ARS', amount: null, price: fix.total },
       ];
 
-      // Calcular liquidez considerando las anotaciones, igual que en SavingDataComponent
+      // Usar campos calculados del backend
       const liquidItems = (sav.saving || []).filter((s) => s.liquid);
+      const liquidTotal = sav.available_total || 0;
       
-      // Obtener las anotaciones para este mes
+      // Obtener las anotaciones para este mes (solo para mostrar en el modal)
       let notes = [];
       try {
         notes = await getNotes(month);
@@ -57,24 +58,6 @@ const BalanceScreen = () => {
         console.error('Error loading notes for month', month, error);
         notes = [];
       }
-      
-      const totalNotesAmount = notes.reduce((sum, note) => {
-        const amount = Number(note.amount) || 0;
-        return sum + amount;
-      }, 0);
-
-      // Calcular el dinero líquido del mes (que vence en este mes)
-      const monthLiquid = (sav.saving || [])
-        .filter((saving) => saving.date_to === month)
-        .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * (exRate || 0)), 0);
-
-      // Calcular el dinero disponible (líquido disponible + no invertido restante)
-      const notInvestedRemaining = Math.max(0, (Number(monthLiquid) || 0) - totalNotesAmount);
-      const availableLiquidInfo = (sav.saving || [])
-        .filter((saving) => saving.liquid && saving.type !== 'fijo' && saving.date_to !== month)
-        .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * (exRate || 0)), 0);
-      
-      const liquidTotal = availableLiquidInfo + notInvestedRemaining;
 
       return {
         date: month,

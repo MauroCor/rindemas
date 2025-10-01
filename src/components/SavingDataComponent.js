@@ -11,18 +11,9 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
   const monthName = getMonthName(monthData.date);
   const currentMonth = isCurrentYearMonth(monthData.date);
 
-  const monthLiquid = monthData.saving
-    .filter((saving) => {
-      if (saving.date_to === monthData.date) return true;
-      if (saving.type === 'plan') return true;
-      return false;
-    })
-    .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
-
-
-  const availableLiquidInfo = monthData.saving
-    .filter((saving) => saving.liquid && saving.type !== 'fijo' && saving.date_to !== monthData.date)
-    .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
+  // Usar campos calculados del backend
+  const monthLiquid = monthData.month_liquid || 0;
+  const availableLiquidInfo = monthData.available_liquid_info || 0;
 
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [newNoteAmount, setNewNoteAmount] = useState('');
@@ -49,14 +40,10 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
     loadNotes();
   }, [monthData.date]);
 
-  const totalNotesAmount = notes.reduce((sum, note) => {
-    const amount = Number(note.amount) || 0;
-    return sum + amount;
-  }, 0);
-
-
-  const notInvestedRemaining = Math.max(0, (Number(monthLiquid) || 0) - totalNotesAmount);
-  const availableTotal = availableLiquidInfo + notInvestedRemaining;
+  // Usar campos calculados del backend
+  const totalNotesAmount = monthData.total_notes_amount || 0;
+  const notInvestedRemaining = monthData.not_invested_remaining || 0;
+  const availableTotal = monthData.available_total || 0;
 
   const addNote = async () => {
     if (!newNoteText.trim()) return;
@@ -73,6 +60,9 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
       const newNote = await postNote(noteData);
       setNotes(prev => [...prev, newNote]);
       
+      // Disparar evento para recargar datos del backend
+      window.dispatchEvent(new CustomEvent('app:data-updated'));
+      
       // Limpiar formulario
       setNewNoteAmount('');
       setNewNoteText('');
@@ -86,6 +76,9 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
     try {
       await deleteNote(id);
       setNotes(prev => prev.filter(n => n.id !== id));
+      
+      // Disparar evento para recargar datos del backend
+      window.dispatchEvent(new CustomEvent('app:data-updated'));
     } catch (error) {
       handleApiError(error, 'deleteNote');
     }
