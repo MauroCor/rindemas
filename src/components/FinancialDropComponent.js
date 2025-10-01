@@ -144,16 +144,16 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 {hasReinvestmentNote && (
                                     <div className="absolute top-1/2 left-0 h-px bg-gray-400 z-10" style={{width: 'calc(100% - 10%)'}}></div>
                                 )}
-                                <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-300' : ''}`}>
-                                    {item.type === 'fijo' ? 'RF' : item.type === 'flex' ? 'RP' : 'RV'}
+                                <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : item.type === 'plan' ? 'text-green-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-300' : ''}`}>
+                                    {item.type === 'fijo' ? 'RF' : item.type === 'flex' ? 'RP' : item.type === 'plan' ? 'PA' : 'RV'}
                                 </span>
                                 <span className={`w-[100%] text-center text-sm whitespace-normal ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`}>
-                                    {item.name}
+                                    <span className={hasReinvestmentNote ? 'line-through' : ''}>{item.name}</span>
                                     {item.type === 'var' && <sup className="text-[10px] ml-1">{parseFloat(item.qty)}</sup>}
                                 </span>
                                 <span className={`w-[50%] text-center text-sm ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`} style={{color: item.liquid && !isProjection ? '#14B8A6' : undefined}}>
                                     {formatPrice(
-                                        item.type === 'var' || item.liquid ? item.obtained : 
+                                        item.type === 'var' || item.type === 'plan' || item.liquid ? item.obtained : 
                                         item.type === 'flex' ? item.obtained : 
                                         item.invested, 
                                         item.type === 'var' ? 'USD' : item.ccy
@@ -168,9 +168,13 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                     > &#10005;
                                     </button>
                                 )}
-                                {!readOnly && (item.type === 'flex' || item.type === 'var') && onPatch && (
+                                {!readOnly && (item.type === 'flex' || item.type === 'var' || item.type === 'plan') && onPatch && (
                                     <button
-                                        onClick={(e) => { e.stopPropagation(); onPatch(item.id, item); }}
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            console.log('🛑 Stop button clicked - Item:', item);
+                                            onPatch(item.id, item); 
+                                        }}
                                         onMouseDown={(e) => e.stopPropagation()}
                                         className="w-[30%] text-right text-sm h-5 flex items-center justify-end"
                                     > <span className='text-[8px] leading-none'>&#9209;</span>

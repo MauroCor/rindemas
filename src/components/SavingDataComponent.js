@@ -12,8 +12,13 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
   const currentMonth = isCurrentYearMonth(monthData.date);
 
   const monthLiquid = monthData.saving
-    .filter((saving) => saving.date_to === monthData.date)
+    .filter((saving) => {
+      if (saving.date_to === monthData.date) return true;
+      if (saving.type === 'plan') return true;
+      return false;
+    })
     .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * exRate), 0);
+
 
   const availableLiquidInfo = monthData.saving
     .filter((saving) => saving.liquid && saving.type !== 'fijo' && saving.date_to !== monthData.date)
@@ -92,7 +97,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
       <div className="mb-3">
         <label>Total</label>
         <div>
-          <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(monthData.total, 'ARS')}</label>
+          <label className='text-2xl font-bold' style={{color: TEXT_COLORS.accent}}>{formatPrice(monthData.total - totalNotesAmount, 'ARS')}</label>
         </div>
       </div>
       <FinancialDropComponent title="Disponible" data={{...monthData, total: availableTotal}} isIncome={true} initialOpen={true} onDelete={(id) => onDeleteSaving(id)} onPatch={(id, data) => onPatchSaving(id, data, monthData.date)} notes={notes} monthDate={monthData.date} />

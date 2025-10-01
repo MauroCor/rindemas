@@ -34,7 +34,7 @@ const SavingScreen = () => {
                             ...month,
                             saving: month.saving.map(item => ({
                                 ...item,
-                                liquid: item.type === 'flex' ? true : item.liquid
+                                liquid: item.type === 'flex' || item.type === 'plan' ? true : item.liquid
                             }))
                         }));
                         setDataMonths(processedSavings);
@@ -121,24 +121,38 @@ const SavingScreen = () => {
     };
 
     const handlePatchSaving = async (id, data, date) => {
+        console.log('🔧 PATCH Saving - Input:', { id, data, date });
+        
         const body = { ...data, date_to: adjustMonths(date, -1) };
+        console.log('🔧 PATCH Saving - Body:', body);
+        
         setConfirm({
             open: true,
-            message: `¿Finalizar '${data.name}' a partir de ${date}?`,
+            message: `¿${data.type === 'plan' ? 'Detener' : 'Finalizar'} '${data.name}' a partir de ${date}?`,
             onConfirm: async () => {
                 try {
-                    await patchSaving(id, body);
+                    console.log('🔧 PATCH Saving - Ejecutando PATCH...');
+                    const result = await patchSaving(id, body);
+                    console.log('🔧 PATCH Saving - Resultado:', result);
+                    
+                    console.log('🔧 PATCH Saving - Obteniendo datos actualizados...');
                     const updatedData = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
+                    console.log('🔧 PATCH Saving - Datos actualizados:', updatedData);
+                    
                     const processedData = updatedData.map(month => ({
                         ...month,
                         saving: month.saving.map(item => ({
                             ...item,
-                            liquid: item.type === 'flex' ? true : item.liquid
+                            liquid: item.type === 'flex' || item.type === 'plan' ? true : item.liquid
                         }))
                     }));
+                    console.log('🔧 PATCH Saving - Datos procesados:', processedData);
+                    
                     setDataMonths(processedData);
                     setConfirm({ open: false, message: '', onConfirm: null });
+                    console.log('🔧 PATCH Saving - Completado exitosamente');
                 } catch (error) {
+                    console.error('🔧 PATCH Saving - Error:', error);
                     logFetchError('patching saving', error);
                     setConfirm({ open: false, message: '', onConfirm: null });
                 }

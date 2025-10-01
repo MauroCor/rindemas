@@ -20,12 +20,29 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
   useEffect(() => {
     if (record && !isEditing) {
       const baseManual = record.manual_obtained ?? record.obtained;
+      
+      const manualObtainedText = record.type === 'plan' ? 
+        (record.manual_obtained !== null && record.manual_obtained !== undefined && record.manual_obtained !== '' ? 
+          formatNumber(record.manual_obtained) : 
+          formatNumber(record.obtained || 0)) : 
+        (baseManual !== null && baseManual !== undefined && baseManual !== '' ? 
+          formatNumber(baseManual) : '');
+      
+      console.log('🔧 Modal Plan - Inicialización:', {
+        record_type: record.type,
+        record_manual_obtained: record.manual_obtained,
+        record_obtained: record.obtained,
+        manualObtainedText,
+        baseManual
+      });
+      
       setEditedRecord({ 
         ...record,
         final_amount: record.final_amount || 0,
         obtained: record.obtained || 0,
         manual_obtained: record.manual_obtained,
-        manual_obtained_text: (baseManual !== null && baseManual !== undefined && baseManual !== '') ? formatNumber(baseManual) : '',
+        obtained_text: record.type === 'plan' ? formatNumber(record.obtained || 0) : '',
+        manual_obtained_text: manualObtainedText,
         qty_text: record.qty === 0 || record.qty ? String(record.qty) : ''
       });
     }
@@ -80,8 +97,37 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
           manual_obtained: parseFloat(manualOrObtained) || 0,
           qty: editedRecord.qty === '' ? 0 : (parseFloat(editedRecord.qty) || 0)
         };
+      } else if (record.type === 'plan') {
+        const manualFromText = editedRecord.manual_obtained_text ? parseFloat(parseNumber(editedRecord.manual_obtained_text)) : null;
+        const manualCandidate = editedRecord.manual_obtained !== null && editedRecord.manual_obtained !== undefined ? editedRecord.manual_obtained : manualFromText;
+        const manualOrObtained = (manualCandidate === null || manualCandidate === undefined || Number.isNaN(parseFloat(manualCandidate))) ? editedRecord.obtained : manualCandidate;
+        
+        console.log('📝 PUT Plan - Valores calculados:', {
+          manualFromText,
+          manualCandidate,
+          manualOrObtained,
+          editedRecord_manual_obtained: editedRecord.manual_obtained,
+          editedRecord_obtained: editedRecord.obtained,
+          editedRecord_name: editedRecord.name,
+          record_name: record.name
+        });
+        
+        updateData = {
+          id: record.id,
+          type: 'plan',
+          month_date: record.monthDate,
+          manual_obtained: parseFloat(manualOrObtained) || 0
+        };
+        if (editedRecord.name !== record.name) {
+          updateData.name = editedRecord.name;
+        }
+        
+        console.log('📝 PUT Plan - Data final:', updateData);
       }
+      
+      console.log('📝 PUT Saving - Ejecutando PUT con data:', updateData);
       await putSaving(updateData);
+      console.log('📝 PUT Saving - PUT completado exitosamente');
       onUpdate(updateData);
       setIsEditing(false);
       onClose();
@@ -118,7 +164,8 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
       final_amount: record.final_amount || 0,
       obtained: record.obtained || 0,
       manual_obtained: record.manual_obtained,
-      manual_obtained_text: (baseManual !== null && baseManual !== undefined && baseManual !== '') ? formatNumber(baseManual) : '',
+      obtained_text: record.type === 'plan' ? formatNumber(record.obtained || 0) : '',
+      manual_obtained_text: record.type === 'plan' ? (record.manual_obtained !== null && record.manual_obtained !== undefined && record.manual_obtained !== '' ? formatNumber(record.manual_obtained) : formatNumber(record.obtained || 0)) : (baseManual !== null && baseManual !== undefined && baseManual !== '' ? formatNumber(baseManual) : ''),
       qty_text: record.qty === 0 || record.qty ? String(record.qty) : ''
     });
     setIsEditing(false);
@@ -145,13 +192,13 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
                     <p className="text-sm">
                       <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Tipo:</span> 
                       <span className="ml-1" style={{color: TEXT_COLORS.primary}}>
-                        {record.type === 'fijo' ? 'Renta Fija' : record.type === 'flex' ? 'Renta Pasiva' : 'Renta Variable'}
+                        {record.type === 'fijo' ? 'Renta Fija' : record.type === 'flex' ? 'Renta Pasiva' : record.type === 'plan' ? 'Plan de Ahorro' : 'Renta Variable'}
                       </span>
                     </p>
                   </div>
 
                 <div className="py-1">
-                  {isEditing && (record.type === 'fijo' || record.type === 'flex') ? (
+                  {isEditing && (record.type === 'fijo' || record.type === 'flex' || record.type === 'plan') ? (
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium" style={{color: TEXT_COLORS.secondary}}>Nombre:</span>
                       <input
@@ -191,14 +238,62 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
                   </p>
                 </div>
 
-                <div className="py-1">
-                  <p className="text-sm">
-                    <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Monto Inicial:</span> 
-                    <span className="ml-1" style={{color: TEXT_COLORS.primary}}>
-                      {formatPrice(record.invested, record.ccy)}
-                    </span>
-                  </p>
-                </div>
+                {record.type !== 'plan' && (
+                  <div className="py-1">
+                    <p className="text-sm">
+                      <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Monto Inicial:</span> 
+                      <span className="ml-1" style={{color: TEXT_COLORS.primary}}>
+                        {formatPrice(record.invested, record.ccy)}
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                {record.type === 'plan' && (
+                  <div className="py-1">
+                    {isEditing ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium" style={{color: TEXT_COLORS.secondary}}>Monto:</span>
+                        <input
+                          type="text"
+                          value={editedRecord.manual_obtained_text ?? ''}
+                          onChange={(e) => {
+                            const cleanValue = parseNumber(e.target.value).slice(0, 12);
+                            const formatted = formatNumber(cleanValue);
+                            setEditedRecord({
+                              ...editedRecord,
+                              manual_obtained_text: formatted
+                            });
+                          }}
+                          onBlur={(e) => {
+                            const cleanValue = parseNumber(e.target.value);
+                            const num = cleanValue === '' ? null : parseFloat(cleanValue);
+                            setEditedRecord({
+                              ...editedRecord,
+                              manual_obtained: Number.isFinite(num) ? num : null,
+                              manual_obtained_text: cleanValue === '' ? '' : formatNumber(cleanValue)
+                            });
+                          }}
+                          className="px-2 rounded border text-sm w-24" style={INPUT_STYLES}
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-sm">
+                        <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Monto:</span> 
+                        <span className="ml-1" style={{
+                          color: (record.type === 'plan' && record.projection) ? '#7C3AED' : TEXT_COLORS.primary
+                        }}>
+                          {formatPrice(record.manual_obtained || record.obtained, record.ccy)}
+                        </span>
+                        {(record.type === 'plan' && record.projection) && (
+                          <span className="ml-1 text-xs" style={{color: '#7C3AED'}}>
+                            (proyección)
+                          </span>
+                        )}
+                      </p>
+                    )}
+                  </div>
+                )}
                 
 
                 {(record.type === 'flex' || record.type === 'var') && (

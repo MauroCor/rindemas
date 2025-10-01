@@ -124,6 +124,9 @@ const AddModal = () => {
     if (values.plazo === 'flex') {
       return has(values.name) && has(values.invested) && has(values.tna) && has(values.desdeValue) && (values.hastaValue === '' || values.hastaValue >= values.desdeValue);
     }
+    if (values.plazo === 'plan') {
+      return has(values.name) && has(values.obtained) && has(values.desdeValue) && (values.hastaValue === '' || values.hastaValue >= values.desdeValue);
+    }
     return has(values.name) && has(values.invested) && has(values.qty) && has(values.desdeValue);
   };
 
@@ -160,14 +163,14 @@ const AddModal = () => {
           data = {
             name: values.name,
             type: values.plazo,
-            invested: parseInt(values.invested),
+            invested: values.plazo === 'plan' ? 0 : parseInt(values.invested),
             ccy: values.plazo === 'var' ? 'USD' : values.ccy,
             obtained: parseInt(values.obtained),
             date_from: values.desdeValue,
             date_to: values.hastaValue === '' ? null : values.hastaValue,
-            tna: parseFloat(values.tna),
+            tna: values.plazo === 'plan' ? 0 : parseFloat(values.tna),
             qty: values.plazo === 'var' ? (values.qty === '' ? '' : Number(values.qty)) : values.qty,
-            crypto: values.cripto,
+            crypto: values.plazo === 'plan' ? false : values.cripto,
             projection: values.projection
           };
           sectionName = 'Ahorros';
@@ -274,7 +277,7 @@ const AddModal = () => {
                       name="Nombre" 
                       value={values.name} 
                       onChange={(e) => setValue('name', e.target.value)} 
-                      placeholder={values.plazo === 'fijo' ? "Ej: Lecap" : values.plazo === 'flex' ? "Ej: Staking" : "Ej: Nombre"} 
+                      placeholder={values.plazo === 'fijo' ? "Ej: Lecap" : values.plazo === 'flex' ? "Ej: Staking" : values.plazo === 'plan' ? "Ej: Plan Casa" : "Ej: Nombre"} 
                     />
                   )}
                 </div>
@@ -409,6 +412,24 @@ const AddModal = () => {
                       <div className="flex flex-col">
                         <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
                         <MonthDropComponent type='Desde' value={values.desdeValue} onChange={(value) => setValue('desdeValue', value)} />
+                      </div>
+                    </div>
+                  </>
+                )}
+                {values.plazo === 'plan' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="flex flex-col">
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Monto mensual</label>
+                        <InputPriceComponent value={values.obtained} onChange={(e) => setValue('obtained', e.target.value)} currency={values.ccy} onCurrencyChange={(e) => setValue('ccy', e.target.value)} compactCurrency={true} />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Desde</label>
+                        <MonthDropComponent type='Desde' value={values.desdeValue} onChange={(value) => setValue('desdeValue', value)} />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
+                        <MonthDropComponent type='Hasta' value={values.hastaValue} onChange={(value) => setValue('hastaValue', value)} />
                       </div>
                     </div>
                   </>

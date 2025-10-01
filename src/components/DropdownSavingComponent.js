@@ -11,6 +11,7 @@ const DropdownSavingComponent = ({ value, onChange }) => {
         <option value="fijo">Renta fija</option>
         <option value="flex">Renta pasiva</option>
         <option value="var">Renta variable</option>
+        <option value="plan">Plan de Ahorro</option>
       </select>
     </div>
   );

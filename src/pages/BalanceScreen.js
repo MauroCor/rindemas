@@ -7,6 +7,7 @@ import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
 import { getIncomes } from '../services/income';
 import { getFixedCosts } from '../services/fixedCost';
 import { getSavings } from '../services/saving';
+import { getNotes } from '../services/notes';
 import { parse, compareAsc } from 'date-fns';
 import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import { useExchangeRate } from '../context/ExchangeRateContext';
@@ -28,14 +29,14 @@ const BalanceScreen = () => {
 
   const isCurrentYearMonth = (ym) => new Date().toISOString().slice(0, 7) === ym;
 
-  const mergeSummary = (incomes, fixedCosts, savings, exRate) => {
+  const mergeSummary = async (incomes, fixedCosts, savings, exRate) => {
     const byIncome = new Map(incomes.map(m => [m.date, m]));
     const byFixed = new Map(fixedCosts.map(m => [m.date, m]));
     const bySave = new Map(savings.map(m => [m.date, m]));
 
     const allMonths = Array.from(new Set([...byIncome.keys(), ...byFixed.keys(), ...bySave.keys()]));
 
-    const merged = allMonths.map((month) => {
+    const merged = await Promise.all(allMonths.map(async (month) => {
       const inc = byIncome.get(month) || { total: 0 };
       const fix = byFixed.get(month) || { total: 0 };
       const sav = bySave.get(month) || { total: 0, saving: [] };
@@ -45,18 +46,42 @@ const BalanceScreen = () => {
         { name: 'Egresos', ccy: 'ARS', amount: null, price: fix.total },
       ];
 
+      // Calcular liquidez considerando las anotaciones, igual que en SavingDataComponent
       const liquidItems = (sav.saving || []).filter((s) => s.liquid);
-      const liquidTotal = liquidItems.reduce((acc, s) => {
-        const val = s.obtained || 0;
-        return acc + (s.ccy === 'ARS' ? val : val * (exRate || 0));
+      
+      // Obtener las anotaciones para este mes
+      let notes = [];
+      try {
+        notes = await getNotes(month);
+      } catch (error) {
+        console.error('Error loading notes for month', month, error);
+        notes = [];
+      }
+      
+      const totalNotesAmount = notes.reduce((sum, note) => {
+        const amount = Number(note.amount) || 0;
+        return sum + amount;
       }, 0);
+
+      // Calcular el dinero líquido del mes (que vence en este mes)
+      const monthLiquid = (sav.saving || [])
+        .filter((saving) => saving.date_to === month)
+        .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * (exRate || 0)), 0);
+
+      // Calcular el dinero disponible (líquido disponible + no invertido restante)
+      const notInvestedRemaining = Math.max(0, (Number(monthLiquid) || 0) - totalNotesAmount);
+      const availableLiquidInfo = (sav.saving || [])
+        .filter((saving) => saving.liquid && saving.type !== 'fijo' && saving.date_to !== month)
+        .reduce((total, saving) => total + (saving.ccy === 'ARS' ? saving.obtained : saving.obtained * (exRate || 0)), 0);
+      
+      const liquidTotal = availableLiquidInfo + notInvestedRemaining;
 
       return {
         date: month,
         balance: { items: balanceItems, total: inc.total - fix.total },
-        liquidez: { saving: liquidItems, total: liquidTotal },
+        liquidez: { saving: liquidItems, total: liquidTotal, notes: notes },
       };
-    });
+    }));
 
     merged.sort((a, b) => compareAsc(parse(a.date, 'yyyy-MM', new Date()), parse(b.date, 'yyyy-MM', new Date())));
     return merged;
@@ -71,7 +96,7 @@ const BalanceScreen = () => {
           getFixedCosts(`?exchg_rate=${exchangeRate}`),
           getSavings(`?exchg_rate=${exchangeRate}`),
         ]);
-        const merged = mergeSummary(incomes, fixedCosts, savings, exchangeRate);
+        const merged = await mergeSummary(incomes, fixedCosts, savings, exchangeRate);
         setDataMonths(merged);
         focusCurrentMonth(merged, setStartIndex, itemsPerPages);
       } catch (e) {
@@ -94,7 +119,7 @@ const BalanceScreen = () => {
             getFixedCosts(`?exchg_rate=${exchangeRate}`),
             getSavings(`?exchg_rate=${exchangeRate}`),
           ]);
-          const merged = mergeSummary(incomes, fixedCosts, savings, exchangeRate);
+          const merged = await mergeSummary(incomes, fixedCosts, savings, exchangeRate);
           setDataMonths(merged);
           focusCurrentMonth(merged, setStartIndex, itemsPerPages);
         } catch (e) {
@@ -136,7 +161,7 @@ const BalanceScreen = () => {
               </div>
             </div>
             <FinancialDropComponent title="Saldo" data={monthData.balance} isIncome={true} initialOpen={false} readOnly monthDate={monthData.date} />
-            <FinancialDropComponent title="Liquidez" data={monthData.liquidez} isIncome={true} initialOpen={false} readOnly monthDate={monthData.date} />
+            <FinancialDropComponent title="Liquidez" data={monthData.liquidez} isIncome={true} initialOpen={false} readOnly monthDate={monthData.date} notes={monthData.liquidez?.notes || []} />
           </div>
         )}
       >
