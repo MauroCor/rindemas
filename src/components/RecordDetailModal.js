@@ -28,14 +28,6 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
         (baseManual !== null && baseManual !== undefined && baseManual !== '' ? 
           formatNumber(baseManual) : '');
       
-      console.log('🔧 Modal Plan - Inicialización:', {
-        record_type: record.type,
-        record_manual_obtained: record.manual_obtained,
-        record_obtained: record.obtained,
-        manualObtainedText,
-        baseManual
-      });
-      
       setEditedRecord({ 
         ...record,
         final_amount: record.final_amount || 0,
@@ -102,16 +94,6 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
         const manualCandidate = editedRecord.manual_obtained !== null && editedRecord.manual_obtained !== undefined ? editedRecord.manual_obtained : manualFromText;
         const manualOrObtained = (manualCandidate === null || manualCandidate === undefined || Number.isNaN(parseFloat(manualCandidate))) ? editedRecord.obtained : manualCandidate;
         
-        console.log('📝 PUT Plan - Valores calculados:', {
-          manualFromText,
-          manualCandidate,
-          manualOrObtained,
-          editedRecord_manual_obtained: editedRecord.manual_obtained,
-          editedRecord_obtained: editedRecord.obtained,
-          editedRecord_name: editedRecord.name,
-          record_name: record.name
-        });
-        
         updateData = {
           id: record.id,
           type: 'plan',
@@ -121,13 +103,9 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
         if (editedRecord.name !== record.name) {
           updateData.name = editedRecord.name;
         }
-        
-        console.log('📝 PUT Plan - Data final:', updateData);
       }
       
-      console.log('📝 PUT Saving - Ejecutando PUT con data:', updateData);
       await putSaving(updateData);
-      console.log('📝 PUT Saving - PUT completado exitosamente');
       onUpdate(updateData);
       setIsEditing(false);
       onClose();

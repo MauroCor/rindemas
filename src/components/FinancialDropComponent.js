@@ -149,7 +149,6 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 </span>
                                 <span className={`w-[100%] text-center text-sm whitespace-normal ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`}>
                                     <span className={hasReinvestmentNote ? 'line-through' : ''}>{item.name}</span>
-                                    {item.type === 'var' && <sup className="text-[10px] ml-1">{parseFloat(item.qty)}</sup>}
                                 </span>
                                 <span className={`w-[50%] text-center text-sm ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`} style={{color: item.liquid && !isProjection ? '#14B8A6' : undefined}}>
                                     {formatPrice(
@@ -172,7 +171,6 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                     <button
                                         onClick={(e) => { 
                                             e.stopPropagation(); 
-                                            console.log('🛑 Stop button clicked - Item:', item);
                                             onPatch(item.id, item); 
                                         }}
                                         onMouseDown={(e) => e.stopPropagation()}

@@ -13,7 +13,6 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
 
   // Usar campos calculados del backend
   const monthLiquid = monthData.month_liquid || 0;
-  const availableLiquidInfo = monthData.available_liquid_info || 0;
 
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [newNoteAmount, setNewNoteAmount] = useState('');
