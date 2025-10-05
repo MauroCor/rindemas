@@ -7,9 +7,10 @@ import ExchangeRateDisplay from '../components/ExchangeRateDisplay';
 import { getIncomes } from '../services/income';
 import { getFixedCosts } from '../services/fixedCost';
 import { getSavings } from '../services/saving';
+import { getCardSpends } from '../services/cardSpend';
 import { getNotes } from '../services/notes';
 import { parse, compareAsc } from 'date-fns';
-import { getMonthlyData, handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
+import { handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import { useExchangeRate } from '../context/ExchangeRateContext';
 import AddButtonComponent from '../components/AddButtonComponent';
 import { formatPrice } from '../utils/numbers';
@@ -29,10 +30,11 @@ const BalanceScreen = () => {
 
   const isCurrentYearMonth = (ym) => new Date().toISOString().slice(0, 7) === ym;
 
-  const mergeSummary = async (incomes, fixedCosts, savings, exRate) => {
+  const mergeSummary = async (incomes, fixedCosts, savings, cardSpends, exRate) => {
     const byIncome = new Map(incomes.map(m => [m.date, m]));
     const byFixed = new Map(fixedCosts.map(m => [m.date, m]));
     const bySave = new Map(savings.map(m => [m.date, m]));
+    const byCard = new Map((cardSpends || []).map(m => [m.date, m]));
 
     const allMonths = Array.from(new Set([...byIncome.keys(), ...byFixed.keys(), ...bySave.keys()]));
 
@@ -40,10 +42,12 @@ const BalanceScreen = () => {
       const inc = byIncome.get(month) || { total: 0 };
       const fix = byFixed.get(month) || { total: 0 };
       const sav = bySave.get(month) || { total: 0, saving: [] };
+      const card = byCard.get(month) || { total: 0 };
 
       const balanceItems = [
         { name: 'Ingresos', ccy: 'ARS', amount: null, price: inc.total },
         { name: 'Egresos', ccy: 'ARS', amount: null, price: fix.total },
+        { name: 'Tarjeta', ccy: 'ARS', amount: null, price: card.total },
       ];
 
       // Usar campos calculados del backend
@@ -61,7 +65,7 @@ const BalanceScreen = () => {
 
       return {
         date: month,
-        balance: { items: balanceItems, total: inc.total - fix.total },
+        balance: { items: balanceItems, total: inc.total - fix.total - (card.total || 0) },
         liquidez: { saving: liquidItems, total: liquidTotal, notes: notes },
       };
     }));
@@ -74,12 +78,13 @@ const BalanceScreen = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [incomes, fixedCosts, savings] = await Promise.all([
+        const [incomes, fixedCosts, savings, cardSpends] = await Promise.all([
           getIncomes(`?exchg_rate=${exchangeRate}`),
           getFixedCosts(`?exchg_rate=${exchangeRate}`),
           getSavings(`?exchg_rate=${exchangeRate}`),
+          getCardSpends(),
         ]);
-        const merged = await mergeSummary(incomes, fixedCosts, savings, exchangeRate);
+        const merged = await mergeSummary(incomes, fixedCosts, savings, cardSpends, exchangeRate);
         setDataMonths(merged);
         focusCurrentMonth(merged, setStartIndex, itemsPerPages);
       } catch (e) {
@@ -97,12 +102,13 @@ const BalanceScreen = () => {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const [incomes, fixedCosts, savings] = await Promise.all([
+          const [incomes, fixedCosts, savings, cardSpends] = await Promise.all([
             getIncomes(`?exchg_rate=${exchangeRate}`),
             getFixedCosts(`?exchg_rate=${exchangeRate}`),
             getSavings(`?exchg_rate=${exchangeRate}`),
+            getCardSpends(),
           ]);
-          const merged = await mergeSummary(incomes, fixedCosts, savings, exchangeRate);
+          const merged = await mergeSummary(incomes, fixedCosts, savings, cardSpends, exchangeRate);
           setDataMonths(merged);
           focusCurrentMonth(merged, setStartIndex, itemsPerPages);
         } catch (e) {
