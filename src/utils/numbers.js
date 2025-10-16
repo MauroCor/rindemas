@@ -59,7 +59,9 @@ export const annualToMonthly = (annualPercent) => {
 export const cumulativeIndex = (monthlyInflations) => {
     const result = [];
     let acc = 1;
-    for (let i = 0; i < monthlyInflations.length; i++) {
+    result.push(1);
+    // Aplicar inflación a partir del segundo mes
+    for (let i = 1; i < monthlyInflations.length; i++) {
         const pi = Number(monthlyInflations[i]) || 0;
         acc *= (1 + pi);
         result.push(acc);

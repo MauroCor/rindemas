@@ -22,7 +22,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
   const { exchangeRate } = useExchangeRate();
   const [usdAnnualChangeInput, setUsdAnnualChangeInput] = useState('0');
   const [usInflationInput, setUsInflationInput] = useState('3');
-  const [powerMode, setPowerMode] = useState('local'); // 'local' o 'international'
+  const [detailUnit, setDetailUnit] = useState('pesos');
 
   const datagraph = data.map((item) => ({
     ...item,
@@ -36,21 +36,13 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
   }));
 
   const filteredData = datagraph.filter((item) => {
-    // Si no hay filtros, mostrar todo
     if (!startMonth && !endMonth) return true;
-    
-    // Si solo hay fecha desde, mostrar desde esa fecha hasta el final
     if (startMonth && !endMonth) return item.date >= startMonth;
-    
-    // Si solo hay fecha hasta, mostrar desde el inicio hasta esa fecha
     if (!startMonth && endMonth) return item.date <= endMonth;
-    
-    // Si hay ambas fechas, mostrar el rango
     return item.date >= startMonth && item.date <= endMonth;
   });
 
   const labels = filteredData.map((item) => item.date);
-  const totals = filteredData.map((item) => Number(item.total) || 0);
   const cpiIndex = useMemo(() => buildCpiIndex(labels.length), [labels.length, buildCpiIndex, annualInflationPercentInput]);
 
   // Proyección mensual del tipo de cambio a partir de la variación anual
@@ -67,193 +59,260 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
     const series = Array.from({ length: labels.length }, () => monthlyUsInflation);
     return cumulativeIndex(series);
   }, [usInflationInput, labels.length]);
+
+  // Inflación acumulada en % (ARG o USA) para modo Detalle en %
+  const inflationPctSeries = useMemo(() => {
+    const base = detailUnit === 'dolares' ? usCpiIndex : cpiIndex;
+    if (!base || base.length === 0) return [];
+    // base es índice (1, 1+r, ...). Convertir a % acumulado
+    return base.map(v => (v - 1) * 100);
+  }, [cpiIndex, usCpiIndex, detailUnit]);
+
+  // Último FX proyectado (para mostrar en la UI)
+  const lastProjectedFx = useMemo(() => {
+    if (!fxPath || fxPath.length === 0) return null;
+    return fxPath[fxPath.length - 1];
+  }, [fxPath]);
   
-  // Para modo Total: recalcular con proyección del dólar
+  // Para modo Total: usar los campos que ya incluyen carry_forward del backend
   const totalsWithProjection = useMemo(() => {
-    return filteredData.map((item, idx) => {
-      let sumARS = 0;
-      let sumUSD = 0;
-      item.saving.forEach((saving) => {
-        const amount = saving.amount;
-        if (saving.ccy === 'ARS') {
-          sumARS += Number(amount) || 0;
-        } else {
-          sumUSD += Number(amount) || 0;
-        }
-      });
+    const result = filteredData.map((item, idx) => {
+      // Usar los nuevos campos que ya incluyen carry_forward
+      const totalARSWithCarry = Number(item.total_ars_with_carry) || 0;
+      const totalUSDWithCarry = Number(item.total_usd_with_carry) || 0;
       
-      // En modo "Detalle", aplicar inflaciones correspondientes
-      if (graphMode === 'todo') {
-        // Aplicar inflación argentina a ARS si existe
-        if (cpiIndex && cpiIndex[idx]) {
-          sumARS = sumARS / cpiIndex[idx];
-        }
-        // Aplicar inflación estadounidense a USD si existe
-        if (usCpiIndex && usCpiIndex[idx]) {
-          sumUSD = sumUSD / usCpiIndex[idx];
-        }
-      }
+      // Aplicar cotización proyectada solo a la porción USD
+      const projectedFx = fxPath[idx] || 0;
+      const totalUSDInARS = totalUSDWithCarry * projectedFx;
       
-      const fx = fxPath[idx] || 0;
-      return sumARS + (sumUSD * fx);
+      return totalARSWithCarry + totalUSDInARS;
     });
-  }, [filteredData, fxPath, graphMode, usCpiIndex, cpiIndex]);
+    
+    return result;
+  }, [filteredData, fxPath, exchangeRate]);
   
   // Solo deflactar la porción ARS, no los USD convertidos
   const totalsReal = useMemo(() => {
     if (!cpiIndex || cpiIndex.length === 0) return [];
     return filteredData.map((item, idx) => {
-      let sumARS = 0;
-      let sumUSD = 0;
-      item.saving.forEach((saving) => {
-        const amount = saving.amount;
-        if (saving.ccy === 'ARS') {
-          sumARS += Number(amount) || 0;
-        } else {
-          sumUSD += Number(amount) || 0;
-        }
-      });
-      const fx = fxPath[idx] || 0;
-      // Solo deflactar ARS, USD se mantiene nominal
-      const arsReal = cpiIndex[idx] ? sumARS / cpiIndex[idx] : sumARS;
-      const usdInPesos = sumUSD * fx;
+      const totalARSWithCarry = Number(item.total_ars_with_carry) || 0;
+      const totalUSDWithCarry = Number(item.total_usd_with_carry) || 0;
+      
+      // Solo deflactar la porción ARS
+      const arsReal = cpiIndex[idx] ? totalARSWithCarry / cpiIndex[idx] : totalARSWithCarry;
+      const usdInPesos = totalUSDWithCarry * (fxPath[idx] || 0);
+      
       return arsReal + usdInPesos;
     });
-  }, [filteredData, fxPath, cpiIndex]);
+  }, [filteredData, cpiIndex, fxPath]);
 
   // Línea de referencia: valor inicial ajustado por inflación (Inflación)
   const referenceLine = useMemo(() => {
     if (!totalsWithProjection.length || !cpiIndex.length) return [];
     const initialValue = totalsWithProjection[0] || 0;
-    return cpiIndex.map(cpi => initialValue * cpi);
-  }, [totalsWithProjection, cpiIndex]);
+    const result = cpiIndex.map(cpi => initialValue * cpi);
+    
+    
+    return result;
+  }, [totalsWithProjection, cpiIndex, annualInflationPercentInput]);
 
   // Análisis de escenarios: ¿le ganaste a la inflación?
   const beatInflation = useMemo(() => {
-    if (!totalsWithProjection.length || !referenceLine.length) return null;
-    const current = totalsWithProjection[totalsWithProjection.length - 1];
+    if (!totalsReal.length || !referenceLine.length) return null;
+    const current = totalsReal[totalsReal.length - 1];
     const reference = referenceLine[referenceLine.length - 1];
     if (!current || !reference) return null;
+    
+    const percentage = ((current - reference) / reference) * 100;
+    
+    
     return {
       beat: current > reference,
-      percentage: ((current - reference) / reference) * 100
+      percentage: percentage
     };
-  }, [totalsWithProjection, referenceLine]);
+  }, [totalsReal, referenceLine]);
 
-  // Series ARS y USD (convertido a pesos) por mes
+  // Series ARS y USD usando los nuevos campos del backend
   const { arsSeries, usdSeries } = useMemo(() => {
     const ars = [];
     const usdInPesos = [];
     for (let idx = 0; idx < filteredData.length; idx++) {
       const month = filteredData[idx];
-      let sumARS = 0;
-      let sumUSD = 0; // en USD
-      month.saving.forEach((saving) => {
-        const amount = saving.amount;
-        if (saving.ccy === 'ARS') {
-          sumARS += Number(amount) || 0;
-        } else {
-          sumUSD += Number(amount) || 0;
-        }
-      });
+      
+      // Usar los nuevos campos que ya incluyen carry_forward
+      const totalARSWithCarry = Number(month.total_ars_with_carry) || 0;
+      const totalUSDWithCarry = Number(month.total_usd_with_carry) || 0;
+      
       const fx = fxPath[idx] || 0;
-      ars.push(sumARS);
-      usdInPesos.push(sumUSD * fx);
+      ars.push(totalARSWithCarry);
+      usdInPesos.push(totalUSDWithCarry * fx);
     }
     return { arsSeries: ars, usdSeries: usdInPesos };
   }, [filteredData, fxPath]);
 
-  // Para modo ARS vs USD: usar inflación local o internacional según powerMode
-  const currentCpiIndex = useMemo(() => {
-    if (powerMode === 'international') {
-      return usCpiIndex;
+  // Rendimientos mensuales usando TNA por inversión; excluir si tna es 0 o falta
+  const portfolioMonthlyReturnPct = useMemo(() => {
+    const result = new Array(filteredData.length).fill(0);
+    for (let idx = 0; idx < filteredData.length; idx++) {
+      const month = filteredData[idx];
+      let weightedSum = 0;
+      let weightDen = 0;
+      month.saving.forEach(s => {
+        // Excluir tipo 'plan' en modo Detalle
+        if (s.type === 'plan') return;
+        // Filtrar por divisa según unidad
+        if ((detailUnit === 'pesos' && s.ccy !== 'ARS') || (detailUnit === 'dolares' && s.ccy !== 'USD')) return;
+        const tna = s.tna != null ? Number(s.tna) : 0;
+        if (!tna || tna <= 0) return; // excluir sin TNA
+        // r mensual por tipo
+        let rMonthly;
+        if (s.type === 'fixed') {
+          const isMaturity = s.date_to && month.date && String(s.date_to) === String(month.date);
+          if (isMaturity) {
+            const inv = Number(s.invested) || 0;
+            const obt = Number(s.obtained) || 0;
+            rMonthly = inv > 0 ? (obt - inv) / inv : 0;
+          } else {
+            rMonthly = 0;
+          }
+        } else {
+          // tasa mensual nominal aproximada desde TNA
+          rMonthly = (tna / 100) / 12;
+        }
+        // peso: capital del mes en la divisa del ahorro (usar amount si existe, sino invested)
+        const amount = Number(s.amount) || 0;
+        const invested = Number(s.invested) || 0;
+        const weight = amount > 0 ? amount : invested;
+        if (weight > 0) {
+          weightedSum += rMonthly * weight;
+          weightDen += weight;
+        }
+      });
+      result[idx] = weightDen > 0 ? (weightedSum / weightDen) * 100 : 0; // %
     }
-    return cpiIndex;
-  }, [powerMode, cpiIndex, usCpiIndex]);
+    return result;
+  }, [filteredData, detailUnit]);
 
-  const arsSeriesAdj = useMemo(() => {
-    if (!currentCpiIndex || currentCpiIndex.length === 0) return arsSeries;
-    
-    // En modo internacional, convertir ARS a dólares
-    if (graphMode === 'ars-usd' && powerMode === 'international') {
-      return arsSeries.map((v, i) => {
-        const adjustedValue = currentCpiIndex[i] ? v / currentCpiIndex[i] : v;
-        const fx = fxPath[i] || 0;
-        return fx > 0 ? adjustedValue / fx : 0;
+  // Acumulados en %
+  const accumulatePct = (rMonthlyPct) => {
+    const out = [];
+    let acc = 1;
+    for (let i = 0; i < rMonthlyPct.length; i++) {
+      acc *= (1 + (rMonthlyPct[i] || 0) / 100);
+      out.push((acc - 1) * 100);
+    }
+    return out;
+  };
+
+  const portfolioAccumPct = useMemo(() => accumulatePct(portfolioMonthlyReturnPct), [portfolioMonthlyReturnPct]);
+
+  // Series por ahorro (acumulado en %) solo en modo Detalle, filtrando por unidad/divisa
+  const detailSavingsDatasets = useMemo(() => {
+    if (graphMode !== 'todo') return [];
+    const isPesos = detailUnit === 'pesos';
+    const perSavingMap = new Map();
+
+    for (let idx = 0; idx < filteredData.length; idx++) {
+      const month = filteredData[idx];
+      month.saving.forEach((s) => {
+        // Excluir tipo 'plan' en modo Detalle
+        if (s.type === 'plan') return;
+        // Filtrar por divisa
+        if (isPesos && s.ccy !== 'ARS') return;
+        if (!isPesos && s.ccy !== 'USD') return;
+
+        // Determinar r mensual según tipo
+        let rMonthly = null;
+        if (s.type === 'fixed') {
+          const isMaturity = s.date_to && month.date && String(s.date_to) === String(month.date);
+          const inv = Number(s.invested) || 0;
+          const obt = Number(s.obtained) || 0;
+          rMonthly = isMaturity && inv > 0 ? (obt - inv) / inv : 0;
+        } else {
+          const tna = s.tna != null ? Number(s.tna) : 0;
+          if (!tna || tna <= 0) return;
+          rMonthly = (tna / 100) / 12;
+        }
+
+        const key = `${s.name}::${s.ccy}`;
+        if (!perSavingMap.has(key)) {
+          perSavingMap.set(key, {
+            name: s.name,
+            ccy: s.ccy,
+            color: generateColor(s.name),
+            acc: 1,
+            data: Array(labels.length).fill(null),
+          });
+        }
+        const entry = perSavingMap.get(key);
+        entry.acc *= (1 + (rMonthly || 0));
+        entry.data[idx] = (entry.acc - 1) * 100;
       });
     }
-    
-    // En otros modos, solo ajustar por inflación
-    return arsSeries.map((v, i) => (currentCpiIndex[i] ? v / currentCpiIndex[i] : v));
-  }, [arsSeries, currentCpiIndex, graphMode, powerMode, fxPath]);
 
-  const usdSeriesAdj = useMemo(() => {
-    if (!currentCpiIndex || currentCpiIndex.length === 0) return usdSeries;
-    
-    // En modo internacional, usar USD originales (sin convertir a pesos)
-    if (graphMode === 'ars-usd' && powerMode === 'international') {
-      // Recalcular USD originales desde los datos
-      const usdOriginales = [];
-      for (let idx = 0; idx < filteredData.length; idx++) {
-        const month = filteredData[idx];
-        let sumUSD = 0; // en USD originales
-        month.saving.forEach((saving) => {
+    return Array.from(perSavingMap.values()).map((s) => ({
+      label: `${s.name} (${s.ccy})`,
+      data: s.data,
+      borderColor: s.color,
+      backgroundColor: 'rgba(0,0,0,0)',
+      pointRadius: 2,
+      borderWidth: 2,
+      tension: 0.2,
+      fill: false,
+    }));
+  }, [graphMode, detailUnit, filteredData, labels]);
+
+  const average = useMemo(() => {
+    const totalSum = filteredData.reduce((acc, item) => {
+      const totalARSWithCarry = Number(item.total_ars_with_carry) || 0;
+      const totalUSDWithCarry = Number(item.total_usd_with_carry) || 0;
+      const fx = fxPath[filteredData.indexOf(item)] || 0;
+      return acc + totalARSWithCarry + (totalUSDWithCarry * fx);
+    }, 0);
+    return totalSum / (filteredData.length || 1);
+  }, [filteredData, fxPath]);
+
+  // Memoizar el cálculo de ahorros agrupados para que responda a cambios de inflación
+  const savingsGrouped = useMemo(() => {
+    const grouped = {};
+    filteredData.forEach((item, itemIndex) => {
+      item.saving.forEach((saving) => {
+        if (!grouped[saving.name]) {
+          grouped[saving.name] = {
+            name: saving.name,
+            data: Array(labels.length).fill(null),
+            borderColor: generateColor(saving.name),
+            ccy: saving.ccy, // Guardar la moneda del ahorro
+          };
+        }
+        const savingIndex = labels.indexOf(item.date);
+        if (savingIndex !== -1) {
+          const amount = Number(saving.amount) || 0;
+          let adjustedAmount = amount;
+          
+          // Ajustar por inflación ARG si es ARS
+          if (saving.ccy === 'ARS' && cpiIndex && cpiIndex[itemIndex]) {
+            adjustedAmount = amount / cpiIndex[itemIndex];
+          }
+          
+          // Para USD: convertir a pesos y aplicar inflación ARG (no inflación EE.UU.)
           if (saving.ccy === 'USD') {
-            sumUSD += Number(saving.amount) || 0;
+            const fx = fxPath[itemIndex] || 0;
+            const usdInPesos = amount * fx;
+            // Aplicar inflación ARG a los pesos convertidos
+            if (cpiIndex && cpiIndex[itemIndex]) {
+              adjustedAmount = usdInPesos / cpiIndex[itemIndex];
+            } else {
+              adjustedAmount = usdInPesos;
+            }
           }
-        });
-        usdOriginales.push(sumUSD);
-      }
-      return usdOriginales.map((v, i) => (currentCpiIndex[i] ? v / currentCpiIndex[i] : v));
-    }
-    
-    // En otros modos, ajustar por inflación y convertir a pesos
-    return usdSeries.map((v, i) => {
-      const adjustedValue = currentCpiIndex[i] ? v / currentCpiIndex[i] : v;
-      const fx = fxPath[i] || 0;
-      return adjustedValue * fx;
-    });
-  }, [usdSeries, currentCpiIndex, graphMode, powerMode, fxPath, filteredData]);
-
-  const average = totals.reduce((acc, val) => acc + val, 0) / (totals.length || 1);
-
-  const savingsGrouped = {};
-  filteredData.forEach((item, itemIndex) => {
-    item.saving.forEach((saving) => {
-      if (!savingsGrouped[saving.name]) {
-        savingsGrouped[saving.name] = {
-          name: saving.name,
-          data: Array(labels.length).fill(null),
-          borderColor: generateColor(saving.name),
-          ccy: saving.ccy, // Guardar la moneda del ahorro
-        };
-      }
-      const savingIndex = labels.indexOf(item.date);
-      if (savingIndex !== -1) {
-        const amount = Number(saving.amount) || 0;
-        let adjustedAmount = amount;
-        
-        // Ajustar por inflación ARG si es ARS
-        if (saving.ccy === 'ARS' && cpiIndex && cpiIndex[itemIndex]) {
-          adjustedAmount = amount / cpiIndex[itemIndex];
+          
+          grouped[saving.name].data[savingIndex] = adjustedAmount;
         }
-        
-        // Convertir USD a pesos y ajustar por inflación EE.UU.
-        if (saving.ccy === 'USD') {
-          const fx = fxPath[itemIndex] || 0;
-          // Primero ajustar por inflación EE.UU. en dólares
-          let usdAdjusted = amount;
-          if (usCpiIndex && usCpiIndex[itemIndex]) {
-            usdAdjusted = amount / usCpiIndex[itemIndex];
-          }
-          // Luego convertir a pesos
-          adjustedAmount = usdAdjusted * fx;
-        }
-        
-        savingsGrouped[saving.name].data[savingIndex] = adjustedAmount;
-      }
+      });
     });
-  });
+    return grouped;
+  }, [filteredData, labels, cpiIndex, fxPath]);
 
   const savingsDatasets = Object.values(savingsGrouped).map((saving) => ({
     label: `${saving.name} (${saving.ccy})`,
@@ -269,7 +328,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
 
   const datasets = [
     {
-      label: 'Total',
+      label: 'Total nominal',
       data: totalsWithProjection,
       borderColor: '#14B8A6',
       backgroundColor: 'rgba(20, 184, 166, 0.15)',
@@ -280,35 +339,10 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
       fill: false,
     },
   ];
-  if (graphMode === 'ars-usd') {
-    // Reemplazar datasets por ARS vs USD (local o internacional según powerMode)
-    datasets.length = 0;
-    datasets.push(
-      {
-        label: powerMode === 'international' ? 'ARS en dólares' : 'ARS',
-        data: arsSeriesAdj,
-        borderColor: '#3B82F6',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        pointRadius: 2,
-        borderWidth: 2,
-        tension: 0.2,
-        fill: false,
-      },
-      {
-        label: powerMode === 'international' ? 'USD' : 'USD en pesos',
-        data: usdSeriesAdj,
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        pointRadius: 2,
-        borderWidth: 2,
-        tension: 0.2,
-        fill: false,
-      }
-    );
-  }
+
   if (graphMode === 'total+avg') {
     datasets.push({
-      label: 'Pesos reales',
+      label: 'Poder adquisitivo real',
       data: totalsReal,
       borderColor: '#F59E0B',
       backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -318,20 +352,35 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
       tension: 0.2,
       fill: false,
     });
-    // Línea de referencia: Inflación
-    datasets.push({
-      label: 'Valor con inflación',
-      data: referenceLine,
-      borderColor: '#EF4444',
-      backgroundColor: 'rgba(239, 68, 68, 0.1)',
-      pointRadius: 0,
-      borderDash: [2, 2],
-      borderWidth: 1,
-      tension: 0,
-      fill: false,
-    });
   }
-  if (showAverage) {
+  if (graphMode === 'todo') {
+    datasets.length = 0;
+    datasets.push(
+      {
+        label: 'Rendimiento total (%)',
+        data: portfolioAccumPct,
+        borderColor: '#10B981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        pointRadius: 2,
+        borderWidth: 2,
+        tension: 0.2,
+        fill: false,
+      },
+      ...detailSavingsDatasets,
+      {
+        label: 'Inflación acumulada (%)',
+        data: inflationPctSeries,
+        borderColor: '#F59E0B',
+        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        pointRadius: 0,
+        borderDash: [4, 3],
+        borderWidth: 2,
+        tension: 0.2,
+        fill: false,
+      }
+    );
+  }
+  if (showAverage && graphMode !== 'todo') {
     datasets.push({
       label: 'Promedio',
       data: Array(labels.length).fill(average),
@@ -342,7 +391,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
       fill: false,
     });
   }
-  if (showSavings) {
+  if (showSavings && graphMode !== 'todo') {
     datasets.push(...savingsDatasets);
   }
 
@@ -361,26 +410,12 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
               return `Promedio: ${formatNumber(parseInt(context.raw))}`;
             }
             
-            // En modo "Detalle", todos los valores están en pesos (incluso los USD convertidos)
             if (graphMode === 'todo') {
-              return `${context.dataset.label}: ${formatNumber(context.raw)}`;
+              return `${context.dataset.label}: ${Number(context.raw).toFixed(1)}%`;
             }
             
-            // Para otros modos, determinar la moneda basada en el nombre del dataset
             const isUSD = context.dataset.label.includes('(USD)') || context.dataset.label.includes('USD');
             
-            // En modo "ARS vs USD", formatear según powerMode
-            if (graphMode === 'ars-usd') {
-              if (powerMode === 'international') {
-                // En modo internacional, ambos valores están en dólares
-                return `${context.dataset.label}: u$d ${Math.round(context.raw)}`;
-              } else {
-                // En modo local, ambos valores están en pesos
-                return `${context.dataset.label}: ${formatNumber(context.raw)}`;
-              }
-            }
-            
-            // Para otros modos, formatear según la moneda original
             let formattedValue;
             if (isUSD) {
               formattedValue = `u$d ${Math.round(context.raw)}`;
@@ -390,6 +425,28 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
             
             return `${context.dataset.label}: ${formattedValue}`;
           },
+          afterLabel: function (context) {
+            // Mostrar información adicional para el modo Total
+            if (graphMode === 'total+avg' && context.dataset.label === 'Total') {
+              const dataIndex = context.dataIndex;
+              const month = filteredData[dataIndex];
+              if (month) {
+                const totalARS = Number(month.total_ars_with_carry) || 0;
+                const totalUSD = Number(month.total_usd_with_carry) || 0;
+                const carryARS = Number(month.carry_forward_ars) || 0;
+                const carryUSD = Number(month.carry_forward_usd) || 0;
+                const fx = fxPath[dataIndex] || 0;
+                
+                return [
+                  `ARS: ${formatNumber(totalARS)}`,
+                  `USD: u$d ${Math.round(totalUSD)} (${formatNumber(totalUSD * fx)})`,
+                  `Carry ARS: ${formatNumber(carryARS)}`,
+                  `Carry USD: u$d ${Math.round(carryUSD)}`
+                ];
+              }
+            }
+            return null;
+          }
         },
       },
       legend: {
@@ -419,9 +476,8 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
         ticks: {
           color: '#d1d5db',
           callback: function (value) {
-            // En modo "ARS vs USD" con powerMode internacional, mostrar dólares
-            if (graphMode === 'ars-usd' && powerMode === 'international') {
-              return `u$d ${Math.round(value)}`;
+            if (graphMode === 'todo') {
+              return `${Math.round(value)}%`;
             }
             return formatNumber(value);
           },
@@ -447,9 +503,9 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
               value={graphMode}
               onChange={(e) => onChangeGraphMode && onChangeGraphMode(e.target.value)}
             >
-              <option value="total+avg">Total</option>
-              <option value="todo">Detalle</option>
-              <option value="ars-usd">ARS vs USD</option>
+              <option value="total+avg">Cartera</option>
+              <option value="todo">Rendimientos</option>
+              
             </select>
           </div>
           {graphMode === 'total+avg' && (
@@ -460,33 +516,6 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
           {graphMode === 'todo' && (
             <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
               <p>¿Cómo rinde cada uno de mis ahorros?</p>
-            </div>
-          )}
-          {graphMode === 'ars-usd' && (
-            <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
-              <p>¿Qué divisa preserva mejor mi poder de compra?</p>
-              <div className="flex justify-center gap-4 mt-2">
-                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
-                  <input
-                    type="radio"
-                    name="powerMode"
-                    value="local"
-                    checked={powerMode === 'local'}
-                    onChange={(e) => setPowerMode(e.target.value)}
-                  />
-                  En Pesos
-                </label>
-                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
-                  <input
-                    type="radio"
-                    name="powerMode"
-                    value="international"
-                    checked={powerMode === 'international'}
-                    onChange={(e) => setPowerMode(e.target.value)}
-                  />
-                  En Dólares
-                </label>
-              </div>
             </div>
           )}
           <div className="flex gap-4">
@@ -534,10 +563,10 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
             </div>
           </div>
           <div className="flex flex-col md:flex-row items-center gap-3 mt-2">
-            {!(graphMode === 'ars-usd' && powerMode === 'international') && (
+            {(graphMode !== 'todo' || (graphMode === 'todo' && detailUnit === 'pesos')) && (
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-2">
-                  <label style={{color:'#D1D5DB'}}>Inflación ARG (%)</label>
+                  <label style={{color:'#D1D5DB'}}>Inflación anual ARG (%)</label>
                   <input
                     type="number"
                     min="0"
@@ -556,10 +585,10 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
                 </div>
               </div>
             )}
-            {graphMode === 'todo' && (
+            {graphMode === 'todo' && detailUnit === 'dolares' && (
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-2">
-                  <label style={{color:'#D1D5DB'}}>Inflación EE.UU. (%)</label>
+                  <label style={{color:'#D1D5DB'}}>Inflación anual EE.UU. (%)</label>
                   <input
                     type="number"
                     min="0"
@@ -577,6 +606,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
                 </div>
               </div>
             )}
+            {graphMode !== 'todo' && (
             <div className="flex flex-col items-center gap-1">
               <div className="flex items-center gap-2">
                 <label className="mb-0" style={{color:'#D1D5DB'}}>Suba del dólar (%)</label>
@@ -596,98 +626,55 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
                     className="rounded-l-md p-1 w-14 text-center"
                     style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderRight:'none' }}
                   />
-                  {exchangeRate && (
+                  {lastProjectedFx != null && (
                     <div className="text-center text-[9px] w-10 rounded-r-md py-0.5 px-1 flex items-center justify-center" style={{color:'#9CA3AF', background:'#2D3748', border:'1px solid #1F2937', borderLeft:'1px solid #4B5563', lineHeight:'1.2'}}>
-                      USD ${usdAnnualChangeInput && Number(usdAnnualChangeInput) > 0 ? 
-                        Math.round(Number(exchangeRate) * (1 + Number(usdAnnualChangeInput) / 100)) : 
-                        Math.round(Number(exchangeRate))
-                      }
+                      USD ${Math.round(lastProjectedFx)}
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            {graphMode === 'ars-usd' && powerMode === 'international' && (
-              <div className="flex flex-col items-center gap-1">
-                <div className="flex items-center gap-2">
-                  <label style={{color:'#D1D5DB'}}>Inflación EE.UU. (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    value={usInflationInput}
-                    onChange={(e) => {
-                      const raw = e.target.value;
-                      if (raw === '') { setUsInflationInput(''); return; }
-                      const sanitized = raw.replace(/[^0-9.]/g, '');
-                      setUsInflationInput(sanitized);
-                    }}
-                    className="rounded-md p-1 w-14 text-center"
-                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
-                  />
-                </div>
-              </div>
             )}
           </div>
-          {graphMode === 'ars-usd' && powerMode === 'local' && arsSeriesAdj.length > 0 && usdSeriesAdj.length > 0 && (
-            <div className="text-center text-xs" style={{color:'#F59E0B'}}>
-              {(() => {
-                const arsStart = arsSeriesAdj[0];
-                const arsEnd = arsSeriesAdj[arsSeriesAdj.length - 1];
-                const usdStart = usdSeriesAdj[0];
-                const usdEnd = usdSeriesAdj[usdSeriesAdj.length - 1];
-                
-                if (arsStart && arsEnd && usdStart && usdEnd) {
-                  const arsGain = ((arsEnd - arsStart) / arsStart) * 100;
-                  const usdGain = ((usdEnd - usdStart) / usdStart) * 100;
-                  const netGain = arsGain - usdGain;
-                  
-                  if (netGain > 0) {
-                    return `El peso superó al dólar en ${netGain.toFixed(1)}% de poder de compra local`;
-                  } else if (netGain < 0) {
-                    return `El dólar superó al peso en ${Math.abs(netGain).toFixed(1)}% de poder de compra local`;
-                  } else {
-                    return `Peso y dólar tienen el mismo poder de compra local`;
-                  }
-                }
-                return '';
-              })()}
-            </div>
-          )}
-          {graphMode === 'ars-usd' && powerMode === 'international' && arsSeriesAdj.length > 0 && usdSeriesAdj.length > 0 && (
-            <div className="text-center text-xs" style={{color:'#F59E0B'}}>
-              {(() => {
-                const arsStart = arsSeriesAdj[0];
-                const arsEnd = arsSeriesAdj[arsSeriesAdj.length - 1];
-                const usdStart = usdSeriesAdj[0];
-                const usdEnd = usdSeriesAdj[usdSeriesAdj.length - 1];
-                
-                if (arsStart && arsEnd && usdStart && usdEnd) {
-                  const arsGain = ((arsEnd - arsStart) / arsStart) * 100;
-                  const usdGain = ((usdEnd - usdStart) / usdStart) * 100;
-                  const netGain = arsGain - usdGain;
-                  
-                  if (netGain > 0) {
-                    return `El peso superó al dólar en ${netGain.toFixed(1)}% de poder de compra internacional`;
-                  } else if (netGain < 0) {
-                    return `El dólar superó al peso en ${Math.abs(netGain).toFixed(1)}% de poder de compra internacional`;
-                  } else {
-                    return `Peso y dólar tienen el mismo poder de compra internacional`;
-                  }
-                }
-                return '';
-              })()}
-            </div>
-          )}
-          {graphMode === 'total+avg' && beatInflation && (
-              <div className="text-center text-sm" style={{color:'#F59E0B'}}>
-                {beatInflation.beat ? (
-                  <p>Tu portafolio supera a la inflación ARG en {beatInflation.percentage.toFixed(1)}%</p>
-                ) : (
-                  <p>La inflación ARG supera a tu portafolio en {Math.abs(beatInflation.percentage).toFixed(1)}%</p>
-                )}
+          {graphMode === 'todo' && (
+            <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
+              <div className="flex justify-center gap-4 mt-2">
+                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
+                  <input
+                    type="radio"
+                    name="detailUnit"
+                    value="pesos"
+                    checked={detailUnit === 'pesos'}
+                    onChange={(e) => setDetailUnit(e.target.value)}
+                  />
+                  Rendimientos en Pesos
+                </label>
+                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
+                  <input
+                    type="radio"
+                    name="detailUnit"
+                    value="dolares"
+                    checked={detailUnit === 'dolares'}
+                    onChange={(e) => setDetailUnit(e.target.value)}
+                  />
+                  Rendimientos en Dólares
+                </label>
               </div>
-            )}
+            </div>
+          )}
+          {graphMode === 'total+avg' && totalsReal && totalsReal.length > 0 && (
+            <div className="text-center text-sm" style={{color:'#F59E0B'}}>
+              <p>Poder adquisitivo: {formatNumber(Math.round(totalsReal[totalsReal.length - 1]))}</p>
+            </div>
+          )}
+          {graphMode === 'todo' && portfolioAccumPct && portfolioAccumPct.length > 0 && (
+            <div className="text-center text-sm" style={{color:'#10B981'}}>
+              {(() => {
+                const r_acum = portfolioAccumPct[portfolioAccumPct.length - 1] / 100;
+                return <p>Rendimiento del periodo: {(r_acum * 100).toFixed(1)}% {detailUnit === 'dolares' ? '(en Dólares)' : '(en Pesos)'}</p>;
+              })()}
+            </div>
+          )}
         </div>
       </div>
       <div style={{height: '300px'}}>
