@@ -91,64 +91,26 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
     return result;
   }, [filteredData, fxPath, exchangeRate]);
   
-  // Solo deflactar la porción ARS, no los USD convertidos
+  // Deflactar ARS con CPI ARG y USD con CPI USA
   const totalsReal = useMemo(() => {
     if (!cpiIndex || cpiIndex.length === 0) return [];
     return filteredData.map((item, idx) => {
       const totalARSWithCarry = Number(item.total_ars_with_carry) || 0;
       const totalUSDWithCarry = Number(item.total_usd_with_carry) || 0;
-      
-      // Solo deflactar la porción ARS
+
+      // ARS reales (deflactado por CPI ARG)
       const arsReal = cpiIndex[idx] ? totalARSWithCarry / cpiIndex[idx] : totalARSWithCarry;
-      const usdInPesos = totalUSDWithCarry * (fxPath[idx] || 0);
-      
-      return arsReal + usdInPesos;
+      // USD reales (deflactado por CPI USA) y luego convertido a pesos
+      const usdRealUSD = (usCpiIndex && usCpiIndex[idx]) ? (totalUSDWithCarry / usCpiIndex[idx]) : totalUSDWithCarry;
+      const usdRealInPesos = usdRealUSD * (fxPath[idx] || 0);
+
+      return arsReal + usdRealInPesos;
     });
-  }, [filteredData, cpiIndex, fxPath]);
+  }, [filteredData, cpiIndex, usCpiIndex, fxPath]);
 
-  // Línea de referencia: valor inicial ajustado por inflación (Inflación)
-  const referenceLine = useMemo(() => {
-    if (!totalsWithProjection.length || !cpiIndex.length) return [];
-    const initialValue = totalsWithProjection[0] || 0;
-    const result = cpiIndex.map(cpi => initialValue * cpi);
-    
-    
-    return result;
-  }, [totalsWithProjection, cpiIndex, annualInflationPercentInput]);
+  // Eliminados: referenceLine y beatInflation ya no se muestran
 
-  // Análisis de escenarios: ¿le ganaste a la inflación?
-  const beatInflation = useMemo(() => {
-    if (!totalsReal.length || !referenceLine.length) return null;
-    const current = totalsReal[totalsReal.length - 1];
-    const reference = referenceLine[referenceLine.length - 1];
-    if (!current || !reference) return null;
-    
-    const percentage = ((current - reference) / reference) * 100;
-    
-    
-    return {
-      beat: current > reference,
-      percentage: percentage
-    };
-  }, [totalsReal, referenceLine]);
-
-  // Series ARS y USD usando los nuevos campos del backend
-  const { arsSeries, usdSeries } = useMemo(() => {
-    const ars = [];
-    const usdInPesos = [];
-    for (let idx = 0; idx < filteredData.length; idx++) {
-      const month = filteredData[idx];
-      
-      // Usar los nuevos campos que ya incluyen carry_forward
-      const totalARSWithCarry = Number(month.total_ars_with_carry) || 0;
-      const totalUSDWithCarry = Number(month.total_usd_with_carry) || 0;
-      
-      const fx = fxPath[idx] || 0;
-      ars.push(totalARSWithCarry);
-      usdInPesos.push(totalUSDWithCarry * fx);
-    }
-    return { arsSeries: ars, usdSeries: usdInPesos };
-  }, [filteredData, fxPath]);
+  // Eliminadas series ars/usd no usadas
 
   // Rendimientos mensuales usando TNA por inversión; excluir si tna es 0 o falta
   const portfolioMonthlyReturnPct = useMemo(() => {
@@ -272,68 +234,16 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
     return totalSum / (filteredData.length || 1);
   }, [filteredData, fxPath]);
 
-  // Memoizar el cálculo de ahorros agrupados para que responda a cambios de inflación
-  const savingsGrouped = useMemo(() => {
-    const grouped = {};
-    filteredData.forEach((item, itemIndex) => {
-      item.saving.forEach((saving) => {
-        if (!grouped[saving.name]) {
-          grouped[saving.name] = {
-            name: saving.name,
-            data: Array(labels.length).fill(null),
-            borderColor: generateColor(saving.name),
-            ccy: saving.ccy, // Guardar la moneda del ahorro
-          };
-        }
-        const savingIndex = labels.indexOf(item.date);
-        if (savingIndex !== -1) {
-          const amount = Number(saving.amount) || 0;
-          let adjustedAmount = amount;
-          
-          // Ajustar por inflación ARG si es ARS
-          if (saving.ccy === 'ARS' && cpiIndex && cpiIndex[itemIndex]) {
-            adjustedAmount = amount / cpiIndex[itemIndex];
-          }
-          
-          // Para USD: convertir a pesos y aplicar inflación ARG (no inflación EE.UU.)
-          if (saving.ccy === 'USD') {
-            const fx = fxPath[itemIndex] || 0;
-            const usdInPesos = amount * fx;
-            // Aplicar inflación ARG a los pesos convertidos
-            if (cpiIndex && cpiIndex[itemIndex]) {
-              adjustedAmount = usdInPesos / cpiIndex[itemIndex];
-            } else {
-              adjustedAmount = usdInPesos;
-            }
-          }
-          
-          grouped[saving.name].data[savingIndex] = adjustedAmount;
-        }
-      });
-    });
-    return grouped;
-  }, [filteredData, labels, cpiIndex, fxPath]);
-
-  const savingsDatasets = Object.values(savingsGrouped).map((saving) => ({
-    label: `${saving.name} (${saving.ccy})`,
-    data: saving.data,
-    borderColor: saving.borderColor,
-    backgroundColor: 'rgba(0, 0, 0, 0)',
-    pointRadius: 3,
-    pointBackgroundColor: '#fff',
-    fill: false,
-    borderWidth: 2,
-    tension: 0.2,
-  }));
+  // Eliminadas series nominales por ahorro no usadas en modos actuales
 
   const datasets = [
     {
       label: 'Total nominal',
       data: totalsWithProjection,
-      borderColor: '#14B8A6',
-      backgroundColor: 'rgba(20, 184, 166, 0.15)',
+      borderColor: '#27AE60',
+      backgroundColor: 'rgba(39, 174, 96, 0.15)',
       pointRadius: 3,
-      pointBackgroundColor: '#14B8A6',
+      pointBackgroundColor: '#27AE60',
       borderWidth: 2,
       tension: 0.2,
       fill: false,
@@ -342,7 +252,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
 
   if (graphMode === 'total+avg') {
     datasets.push({
-      label: 'Poder adquisitivo real',
+      label: 'Poder adquisitivo',
       data: totalsReal,
       borderColor: '#F59E0B',
       backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -359,8 +269,8 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
       {
         label: 'Rendimiento total (%)',
         data: portfolioAccumPct,
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        borderColor: '#27AE60',
+        backgroundColor: 'rgba(39, 174, 96, 0.1)',
         pointRadius: 2,
         borderWidth: 2,
         tension: 0.2,
@@ -391,9 +301,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
       fill: false,
     });
   }
-  if (showSavings && graphMode !== 'todo') {
-    datasets.push(...savingsDatasets);
-  }
+  // Eliminado showSavings nominal
 
   const chartData = { labels, datasets };
 
@@ -491,7 +399,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
   return (
     <div className="p-4 rounded-lg shadow-lg" style={{background:'#1F2937', color:'#F3F4F6'}}>
       <div className="flex items-center justify-center mb-3">
-        <h2 className="text-xl font-bold text-center">Evolución</h2>
+        <h2 className="text-xl font-bold text-center">Proyección del Portafolio</h2>
       </div>
       <div className="mb-4 text-sm">
         <div className="flex flex-col items-center gap-4">
@@ -503,29 +411,138 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
               value={graphMode}
               onChange={(e) => onChangeGraphMode && onChangeGraphMode(e.target.value)}
             >
-              <option value="total+avg">Cartera</option>
+              <option value="total+avg">Portafolio</option>
               <option value="todo">Rendimientos</option>
               
             </select>
           </div>
           {graphMode === 'total+avg' && (
-            <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
-              <p>¿Cómo evoluciona mi dinero con el tiempo?</p>
+            <div className="text-center text-base" style={{color:'#9CA3AF'}}>
+              <p>¿Cuánto tendré y cuánto valdrá?</p>
+            </div>
+          )}
+          {graphMode === 'todo' && (
+            <div className="text-center text-base" style={{color:'#9CA3AF'}}>
+              <p>¿Rinden por encima de la inflación?</p>
             </div>
           )}
           {graphMode === 'todo' && (
             <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
-              <p>¿Cómo rinde cada uno de mis ahorros?</p>
+              <div className="flex justify-center gap-4 mt-2">
+                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
+                  <input
+                    type="radio"
+                    name="detailUnit"
+                    value="pesos"
+                    checked={detailUnit === 'pesos'}
+                    onChange={(e) => setDetailUnit(e.target.value)}
+                  />
+                  En Pesos
+                </label>
+                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
+                  <input
+                    type="radio"
+                    name="detailUnit"
+                    value="dolares"
+                    checked={detailUnit === 'dolares'}
+                    onChange={(e) => setDetailUnit(e.target.value)}
+                  />
+                  En Dólares
+                </label>
+              </div>
             </div>
           )}
+          <div className="flex flex-col md:flex-row items-center gap-3 mt-2">
+            {(graphMode !== 'todo' || (graphMode === 'todo' && detailUnit === 'pesos')) && (
+              <div className="flex flex-col items-center gap-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <label style={{color:'#D1D5DB'}}>Inflación ARG</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={annualInflationPercentInput}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        if (raw === '') { setAnnualInflationPercentInput(''); return; }
+                        const digits = raw.replace(/[^0-9]/g, '');
+                        const sanitized = digits.replace(/^0+(\d)/, '$1');
+                        setAnnualInflationPercentInput(sanitized);
+                      }}
+                      className="rounded-md p-1 pr-5 w-16 text-center"
+                      style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', paddingRight:'18px' }}
+                    />
+                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400">%</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {(graphMode !== 'todo' || (graphMode === 'todo' && detailUnit === 'dolares')) && (
+              <div className="flex flex-col items-center gap-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <label style={{color:'#D1D5DB'}}>Inflación EUA</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={usInflationInput}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        if (raw === '') { setUsInflationInput(''); return; }
+                        const sanitized = raw.replace(/[^0-9.]/g, '');
+                        setUsInflationInput(sanitized);
+                      }}
+                      className="rounded-md p-1 pr-5 w-16 text-center"
+                      style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', paddingRight:'18px' }}
+                    />
+                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400">%</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {graphMode !== 'todo' && (
+            <div className="flex flex-col items-center gap-1 text-xs">
+              <div className="flex items-center gap-2">
+                <label style={{color:'#D1D5DB'}}>Aumento dólar</label>
+                <div className="flex items-center">
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={usdAnnualChangeInput}
+                      onChange={(e) => {
+                        const raw = e.target.value;
+                        if (raw === '') { setUsdAnnualChangeInput(''); return; }
+                        const digits = raw.replace(/[^0-9]/g, '');
+                        const sanitized = digits.replace(/^0+(\d)/, '$1');
+                        setUsdAnnualChangeInput(sanitized);
+                      }}
+                      className="rounded-l-md p-1 pr-5 w-16 text-center"
+                      style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderRight:'none', paddingRight:'18px' }}
+                    />
+                    <span className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400">%</span>
+                  </div>
+                  {lastProjectedFx != null && (
+                    <div className="text-center text-[9px] w-10 rounded-r-md py-0.5 px-1 flex items-center justify-center" style={{color:'#9CA3AF', background:'#2D3748', border:'1px solid #1F2937', borderLeft:'1px solid #4B5563', lineHeight:'1.2'}}>
+                      USD ${Math.round(lastProjectedFx)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            )}
+          </div>
           <div className="flex gap-4">
-            <div className="flex flex-col items-center relative">
-              <label className="mb-1" htmlFor="startMonth" style={{color:'#D1D5DB'}}>Desde:</label>
+            <div className="flex flex-col items-center relative text-xs">
+              <label htmlFor="startMonth" style={{color:'#D1D5DB'}}>Desde:</label>
               <div>
                 <button
                   type="button"
                   onClick={() => setStartMonth("")}
-                  className="pr-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
+                  className="pr-2 text-gray-300 hover:text-gray-400 font-bold text-sm"
                 >
                   x
                 </button>
@@ -540,8 +557,8 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
                 />
               </div>
             </div>
-            <div className="flex flex-col items-center relative">
-              <label className="mb-1" htmlFor="endMonth" style={{color:'#D1D5DB'}}>Hasta:</label>
+            <div className="flex flex-col items-center relative text-xs">
+              <label htmlFor="endMonth" style={{color:'#D1D5DB'}}>Hasta:</label>
               <div>
                 <input
                   type="month"
@@ -555,123 +572,36 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
                 <button
                   type="button"
                   onClick={() => setEndMonth("")}
-                  className="pl-2 text-gray-300 hover:text-gray-400 font-bold text-xl"
+                  className="pl-2 text-gray-300 hover:text-gray-400 font-bold text-sm"
                 >
                   x
                 </button>
               </div>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row items-center gap-3 mt-2">
-            {(graphMode !== 'todo' || (graphMode === 'todo' && detailUnit === 'pesos')) && (
-              <div className="flex flex-col items-center gap-1">
-                <div className="flex items-center gap-2">
-                  <label style={{color:'#D1D5DB'}}>Inflación anual ARG (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={annualInflationPercentInput}
-                    onChange={(e) => {
-                      const raw = e.target.value;
-                      if (raw === '') { setAnnualInflationPercentInput(''); return; }
-                      const digits = raw.replace(/[^0-9]/g, '');
-                      const sanitized = digits.replace(/^0+(\d)/, '$1');
-                      setAnnualInflationPercentInput(sanitized);
-                    }}
-                    className="rounded-md p-1 w-14 text-center"
-                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
-                  />
-                </div>
-              </div>
-            )}
-            {graphMode === 'todo' && detailUnit === 'dolares' && (
-              <div className="flex flex-col items-center gap-1">
-                <div className="flex items-center gap-2">
-                  <label style={{color:'#D1D5DB'}}>Inflación anual EE.UU. (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    value={usInflationInput}
-                    onChange={(e) => {
-                      const raw = e.target.value;
-                      if (raw === '') { setUsInflationInput(''); return; }
-                      const sanitized = raw.replace(/[^0-9.]/g, '');
-                      setUsInflationInput(sanitized);
-                    }}
-                    className="rounded-md p-1 w-14 text-center"
-                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
-                  />
-                </div>
-              </div>
-            )}
-            {graphMode !== 'todo' && (
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-2">
-                <label className="mb-0" style={{color:'#D1D5DB'}}>Suba del dólar (%)</label>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={usdAnnualChangeInput}
-                    onChange={(e) => {
-                      const raw = e.target.value;
-                      if (raw === '') { setUsdAnnualChangeInput(''); return; }
-                      const digits = raw.replace(/[^0-9]/g, '');
-                      const sanitized = digits.replace(/^0+(\d)/, '$1');
-                      setUsdAnnualChangeInput(sanitized);
-                    }}
-                    className="rounded-l-md p-1 w-14 text-center"
-                    style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', borderRight:'none' }}
-                  />
-                  {lastProjectedFx != null && (
-                    <div className="text-center text-[9px] w-10 rounded-r-md py-0.5 px-1 flex items-center justify-center" style={{color:'#9CA3AF', background:'#2D3748', border:'1px solid #1F2937', borderLeft:'1px solid #4B5563', lineHeight:'1.2'}}>
-                      USD ${Math.round(lastProjectedFx)}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            )}
-          </div>
-          {graphMode === 'todo' && (
-            <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
-              <div className="flex justify-center gap-4 mt-2">
-                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
-                  <input
-                    type="radio"
-                    name="detailUnit"
-                    value="pesos"
-                    checked={detailUnit === 'pesos'}
-                    onChange={(e) => setDetailUnit(e.target.value)}
-                  />
-                  Rendimientos en Pesos
-                </label>
-                <label className="inline-flex items-center gap-2" style={{color:'#D1D5DB'}}>
-                  <input
-                    type="radio"
-                    name="detailUnit"
-                    value="dolares"
-                    checked={detailUnit === 'dolares'}
-                    onChange={(e) => setDetailUnit(e.target.value)}
-                  />
-                  Rendimientos en Dólares
-                </label>
-              </div>
-            </div>
-          )}
-          {graphMode === 'total+avg' && totalsReal && totalsReal.length > 0 && (
-            <div className="text-center text-sm" style={{color:'#F59E0B'}}>
-              <p>Poder adquisitivo: {formatNumber(Math.round(totalsReal[totalsReal.length - 1]))}</p>
+          
+          {graphMode === 'total+avg' && totalsReal && totalsReal.length > 0 && totalsWithProjection && totalsWithProjection.length > 0 && (
+            <div className="text-center text-sm">
+              {(() => {
+                const lastReal = Math.round(totalsReal[totalsReal.length - 1] || 0);
+                const lastNominal = Math.round(totalsWithProjection[totalsWithProjection.length - 1] || 0);
+                return (
+                  <p className="text-gray-400">
+                    Total: <span className="font-semibold text-gray-200">{formatNumber(lastNominal)}</span> · Real: <span className="font-semibold text-gray-200">{formatNumber(lastReal)}</span>
+                  </p>
+                );
+              })()}
             </div>
           )}
           {graphMode === 'todo' && portfolioAccumPct && portfolioAccumPct.length > 0 && (
-            <div className="text-center text-sm" style={{color:'#10B981'}}>
+            <div className="text-center text-sm" style={{color:'#9CA3AF'}}>
               {(() => {
                 const r_acum = portfolioAccumPct[portfolioAccumPct.length - 1] / 100;
-                return <p>Rendimiento del periodo: {(r_acum * 100).toFixed(1)}% {detailUnit === 'dolares' ? '(en Dólares)' : '(en Pesos)'}</p>;
+                return (
+                  <p className="text-gray-400">
+                    Rendimiento del período: <span className="font-semibold text-gray-200">{(r_acum * 100).toFixed(1)}%</span> {detailUnit === 'dolares' ? '(USD)' : '(ARS)'}
+                  </p>
+                );
               })()}
             </div>
           )}
@@ -687,7 +617,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
 // Paleta de colores fijos para las referencias
 const FIXED_COLORS = [
   '#3B82F6', // Azul
-  '#10B981', // Verde
+  '#27AE60', // Verde
   '#F59E0B', // Amarillo
   '#EF4444', // Rojo
   '#8B5CF6', // Púrpura
@@ -696,7 +626,7 @@ const FIXED_COLORS = [
   '#84CC16', // Lima
   '#EC4899', // Rosa
   '#6B7280', // Gris
-  '#14B8A6', // Teal
+  '#27AE60', // Teal
   '#F43F5E', // Rose
 ];
 

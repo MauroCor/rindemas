@@ -20,16 +20,18 @@ const InputPriceComponent = ({ onChange, value, currency, onCurrencyChange, appe
                     type="text"
                     name="drop1234"
                     autoComplete="off"
+                    inputMode='numeric'
+                    pattern='[0-9]*'
                     placeholder={`${currency === 'ARS' ? 'Ej: $350.000' : 'Ej: u$s 350'}`}
                     value={value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ''}
                     onInput={(e) => {
-                        const cleanValue = e.target.value.replace(/\./g, '').slice(0, 9);
+                        const cleanValue = e.target.value.replace(/[^0-9]/g, '').slice(0, 9);
                         e.target.value = cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                         const syntheticEvent = { target: { value: cleanValue } };
                         onChange(syntheticEvent); 
                     }}
                     onChange={(e) => {
-                        const cleanValue = e.target.value.replace(/\./g, '');
+                        const cleanValue = e.target.value.replace(/[^0-9]/g, '');
                         const syntheticEvent = { target: { value: cleanValue } };
                         onChange(syntheticEvent);
                     }}

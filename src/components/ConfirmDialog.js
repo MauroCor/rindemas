@@ -13,7 +13,7 @@ const ConfirmDialog = ({ open, title = 'Confirmar', message, confirmText = 'Conf
           </div>
           <div className="flex justify-center gap-2 px-5 py-3 border-t" style={{ borderColor: '#1F2937' }}>
             <button onClick={onCancel} className="px-3 py-2 rounded hover:bg-gray-700" style={{color:'#E5E7EB'}}> {cancelText} </button>
-            <button onClick={onConfirm} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6' }}> {confirmText} </button>
+            <button onClick={onConfirm} className="px-3 py-2 rounded text-white" style={{ background: '#27AE60' }}> {confirmText} </button>
           </div>
         </div>
       </div>

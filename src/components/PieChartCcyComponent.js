@@ -23,9 +23,9 @@ const PieChartCcyComponent = ({ title, data }) => {
 
   const labels = Object.keys(currencyTotals);
   const values = Object.values(currencyTotals);
-  // Paleta consistente con la app (Tailwind-like): ARS celeste (sky), USD verde (emerald)
-  const backgroundColor = labels.map(l => l === 'ARS' ? '#60A5FA' : '#10B981');
-  const hoverBackgroundColor = labels.map(l => l === 'ARS' ? '#93C5FD' : '#34D399');
+  // Paleta consistente con la app: ARS celeste (sky), USD verde corporativo
+  const backgroundColor = labels.map(l => l === 'ARS' ? '#60A5FA' : '#27AE60');
+  const hoverBackgroundColor = labels.map(l => l === 'ARS' ? '#93C5FD' : '#219653');
 
   const chartData = {
     labels,

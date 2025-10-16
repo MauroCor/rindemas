@@ -23,9 +23,9 @@ const SessionExpiredModal = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             className="w-full text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
-            style={{backgroundColor: '#14B8A6'}}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#0D9488'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#14B8A6'}
+            style={{backgroundColor: '#27AE60'}}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#219653'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#27AE60'}
           >
             Entendido
           </button>

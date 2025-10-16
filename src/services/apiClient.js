@@ -36,9 +36,18 @@ const apiRequest = async (endpoint, method = 'GET', data = null, login = false) 
     }
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error('Error response body:', errorBody);
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorBodyText = await response.text();
+      let parsedBody = null;
+      try {
+        parsedBody = errorBodyText ? JSON.parse(errorBodyText) : null;
+      } catch (_) {
+        // keep as text if not JSON
+      }
+      const err = new Error(`HTTP error ${response.status}`);
+      err.status = response.status;
+      err.data = parsedBody ?? errorBodyText;
+      console.error('Error response body:', err.data);
+      throw err;
     }
 
     return response;

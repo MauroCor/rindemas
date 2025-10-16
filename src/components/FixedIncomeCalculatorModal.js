@@ -122,7 +122,7 @@ const FixedIncomeCalculatorModal = ({ isOpen, onClose, onApply, initialAmount, i
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-300">Monto final</span>
-                <span className="font-bold" style={{color:'#14B8A6'}}>{finalAmount.toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 })}</span>
+                <span className="font-bold" style={{color:'#27AE60'}}>{finalAmount.toLocaleString('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 })}</span>
               </div>
             </div>
           )}
@@ -138,7 +138,7 @@ const FixedIncomeCalculatorModal = ({ isOpen, onClose, onApply, initialAmount, i
           <button
             disabled={!canApply}
             className="px-3 py-2 rounded text-white"
-            style={{ background: '#14B8A6', opacity: canApply?1:0.6 }}
+            style={{ background: '#27AE60', opacity: canApply?1:0.6 }}
             onClick={() => { onApply(Math.round(finalAmount)); onClose(); }}
           >
             Aplicar

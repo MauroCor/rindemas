@@ -5,7 +5,7 @@ const InputNumberComponent = ({ onChange, value, placeholder="Ej: $350.000" }) =
     };
 
     const parseNumber = (str) => {
-        return str.replace(/\./g, '');
+        return str.replace(/[^0-9]/g, '');
     };
 
     return (
@@ -14,6 +14,8 @@ const InputNumberComponent = ({ onChange, value, placeholder="Ej: $350.000" }) =
                 type="text"
                 name="drop1234"
                 autoComplete='off'
+                inputMode='numeric'
+                pattern='[0-9]*'
                 placeholder={placeholder}
                 value={formatNumber(value)}
                 onInput={(e) => {

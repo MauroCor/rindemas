@@ -31,6 +31,7 @@ const AddModal = () => {
   const [showCalc, setShowCalc] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [varQuote, setVarQuote] = useState(null);
+  const [backendError, setBackendError] = useState('');
 
   const { values, setValue, reset: resetForm } = useForm({
     name: '',
@@ -56,6 +57,11 @@ const AddModal = () => {
       setTab(selectedOption || 'Ingreso');
     }
   }, [isOpen, selectedOption]);
+
+  // Al cambiar de sección (tab) limpiamos el error de backend mostrado
+  useEffect(() => {
+    setBackendError('');
+  }, [tab]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -135,6 +141,7 @@ const AddModal = () => {
   const onClose = () => {
     resetForm();
     setShowCalc(false);
+    setBackendError('');
     closeAddModal();
   };
 
@@ -192,7 +199,8 @@ const AddModal = () => {
       resetForm();
       
     } catch (error) {
-      handleApiError(error, 'handleSubmit');
+      const msg = handleApiError(error, 'handleSubmit');
+      setBackendError(msg || 'Ocurrió un error');
     }
   };
 
@@ -444,9 +452,15 @@ const AddModal = () => {
             )}
           </div>
 
+          {backendError && (
+            <div className="px-6 py-3 border-t" style={{ borderColor: '#1F2937' }}>
+              <div className="text-red-400 text-sm text-center">{backendError}</div>
+            </div>
+          )}
+
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={{ borderColor: '#1F2937' }}>
             <button onClick={onClose} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
-            <button onClick={() => handleSubmit()} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#14B8A6', opacity: validate()?1:0.6 }}>Agregar</button>
+            <button onClick={() => handleSubmit()} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#27AE60', opacity: validate()?1:0.6 }}>Agregar</button>
           </div>
           </div>
           {showCalc && tab === 'Ahorro' && values.plazo === 'fijo' && (

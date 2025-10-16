@@ -476,7 +476,7 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
                     onClick={handleConfirm}
                     disabled={loading}
                     className="px-3 py-2 rounded text-white" 
-                    style={{background:'#10B981', opacity: loading ? 0.6 : 1}}
+                    style={{background:'#27AE60', opacity: loading ? 0.6 : 1}}
                   >
                     {loading ? 'Confirmando...' : 'Confirmar'}
                   </button>

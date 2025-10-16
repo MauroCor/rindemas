@@ -141,12 +141,12 @@ const BalanceScreen = () => {
         startIndex={startIndex}
         itemsPerPages={itemsPerPages}
         renderItem={(monthData) => (
-          <div className={`w-60 rounded-xl p-4 shadow-lg text-center border ${isCurrentYearMonth(monthData.date) ? 'border-teal-500' : 'border-gray-700'}`} style={{background:'#1F2937'}}>
+          <div className={`w-60 rounded-xl p-4 shadow-lg text-center border ${isCurrentYearMonth(monthData.date) ? 'border-green-500' : 'border-gray-700'}`} style={{background:'#1F2937'}}>
             <h3 className="font-bold text-2xl mb-4">{getMonthName(monthData.date)}</h3>
             <div className="mb-3">
               <label>Balance</label>
               <div>
-                <label className='text-2xl font-bold' style={{color:'#14B8A6'}}>{formatPrice((monthData.balance?.total || 0) + (monthData.liquidez?.total || 0), 'ARS')}</label>
+                <label className='text-2xl font-bold' style={{color:'#27AE60'}}>{formatPrice((monthData.balance?.total || 0) + (monthData.liquidez?.total || 0), 'ARS')}</label>
               </div>
             </div>
             <FinancialDropComponent title="Saldo" data={monthData.balance} isIncome={true} initialOpen={false} readOnly monthDate={monthData.date} />
@@ -172,7 +172,7 @@ const BalanceScreen = () => {
                   onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
                   className={`px-3 py-1 text-xs ${(
                     dataMonths.slice(startIndex, startIndex + itemsPerPages).some(m => m.date === new Date().toISOString().slice(0,7))
-                  ) ? 'text-[#D1D5DB]' : 'bg-teal-600 hover:bg-teal-500 text-white'}`}
+                  ) ? 'text-[#D1D5DB]' : 'bg-green-600 hover:bg-green-500 text-white'}`}
                 />
               </div>
               <DropdownItemsPerPageComponent

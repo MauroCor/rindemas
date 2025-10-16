@@ -150,7 +150,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 <span className={`w-[100%] text-center text-sm whitespace-normal ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`}>
                                     <span className={hasReinvestmentNote ? 'line-through' : ''}>{item.name}</span>
                                 </span>
-                                <span className={`w-[50%] text-center text-sm ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`} style={{color: item.liquid && !isProjection ? '#14B8A6' : undefined}}>
+                                <span className={`w-[50%] text-center text-sm ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`} style={{color: item.liquid && !isProjection ? '#27AE60' : undefined}}>
                                     {formatPrice(
                                         item.type === 'var' || item.type === 'plan' || item.liquid ? item.obtained : 
                                         item.type === 'flex' ? item.obtained : 

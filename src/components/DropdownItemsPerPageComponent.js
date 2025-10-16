@@ -9,7 +9,7 @@ const DropdownItemsPerPageComponent = ({ itemsPerPage, onItemsPerPageChange }) =
             onClick={() => onItemsPerPageChange(opt)}
             className={`px-3 py-1 text-xs ${itemsPerPage === opt ? 'text-white' : ''}`}
             style={{
-              background: itemsPerPage === opt ? '#14B8A6' : 'transparent',
+              background: itemsPerPage === opt ? '#27AE60' : 'transparent',
               color: itemsPerPage === opt ? '#FFFFFF' : '#D1D5DB',
               borderRight: idx < options.length - 1 ? '1px solid #374151' : 'none'
             }}

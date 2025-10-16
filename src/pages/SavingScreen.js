@@ -148,23 +148,7 @@ const SavingScreen = () => {
         });
     };
 
-    const cumulativeLiquidityBeforeByMonth = useMemo(() => {
-        const map = new Map();
-        if (!Array.isArray(dataMonths)) return map;
-        const sorted = [...dataMonths].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-        let prefix = 0;
-        for (let i = 0; i < sorted.length; i++) {
-            const m = sorted[i];
-            const monthLiquid = Array.isArray(m.saving)
-                ? m.saving
-                    .filter(s => s.date_to === m.date)
-                    .reduce((sum, s) => sum + (s.ccy === 'ARS' ? (Number(s.obtained) || 0) : ((Number(s.obtained) || 0) * (Number(exchangeRate) || 0))), 0)
-                : 0;
-            map.set(m.date, prefix);
-            prefix += monthLiquid;
-        }
-        return map;
-    }, [dataMonths, exchangeRate]);
+    // Eliminado: cumulativeLiquidityBeforeByMonth no se utiliza
 
     const graphDataMonths = useMemo(() => {
         if (!Array.isArray(filteredDataMonths)) return [];
@@ -178,12 +162,12 @@ const SavingScreen = () => {
         <>
         <div className="min-h-screen py-4" style={{background:'#111827', color:'#F3F4F6'}}>
             <h1 className="text-center text-2xl font-bold tracking-tight">Ahorros Invertidos</h1>
-            <p className="italic text-center text-sm mb-6" style={{color:'#9CA3AF'}}>¿Cuánto crecen mis ahorros?</p>
+            <p className="italic text-center text-sm mb-6" style={{color:'#9CA3AF'}}>¿Cuánto crece mi cartera?</p>
             <div className="relative p-1">
                 <div className="flex justify-center items-center gap-3">
                     <AddButtonComponent fromScreen="Ahorro" />
                     <div className="flex items-center gap-2 px-3 py-1 rounded-full border" style={{background:'#1F2937', borderColor:'#374151'}}>
-                        <span className="text-sm font-medium" style={{color:'#F3F4F6'}}>Modo proyección</span>
+                        <span className="text-sm font-medium" style={{color:'#F3F4F6'}}>Proyectar</span>
                         <button
                             type="button"
                             onClick={() => setIncludeFutureLiquidity(!includeFutureLiquidity)}
@@ -250,15 +234,17 @@ const SavingScreen = () => {
                 </CarouselComponent>
             </div>
 
-            <div className="pt-10 text-center max-w-screen-sm mx-auto">
-                <GraphComponent
-                    data={graphDataMonths}
-                    showAverage={graphMode === 'total+avg' || graphMode === 'todo'}
-                    showSavings={graphMode === 'todo'}
-                    graphMode={graphMode}
-                    onChangeGraphMode={setGraphMode}
-                />
-            </div>
+            {includeFutureLiquidity && (
+                <div className="pt-10 text-center max-w-screen-sm mx-auto">
+                    <GraphComponent
+                        data={graphDataMonths}
+                        showAverage={graphMode === 'total+avg' || graphMode === 'todo'}
+                        showSavings={graphMode === 'todo'}
+                        graphMode={graphMode}
+                        onChangeGraphMode={setGraphMode}
+                    />
+                </div>
+            )}
 
             <div className="pt-10 text-center max-w-screen-sm mx-auto">
                 <PieChartComponent title="Divisas" data={filteredDataMonths} />

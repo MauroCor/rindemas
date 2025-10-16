@@ -194,7 +194,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
                         </option>
                       ))}
                     </select>
-                    <button className="w-6 h-6 my-1 rounded text-white flex items-center justify-center mx-auto" style={{background:'#14B8A6'}} onClick={addNote}>
+                    <button className="w-6 h-6 my-1 rounded text-white flex items-center justify-center mx-auto" style={{background:'#27AE60'}} onClick={addNote}>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><path fill="#fff" d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                     </button>
                   </div>

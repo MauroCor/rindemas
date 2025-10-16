@@ -5,7 +5,7 @@ export const CARD_STYLES = {
 
 export const CARD_CLASSES = {
   base: 'w-60 rounded-xl p-4 shadow-lg text-center',
-  current: 'border border-teal-500',
+  current: 'border border-green-500',
   default: 'border border-gray-700'
 };
 
@@ -42,7 +42,7 @@ export const LABEL_STYLES = {
 export const TEXT_COLORS = {
   primary: '#F3F4F6',
   secondary: '#9CA3AF',
-  accent: '#14B8A6',
+  accent: '#27AE60',
   muted: '#D1D5DB'
 };
 

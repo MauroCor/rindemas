@@ -142,7 +142,7 @@ const ChangePasswordModal = ({ isOpen, onClose, onSuccess }) => {
           </div>
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={MODAL_BORDER_STYLES}>
             <button onClick={handleClose} className="px-3 py-2 rounded hover:bg-gray-700" style={{color: TEXT_COLORS.primary}}>Cancelar</button>
-            <button onClick={apply} disabled={loading} className="px-3 py-2 rounded text-white" style={{background:'#14B8A6', opacity: loading?0.6:1}}>Aplicar</button>
+            <button onClick={apply} disabled={loading} className="px-3 py-2 rounded text-white" style={{background:'#27AE60', opacity: loading?0.6:1}}>Aplicar</button>
           </div>
         </div>
       </div>
