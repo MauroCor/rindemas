@@ -60,8 +60,8 @@ const Login = () => {
                 type="text"
                 autoComplete='off'
                 placeholder="Ingresa tu usuario"
-                className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200"
-                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
+                style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #16A085' }}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -78,8 +78,8 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete='off'
                   placeholder="Ingresa tu contraseña"
-                  className="w-full px-4 py-3 rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-200"
-                  style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937' }}
+                  className="w-full px-4 py-3 rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
+                  style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #16A085' }}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -102,16 +102,16 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{background:'#27AE60'}}
+                className="w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{background:'#16A085'}}
               >
-                {isLoading ? 'Verificando...' : 'Iniciar Sesión'}
+                {isLoading ? 'Ingresando...' : 'Iniciar Sesión'}
               </button>
               
               {message && (
                 <p 
                   className={`mt-3 text-sm text-center font-medium ${
-                    message.includes('incorrectas') ? 'text-red-400' : 'text-green-400'
+                    message.includes('incorrectas') ? 'text-red-400' : 'text-teal-400'
                   }`}
                 >
                   {message}
@@ -124,7 +124,8 @@ const Login = () => {
             <p className="text-xs" style={{color:'#6B7280'}}>
               ¿Primera vez? Contacta al <a
                 href="mailto:maurocorrales4@gmail.com?subject=Rinde%2B%20Solicitud%20Usuario&body=Hola!%20Solicito%20una%20cuenta%20personal%20para%20Rinde%2B.%0A%0AMis%20datos%20son:%0ANombre:%20%0AApellido%20(Opcional):%20%0AEmail%20(Opcional):%0ANombre%20de%20usuario%20deseado%20(Opcional):%0AMe%20gustaria%20recibir%20asesoramiento%20personalizado:%20S%C3%8D%20/%20No.%0A%0AGracias.%20Saludos!"
-                className="text-green-400 underline hover:text-green-300"
+                className="text-teal-400 underline hover:text-teal-300"
+                style={{color:'#16A085'}}
               >administrador</a> para obtener acceso.
             </p>
           </div>

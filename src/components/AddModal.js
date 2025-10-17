@@ -460,7 +460,7 @@ const AddModal = () => {
 
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={{ borderColor: '#1F2937' }}>
             <button onClick={onClose} className="px-3 py-2 rounded hover:bg-gray-700">Cerrar</button>
-            <button onClick={() => handleSubmit()} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#27AE60', opacity: validate()?1:0.6 }}>Agregar</button>
+            <button onClick={() => handleSubmit()} disabled={!validate()} className="px-3 py-2 rounded text-white" style={{ background: '#16A085', opacity: validate()?1:0.6 }}>Agregar</button>
           </div>
           </div>
           {showCalc && tab === 'Ahorro' && values.plazo === 'fijo' && (

@@ -132,7 +132,7 @@ const ExchangeRateModal = ({ isOpen, onClose }) => {
             <button 
               onClick={handleAccept} 
               className="px-3 py-2 rounded text-white" 
-              style={{background: TEXT_COLORS.accent}}
+              style={{background: '#16A085'}}
             >
               Aceptar
             </button>

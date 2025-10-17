@@ -17,13 +17,14 @@ const UserProfileModal = ({ isOpen, onClose, user, onChangePassword }) => {
               <p className="text-sm"><span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Email:</span> <span style={{color: TEXT_COLORS.primary}}>{user?.email || '-'}</span></p>
               <p className="text-sm"><span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Usuario:</span> <span style={{color: TEXT_COLORS.primary}}>{user?.username || '-'}</span></p>
               <div className="pt-1">
-                <button onClick={() => { onClose(); onChangePassword(); }} className="px-2 rounded text-white text-sm" style={{background:'#3B82F6'}}>Cambiar contraseña</button>
+                <button onClick={() => { onClose(); onChangePassword(); }} className="px-2 rounded text-white text-sm" style={{background:'#16A085'}}>Cambiar contraseña</button>
               </div>
               <div className="pt-4" />
               <p className="text-xs" style={{color:'#6B7280'}}>
                 ¿Consultas? Contacta al <a
                   href="mailto:maurocorrales4@gmail.com?subject=Rinde%2B%20Consultas."
                   className="text-teal-400 underline hover:text-teal-300"
+                  style={{color:'#16A085'}}
                 >administrador</a>.
               </p>
             </div>

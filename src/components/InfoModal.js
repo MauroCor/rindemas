@@ -15,7 +15,7 @@ const InfoModal = ({ isOpen, onClose, title = 'Información', message = '' }) =>
             {message}
           </div>
           <div className="flex justify-end gap-2 px-6 py-4 border-t" style={MODAL_BORDER_STYLES}>
-            <button onClick={onClose} className="px-3 py-2 rounded text-white" style={{background:'#27AE60'}}>Cerrar</button>
+            <button onClick={onClose} className="px-3 py-2 rounded text-white" style={{background:'#16A085'}}>Cerrar</button>
           </div>
         </div>
       </div>

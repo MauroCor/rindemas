@@ -12,7 +12,7 @@ const HelpScreen = () => {
 
         {/* Propósito */}
         <section className="rounded-lg p-6 mb-6 shadow-lg" style={{background:'#1F2937'}}>
-          <h2 className="text-center text-xl font-semibold text-blue-400 mb-3">Rinde+</h2>
+          <h2 className="text-center text-xl font-semibold mb-3" style={{color:'#16A085'}}>Rinde+</h2>
           <p className="text-gray-300">
             Este sistema es tu mejor asistente para entender cómo evolucionan tus finanzas personales en el tiempo. Prioriza la claridad por sobre la complejidad: muestra ingresos, egresos y ahorros mensuales con proyecciones que ayudan a razonar decisiones.
           </p>
@@ -21,7 +21,7 @@ const HelpScreen = () => {
         {/* Consejos iniciales (desplegable) */}
         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
           <button onClick={()=>setOpenTips(!openTips)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-blue-400 text-center">Consejos iniciales</h2>
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Consejos iniciales</h2>
             <span className="text-gray-300 text-sm absolute right-6">{openTips ? '▲' : '▼'}</span>
           </button>
           {openTips && (
@@ -41,7 +41,7 @@ const HelpScreen = () => {
         {/* Pestaña: Balance (desplegable) */}
         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
           <button onClick={()=>setOpenBalance(!openBalance)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-blue-400 text-center">Pestaña: Balance</h2>
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Pestaña: Balance</h2>
             <span className="text-gray-300 text-sm absolute right-6">{openBalance ? '▲' : '▼'}</span>
           </button>
           {openBalance && (
@@ -59,7 +59,7 @@ const HelpScreen = () => {
         {/* Pestaña: Saldos (desplegable) */}
         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
           <button onClick={()=>setOpenSaldos(!openSaldos)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-blue-400 text-center">Pestaña: Saldos</h2>
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Pestaña: Saldos</h2>
             <span className="text-gray-300 text-sm absolute right-6">{openSaldos ? '▲' : '▼'}</span>
           </button>
           {openSaldos && (
@@ -80,7 +80,7 @@ const HelpScreen = () => {
         {/* Pestaña: Ahorros (desplegable) */}
         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
           <button onClick={()=>setOpenAhorros(!openAhorros)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-blue-400 text-center">Pestaña: Ahorros</h2>
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Pestaña: Ahorros</h2>
             <span className="text-gray-300 text-sm absolute right-6">{openAhorros ? '▲' : '▼'}</span>
           </button>
           {openAhorros && (

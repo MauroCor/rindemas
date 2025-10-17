@@ -240,10 +240,10 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
     {
       label: 'Total nominal',
       data: totalsWithProjection,
-      borderColor: '#27AE60',
+      borderColor: '#16A085',
       backgroundColor: 'rgba(39, 174, 96, 0.15)',
       pointRadius: 3,
-      pointBackgroundColor: '#27AE60',
+      pointBackgroundColor: '#16A085',
       borderWidth: 2,
       tension: 0.2,
       fill: false,
@@ -269,7 +269,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
       {
         label: 'Rendimiento total (%)',
         data: portfolioAccumPct,
-        borderColor: '#27AE60',
+        borderColor: '#16A085',
         backgroundColor: 'rgba(39, 174, 96, 0.1)',
         pointRadius: 2,
         borderWidth: 2,
@@ -617,7 +617,7 @@ const GraphComponent = ({ data, showAverage = false, showSavings = false, graphM
 // Paleta de colores fijos para las referencias
 const FIXED_COLORS = [
   '#3B82F6', // Azul
-  '#27AE60', // Verde
+  '#16A085', // Verde
   '#F59E0B', // Amarillo
   '#EF4444', // Rojo
   '#8B5CF6', // Púrpura
@@ -626,7 +626,7 @@ const FIXED_COLORS = [
   '#84CC16', // Lima
   '#EC4899', // Rosa
   '#6B7280', // Gris
-  '#27AE60', // Teal
+  '#16A085', // Teal
   '#F43F5E', // Rose
 ];
 

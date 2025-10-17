@@ -68,9 +68,10 @@ const NavbarComponent = () => {
             to="/balance"
             className={({ isActive }) =>
               isActive
-                ? "font-bold text-lg text-white border border-teal-500 rounded-full px-2 py-1"
+                ? "font-bold text-lg text-white border rounded-full px-2 py-1"
                 : "text-white hover:text-gray-200 px-2 py-1"
             }
+            style={({ isActive }) => isActive ? { borderColor: '#16A085' } : {}}
           >
             Balance
           </NavLink>
@@ -78,9 +79,10 @@ const NavbarComponent = () => {
             to="/saldo"
             className={({ isActive }) =>
               isActive
-                ? "font-bold text-lg text-white border border-teal-500 rounded-full px-2 py-1"
+                ? "font-bold text-lg text-white border rounded-full px-2 py-1"
                 : "text-white hover:text-gray-200 px-2 py-1"
             }
+            style={({ isActive }) => isActive ? { borderColor: '#16A085' } : {}}
           >
             Saldo
           </NavLink>
@@ -89,9 +91,10 @@ const NavbarComponent = () => {
             to="/ahorro"
             className={({ isActive }) =>
               isActive
-                ? "font-bold text-lg text-white border border-teal-500 rounded-full px-2 py-1"
+                ? "font-bold text-lg text-white border rounded-full px-2 py-1"
                 : "text-white hover:text-gray-200 px-2 py-1"
             }
+            style={({ isActive }) => isActive ? { borderColor: '#16A085' } : {}}
           >
             Ahorro
           </NavLink>

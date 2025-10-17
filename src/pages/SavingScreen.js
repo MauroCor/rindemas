@@ -171,7 +171,8 @@ const SavingScreen = () => {
                         <button
                             type="button"
                             onClick={() => setIncludeFutureLiquidity(!includeFutureLiquidity)}
-                            className={`relative w-12 h-6 rounded-full transition-colors ${includeFutureLiquidity ? 'bg-teal-500' : 'bg-gray-600'}`}
+                            className={`relative w-12 h-6 rounded-full transition-colors ${includeFutureLiquidity ? 'bg-gray-600' : 'bg-gray-600'}`}
+                            style={{background: includeFutureLiquidity ? '#16A085' : '#4B5563'}}
                             aria-pressed={includeFutureLiquidity}
                         >
                             <span

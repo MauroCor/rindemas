@@ -5,9 +5,10 @@ const Tab = ({ value, label, selected, onChange }) => (
     onClick={() => onChange(value)}
     className={`px-3 py-1 rounded-full text-sm transition-colors ${
       selected === value
-        ? 'bg-teal-600 text-white border border-teal-400'
+        ? 'text-white border'
         : 'bg-[#111827] text-gray-300 border border-[#1F2937] hover:bg-[#0f2030]'
     }`}
+    style={selected === value ? { background: '#16A085', borderColor: '#16A085' } : {}}
   >
     {label}
   </button>
