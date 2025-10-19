@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import CarouselComponent from '../components/CarouselComponent';
 import ButtonComponent from '../components/ButtonComponent';
 import DropdownItemsPerPageComponent from '../components/DropdownItemsPerPageComponent';
@@ -20,13 +20,14 @@ const SavingScreen = () => {
     const [itemsPerPages, setItemsPerPages] = useState(3);
     const [currentsMonths, setCurrentsMonths] = useState([]);
     const [startIndex, setStartIndex] = useState(0);
+    const startIndexRef = useRef(0);
     const [loading, setLoading] = useState(true);
     const [includeFutureLiquidity, setIncludeFutureLiquidity] = useState(false);
     const [graphMode, setGraphMode] = useState('total+avg');
 
     useEffect(() => {
         setLoading(true);
-        const fetchData = async () => {
+        const fetchData = async (shouldFocus = true) => {
                 try {
                     if (exchangeRate !== '') {
                         const savings = await getSavings(`?exchg_rate=${exchangeRate}`, includeFutureLiquidity);
@@ -38,7 +39,9 @@ const SavingScreen = () => {
                             }))
                         }));  
                         setDataMonths(processedSavings);
-                        focusCurrentMonth(processedSavings, setStartIndex, itemsPerPages);
+                        if (shouldFocus) {
+                            focusCurrentMonth(processedSavings, setStartIndex, itemsPerPages);
+                        }
                     }
             } catch (error) {
                 logFetchError('data', error);
@@ -48,7 +51,12 @@ const SavingScreen = () => {
         };
         fetchData();
         const onDataUpdated = (e) => {
-            fetchData();
+            // Mantener la posición actual del carrusel al actualizar datos
+            const currentStartIndex = startIndexRef.current;
+            fetchData(false).then(() => {
+                // Restaurar la posición del carrusel después de actualizar
+                setStartIndex(currentStartIndex);
+            });
         };
         window.addEventListener('app:data-updated', onDataUpdated);
         return () => window.removeEventListener('app:data-updated', onDataUpdated);
@@ -88,6 +96,11 @@ const SavingScreen = () => {
         focusCurrentMonth(filteredDataMonths, setStartIndex, newItemsPerPage);
     };
 
+    // Actualizar la referencia cuando cambie startIndex
+    useEffect(() => {
+        startIndexRef.current = startIndex;
+    }, [startIndex]);
+
     const [confirm, setConfirm] = useState({ open: false, message: '', onConfirm: null });
     const handleDeleteSaving = async (saving) => {
         setConfirm({
@@ -96,8 +109,8 @@ const SavingScreen = () => {
             onConfirm: async () => {
                 try {
                     await deleteSaving(saving.id);
-                    setDataMonths((prevData) =>
-                        prevData.map((month) => {
+                    setDataMonths((prevData) => {
+                        const updatedData = prevData.map((month) => {
                             const updatedSaving = month.saving.filter((item) => item.id !== saving.id);
                             const newTotal = updatedSaving.reduce((total, item) => {
                                 const value = item.ccy === 'ARS' ? (Number(item.obtained) || 0) : ((Number(item.obtained) || 0) * (Number(exchangeRate) || 0));
@@ -108,9 +121,10 @@ const SavingScreen = () => {
                                 saving: updatedSaving,
                                 total: newTotal
                             };
-                        })
-                    );
-                    setDataMonths((prevData) => prevData.filter((month) => month.saving.length > 0));
+                        });
+                        // Filtrar meses vacíos pero mantener la posición del carrusel
+                        return updatedData.filter((month) => month.saving.length > 0);
+                    });
                     setConfirm({ open: false, message: '', onConfirm: null });
                 } catch (error) {
                     logFetchError('deleting saving', error);
