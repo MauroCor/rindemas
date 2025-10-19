@@ -164,12 +164,23 @@ const ResultScreen = () => {
               <div className="flex flex-grow justify-center items-center space-x-2">
                 <div className="flex items-center rounded-full border overflow-hidden" style={{background:'#1F2937', borderColor:'#374151'}}>
                   <ButtonComponent
-                    text="Actual"
+                    text="Centrar"
                     ariaLabel="Ir al mes actual"
                     onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
                     className={`px-3 py-1 text-xs ${(
                       Array.isArray(currentsMonths) && currentsMonths.some(m => m.date === new Date().toISOString().slice(0,7))
-                    ) ? 'text-[#D1D5DB]' : 'bg-teal-600 hover:bg-teal-500 text-white'}`}
+                    ) ? 'text-[#D1D5DB]' : 'text-white'}`}
+                    style={{background: Array.isArray(currentsMonths) && currentsMonths.some(m => m.date === new Date().toISOString().slice(0,7)) ? 'transparent' : '#16A085'}}
+                    onMouseEnter={(e) => {
+                      if (!(Array.isArray(currentsMonths) && currentsMonths.some(m => m.date === new Date().toISOString().slice(0,7)))) {
+                        e.target.style.background = '#138D75';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!(Array.isArray(currentsMonths) && currentsMonths.some(m => m.date === new Date().toISOString().slice(0,7)))) {
+                        e.target.style.background = '#16A085';
+                      }
+                    }}
                   />
                 </div>
                 <DropdownItemsPerPageComponent

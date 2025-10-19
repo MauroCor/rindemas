@@ -104,16 +104,24 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
           )}
         </div>
         {monthLiquid > 0 && (
-          <button
-            className="absolute right-6 rounded p-1 hover:bg-gray-700"
-            title="Agregar/Ver anotaciones"
-            onClick={()=> {
-              setNewNoteAmount(notInvestedRemaining.toString());
-              setShowNotesModal(true);
-            }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><path fill="#D1D5DB" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
-          </button>
+          <div className="absolute right-2 flex items-center">
+            <button
+              className="rounded p-1 hover:bg-gray-700"
+              title="Agregar/Ver anotaciones"
+              onClick={()=> {
+                setNewNoteAmount(notInvestedRemaining.toString());
+                setShowNotesModal(true);
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-4 h-4"><path fill="#D1D5DB" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>
+            </button>
+            <span 
+              className="font-bold"
+              title={`${notes.length} anotación${notes.length !== 1 ? 'es' : ''}`}
+            >
+              {notes.length}
+            </span>
+          </div>
         )}
       </div>
 
@@ -184,7 +192,7 @@ const SavingDataComponent = ({ monthData, onDeleteSaving, onPatchSaving, exRate 
                     <select
                       value={newNoteReference}
                       onChange={(e)=>setNewNoteReference(e.target.value)}
-                      className="rounded px-1 py-1 text-[9px]"
+                      className="rounded px-1 py-1 text-[11px]"
                       style={{background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937'}}
                     >
                       <option value=""></option>

@@ -50,9 +50,18 @@ const BalanceScreen = () => {
         { name: 'Tarjeta', ccy: 'ARS', amount: null, price: card.total },
       ];
 
-      // Usar campos calculados del backend
-      const liquidItems = (sav.saving || []).filter((s) => s.liquid);
-      const liquidTotal = sav.available_total || 0;
+      // Usar campos calculados del backend - incluir proyecciones y excluir Plan de Ahorro
+      const liquidItems = (sav.saving || []).filter((s) => s.liquid && s.type !== 'plan');
+      // Tomar el total del backend y restar los Planes de Ahorro
+      const planAmount = (sav.saving || [])
+        .filter(s => s.liquid && s.type === 'plan')
+        .reduce((total, item) => {
+          const amount = item.type === 'var' || item.type === 'plan' || item.liquid ? item.obtained : 
+                        item.type === 'flex' ? item.obtained : 
+                        item.invested;
+          return total + (amount || 0);
+        }, 0);
+      const liquidTotal = (sav.available_total || 0) - planAmount;
       
       // Obtener las anotaciones para este mes (solo para mostrar en el modal)
       let notes = [];
@@ -81,7 +90,7 @@ const BalanceScreen = () => {
         const [incomes, fixedCosts, savings, cardSpends] = await Promise.all([
           getIncomes(`?exchg_rate=${exchangeRate}`),
           getFixedCosts(`?exchg_rate=${exchangeRate}`),
-          getSavings(`?exchg_rate=${exchangeRate}`),
+          getSavings(`?exchg_rate=${exchangeRate}`, true), // incluir proyecciones
           getCardSpends(),
         ]);
         const merged = await mergeSummary(incomes, fixedCosts, savings, cardSpends, exchangeRate);
@@ -105,7 +114,7 @@ const BalanceScreen = () => {
           const [incomes, fixedCosts, savings, cardSpends] = await Promise.all([
             getIncomes(`?exchg_rate=${exchangeRate}`),
             getFixedCosts(`?exchg_rate=${exchangeRate}`),
-            getSavings(`?exchg_rate=${exchangeRate}`),
+            getSavings(`?exchg_rate=${exchangeRate}`, true), // incluir proyecciones
             getCardSpends(),
           ]);
           const merged = await mergeSummary(incomes, fixedCosts, savings, cardSpends, exchangeRate);
@@ -167,13 +176,23 @@ const BalanceScreen = () => {
             <div className="flex flex-grow justify-center items-center space-x-2">
               <div className="flex items-center rounded-full border overflow-hidden" style={{background:'#1F2937', borderColor:'#374151'}}>
                 <ButtonComponent
-                  text="Actual"
+                  text="Centrar"
                   ariaLabel="Ir al mes actual"
                   onClick={() => focusCurrentMonth(dataMonths, setStartIndex, itemsPerPages)}
                   className={`px-3 py-1 text-xs ${(
                     dataMonths.slice(startIndex, startIndex + itemsPerPages).some(m => m.date === new Date().toISOString().slice(0,7))
                   ) ? 'text-[#D1D5DB]' : 'text-white'}`}
                   style={{background: dataMonths.slice(startIndex, startIndex + itemsPerPages).some(m => m.date === new Date().toISOString().slice(0,7)) ? 'transparent' : '#16A085'}}
+                  onMouseEnter={(e) => {
+                    if (!dataMonths.slice(startIndex, startIndex + itemsPerPages).some(m => m.date === new Date().toISOString().slice(0,7))) {
+                      e.target.style.background = '#138D75';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!dataMonths.slice(startIndex, startIndex + itemsPerPages).some(m => m.date === new Date().toISOString().slice(0,7))) {
+                      e.target.style.background = '#16A085';
+                    }
+                  }}
                 />
               </div>
               <DropdownItemsPerPageComponent

@@ -70,8 +70,8 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                     style={{background:'#374151'}} onMouseDown={(e) => e.preventDefault()}>
                     <label className='' style={{ width: '70px', display: 'inline-block', textAlign: 'center' }}>{title}</label>
                     <div className='right-4 text-xs' style={{color:'#9CA3AF'}}>{showDetails ? '▲' : '▼'}</div>
-                    <label className={`text-lg ${isIncome ? 'text-teal-400' : 'text-red-400'}`}
-                        style={{ width: '70px', display: 'inline-block', textAlign: 'center', color: isIncome ? '#10B981' : '#DC2626', textShadow: '0 0 8px rgba(16, 185, 129, 0.3)' }}>{formatPrice(data.total, 'ARS')}</label>
+                    <label className={`text-lg ${isIncome ? 'text-teal-400' : 'text-red-500'}`}
+                        style={{ width: '70px', display: 'inline-block', textAlign: 'center', color: isIncome ? '#10B981' : '#e67875', textShadow: '0 0 8px rgba(16, 185, 129, 0.3)' }}>{formatPrice(data.total, 'ARS')}</label>
                 </div>
                 {showDetails && (
                     <div className="mt-4" onMouseDown={(e) => e.preventDefault()}>
@@ -84,7 +84,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             >
                                 <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
                                 <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy !== 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
-                                <span className="w-[33%] text-left text-sm" style={{color: item.name === 'Ingresos' ? '#10B981' : item.name === 'Egresos' ? '#DC2626' : item.name === 'Tarjeta' ? '#D97706' : '#F3F4F6', textShadow: item.name === 'Ingresos' ? '0 0 6px rgba(16, 185, 129, 0.4)' : item.name === 'Egresos' ? '0 0 6px rgba(220, 38, 38, 0.4)' : item.name === 'Tarjeta' ? '0 0 6px rgba(217, 119, 6, 0.4)' : 'none'}}>{formatPrice(item.price, 'ARS')}</span>
+                                <span className="w-[33%] text-left text-sm" style={{color: item.name === 'Ingresos' ? '#10B981' : item.name === 'Egresos' ? '#e67875' : item.name === 'Tarjeta' ? '#e67875' : '#F3F4F6', textShadow: item.name === 'Ingresos' ? '0 0 6px rgba(16, 185, 129, 0.4)' : item.name === 'Egresos' ? '0 0 6px rgba(220, 38, 38, 0.4)' : item.name === 'Tarjeta' ? '0 0 6px rgba(217, 119, 6, 0.4)' : 'none'}}>{formatPrice(item.price, 'ARS')}</span>
                                 {!readOnly && item.name !== 'Tarjeta' && onDelete && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onDelete(item); }}
@@ -144,7 +144,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 {hasReinvestmentNote && (
                                     <div className="absolute top-1/2 left-0 h-px bg-gray-400 z-10" style={{width: 'calc(100% - 10%)'}}></div>
                                 )}
-                                <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : item.type === 'plan' ? 'text-green-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-300' : ''}`}>
+                                <span className={`text-left text-[8px] font-extrabold font-sans ${item.type === 'fijo' ? 'text-teal-400' : item.type === 'flex' ? 'text-blue-400' : item.type === 'plan' ? 'text-green-400' : 'text-yellow-400'} ${hasReinvestmentNote ? 'relative z-20' : ''}`}>
                                     {item.type === 'fijo' ? 'RF' : item.type === 'flex' ? 'RP' : item.type === 'plan' ? 'PA' : 'RV'}
                                 </span>
                                 <span className={`w-[100%] text-center text-sm whitespace-normal ${hasReinvestmentNote ? 'relative z-20' : ''} ${isProjection ? 'text-purple-200' : ''}`}>
