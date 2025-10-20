@@ -68,7 +68,7 @@ const BalanceScreen = () => {
       try {
         notes = await getNotes(month);
       } catch (error) {
-        console.error('Error loading notes for month', month, error);
+        // Error silencioso en producción
         notes = [];
       }
 
@@ -97,7 +97,7 @@ const BalanceScreen = () => {
         setDataMonths(merged);
         focusCurrentMonth(merged, setStartIndex, itemsPerPages);
       } catch (e) {
-        console.error('Error loading summary:', e);
+        // Error silencioso en producción
       } finally {
         setLoading(false);
       }
@@ -121,7 +121,7 @@ const BalanceScreen = () => {
           setDataMonths(merged);
           focusCurrentMonth(merged, setStartIndex, itemsPerPages);
         } catch (e) {
-          console.error('Error loading summary:', e);
+          // Error silencioso en producción
         } finally {
           setLoading(false);
         }

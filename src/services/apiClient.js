@@ -1,4 +1,5 @@
 import { base_url } from "./config";
+import { logError } from '../utils/logger';
 
 let sessionExpired = false;
 let sessionExpiredCallback = null;
@@ -46,13 +47,13 @@ const apiRequest = async (endpoint, method = 'GET', data = null, login = false) 
       const err = new Error(`HTTP error ${response.status}`);
       err.status = response.status;
       err.data = parsedBody ?? errorBodyText;
-      console.error('Error response body:', err.data);
+      logError('API error body', err.data);
       throw err;
     }
 
     return response;
   } catch (error) {
-    console.error('API request error:', error.message);
+    logError('API request error', error.message);
     throw error;
   }
 };

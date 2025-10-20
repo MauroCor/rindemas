@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
+import { logError } from '../utils/logger';
 import logoRindePlus from '../images/logo-rindemas.png';
 import logoRindePlusMobile from '../images/logo-rindemas-mobile.png';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -23,7 +24,7 @@ const NavbarComponent = () => {
           const user = await getUser();
           setUserFullName(user.full_name);
         } catch (error) {
-          console.error('Error al obtener el usuario:', error);
+          logError('Error al obtener el usuario:', error);
         }
       };
 

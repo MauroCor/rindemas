@@ -32,9 +32,9 @@ const UserMenu = ({ userName, handleLogout }) => {
         if (mounted) setUser(data);
       } catch (_) {}
     };
-    if (openProfile && !user) fetchUser();
+    fetchUser();
     return () => { mounted = false; };
-  }, [openProfile]);
+  }, []);
 
   return (
     <div className="relative sm:pl-[71px]">
@@ -74,8 +74,26 @@ const UserMenu = ({ userName, handleLogout }) => {
               </button>
             </li>
 
+            {user?.is_superuser && (
             <li className="text-center text-gray-300 relative">
-              <Link to="/ayuda" className="block w-full p-1 text-center hover:bg-gray-700">Ayuda</Link>
+              <Link
+                to="/admin"
+                className="block w-full p-1 text-center hover:bg-gray-700"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin
+              </Link>
+            </li>
+            )}
+
+            <li className="text-center text-gray-300 relative">
+              <Link
+                to="/ayuda"
+                className="block w-full p-1 text-center hover:bg-gray-700"
+                onClick={() => setIsOpen(false)}
+              >
+                Manual
+              </Link>
             </li>
 
             <li className='border-t-2 border-t-gray-600'>

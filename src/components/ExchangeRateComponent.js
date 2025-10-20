@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { logError } from '../utils/logger';
 import { useExchangeRate } from "../context/ExchangeRateContext";
 
 const ExchangeRateComponent = () => {
@@ -19,7 +20,7 @@ const ExchangeRateComponent = () => {
       setExchangeRate(rate);
       updateExchangeRate(rate)
     } catch (error) {
-      console.error("Error fetching exchange rate:", error);
+      logError("Error fetching exchange rate:", error);
     }
   };
 

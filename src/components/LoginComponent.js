@@ -58,7 +58,7 @@ const Login = () => {
               <input
                 id="username"
                 type="text"
-                autoComplete='off'
+                autoComplete="username"
                 placeholder="Ingresa tu usuario"
                 className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
                 style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #16A085' }}
@@ -76,7 +76,7 @@ const Login = () => {
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete='off'
+                  autoComplete="current-password"
                   placeholder="Ingresa tu contraseña"
                   className="w-full px-4 py-3 rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-200"
                   style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #16A085' }}

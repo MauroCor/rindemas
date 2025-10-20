@@ -71,7 +71,7 @@ const BalanceDetailModal = ({ isOpen, onClose, record, onUpdate, recordType }) =
       setIsEditing(false);
       onClose();
     } catch (error) {
-      console.error('Error updating record:', error);
+      // Error silencioso en producción
     } finally {
       setLoading(false);
     }

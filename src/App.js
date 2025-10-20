@@ -11,6 +11,7 @@ import Footer from './components/FooterComponent';
 import { ExchangeRateProvider } from './context/ExchangeRateContext';
 import HelpScreen from './pages/HelpScreen';
 import BalanceScreen from './pages/BalanceScreen';
+import AdminScreen from './pages/AdminScreen';
 import AddModal from './components/AddModal';
 import { AddModalProvider } from './components/AddModalContext';
 import { SessionProvider, useSession } from './context/SessionContext';
@@ -68,6 +69,16 @@ const AppContent = () => {
             <PrivateRoute>
               <NavbarComponent />
               <HelpScreen />
+              <Footer />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <NavbarComponent />
+              <AdminScreen />
               <Footer />
             </PrivateRoute>
           }

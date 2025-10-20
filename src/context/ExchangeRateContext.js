@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { logError } from '../utils/logger';
 
 const ExchangeRateContext = createContext();
 
@@ -21,7 +22,7 @@ export const ExchangeRateProvider = ({ children }) => {
         const rate = parseInt(data['compra']);
         setExchangeRate(rate);
       } catch (error) {
-        console.error("Error fetching exchange rate:", error);
+        logError('Error fetching exchange rate:', error);
       }
     };
 

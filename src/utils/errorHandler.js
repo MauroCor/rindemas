@@ -1,5 +1,7 @@
+import { logError } from '../utils/logger';
+
 export const handleApiError = (error, context = '') => {
-  console.error(`API Error ${context}:`, error);
+  logError(`API Error ${context}:`, error);
   if (error?.message?.includes('Network')) return 'Error de conexión. Verifique su internet.';
   if (error?.data || error?.status) {
     const d = error.data;
