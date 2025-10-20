@@ -47,7 +47,7 @@ const Login = () => {
               style={{height:'56px'}}
             />
             <h2 className="sr-only">Rinde+</h2>
-            <p className="mt-1 text-base" style={{color:'#9CA3AF'}}>- Proyectá tu evolución -</p>
+            <p className="mt-1 text-base" style={{color:'#9CA3AF'}}>- Proyecta tu evolución -</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">

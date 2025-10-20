@@ -248,14 +248,14 @@ Equipo Rinde+.`;
     switch (type) {
       case 'created':
         const password = user.password || 'N/A';
-        content = `Tu cuenta Rinde+ ha sido creada. ¡Proyectá tu evolución! 🚀
+        content = `Tu cuenta Rinde+ ha sido creada. ¡Proyecta tu evolución! 🚀
 
 Acceso:
 • Link: maurocor.github.io/rindemas/
 • Usuario: ${username}
 • Contraseña: ${password}
 
-💡 Actualiza esta contraseña genérica.
+💡 Actualizar esta contraseña genérica.
 Puedes hacerlo al iniciar sesión en: Usuario > Perfil > Cambiar contraseña.`;
         break;
         
