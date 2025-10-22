@@ -55,33 +55,79 @@ export const getMonthlyReturnForSaving = (month, saving) => {
 export const calculatePortfolioMonthlyReturns = (filteredData, detailUnit) => {
   const result = new Array(filteredData.length).fill(0);
   
-  for (let idx = 0; idx < filteredData.length; idx++) {
-    const month = filteredData[idx];
-    let weightedSum = 0;
-    let weightDen = 0;
+  // Modo dólares: lógica mixta (flex acumula + var constante)
+  if (detailUnit === 'dolares') {
+    const flexAccumulated = new Array(filteredData.length).fill(1);
+    const varSum = new Array(filteredData.length).fill(0);
     
-    month.saving.forEach(s => {
-      // Excluir tipo 'plan' en modo Detalle
-      if (s.type === 'plan') return;
+    for (let idx = 0; idx < filteredData.length; idx++) {
+      const month = filteredData[idx];
+      let flexWeightedSum = 0;
+      let flexWeightDen = 0;
+      let varWeightedSum = 0;
+      let varWeightDen = 0;
       
-      // Filtrar por divisa según unidad
-      if ((detailUnit === 'pesos' && s.ccy !== 'ARS') || (detailUnit === 'dolares' && s.ccy !== 'USD')) return;
+      month.saving.forEach(s => {
+        if (s.type === 'plan') return;
+        if (s.ccy !== 'USD') return;
+        
+        const rMonthly = getMonthlyReturnForSaving(month, s);
+        if (rMonthly === null) return;
+        
+        const amount = Number(s.amount) || 0;
+        const invested = Number(s.invested) || 0;
+        const weight = amount > 0 ? amount : invested;
+        
+        if (weight > 0) {
+          if (s.type === 'var') {
+            varWeightedSum += rMonthly * weight;
+            varWeightDen += weight;
+          } else {
+            flexWeightedSum += rMonthly * weight;
+            flexWeightDen += weight;
+          }
+        }
+      });
       
-      const rMonthly = getMonthlyReturnForSaving(month, s);
-      if (rMonthly === null) return;
-      
-      // peso: capital del mes en la divisa del ahorro
-      const amount = Number(s.amount) || 0;
-      const invested = Number(s.invested) || 0;
-      const weight = amount > 0 ? amount : invested;
-      
-      if (weight > 0) {
-        weightedSum += rMonthly * weight;
-        weightDen += weight;
+      // Acumular flex
+      if (idx > 0) {
+        flexAccumulated[idx] = flexAccumulated[idx - 1] * (1 + (flexWeightDen > 0 ? flexWeightedSum / flexWeightDen : 0));
+      } else {
+        flexAccumulated[idx] = 1 + (flexWeightDen > 0 ? flexWeightedSum / flexWeightDen : 0);
       }
-    });
-    
-    result[idx] = weightDen > 0 ? (weightedSum / weightDen) : 0; // %
+      
+      // Sumar var
+      varSum[idx] = varWeightDen > 0 ? varWeightedSum / varWeightDen : 0;
+      
+      // Total = flex acumulado + var constante
+      result[idx] = (flexAccumulated[idx] - 1) * 100 + varSum[idx];
+    }
+  } else {
+    // Modo pesos: lógica original (todos acumulan)
+    for (let idx = 0; idx < filteredData.length; idx++) {
+      const month = filteredData[idx];
+      let weightedSum = 0;
+      let weightDen = 0;
+      
+      month.saving.forEach(s => {
+        if (s.type === 'plan') return;
+        if (s.ccy !== 'ARS') return;
+        
+        const rMonthly = getMonthlyReturnForSaving(month, s);
+        if (rMonthly === null) return;
+        
+        const amount = Number(s.amount) || 0;
+        const invested = Number(s.invested) || 0;
+        const weight = amount > 0 ? amount : invested;
+        
+        if (weight > 0) {
+          weightedSum += rMonthly * weight;
+          weightDen += weight;
+        }
+      });
+      
+      result[idx] = weightDen > 0 ? (weightedSum / weightDen) : 0;
+    }
   }
   
   return result;

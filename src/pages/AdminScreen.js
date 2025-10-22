@@ -6,6 +6,7 @@ import UserTable from '../components/admin/UserTable';
 import UserForm from '../components/admin/UserForm';
 import UserModals from '../components/admin/UserModals';
 import { sortUsers, copyToClipboard } from '../utils/adminUtils';
+import { logError } from '../utils/logger';
 
 const AdminScreen = () => {
   const [uiState, setUiState] = useState({
@@ -100,7 +101,7 @@ const AdminScreen = () => {
       resetForm();
       setUiState(prev => ({ ...prev, showUserCreated: true }));
     } catch (error) {
-      console.error('Error creating user:', error);
+      logError('Error creating user:', error);
     } finally {
       setUiState(prev => ({ ...prev, loading: false }));
     }
@@ -134,7 +135,7 @@ const AdminScreen = () => {
       resetForm();
       setUiState(prev => ({ ...prev, showUserEdited: true }));
     } catch (error) {
-      console.error('Error updating user:', error);
+      logError('Error updating user:', error);
     } finally {
       setUiState(prev => ({ ...prev, loading: false }));
     }
@@ -192,7 +193,7 @@ const AdminScreen = () => {
       setUserState(prev => ({ ...prev, userToToggle: null }));
       await loadUsers();
     } catch (error) {
-      console.error('Error toggling user status:', error);
+      logError('Error toggling user status:', error);
     } finally {
       setUiState(prev => ({ ...prev, loading: false }));
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { formatPrice } from '../utils/numbers';
 import { putSaving, getSavings } from '../services/saving';
 import { MODAL_STYLES, MODAL_BORDER_STYLES, LABEL_STYLES, INPUT_STYLES, TEXT_COLORS } from '../utils/styles';
+import { logError } from '../utils/logger';
 
 const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -76,7 +77,7 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
           initial: initialTickerValue
         });
       } catch (error) {
-        console.error('Error loading ticker data:', error);
+        logError('Error loading ticker data:', error);
         setTickerValues({ current: null, initial: null });
       }
     };
