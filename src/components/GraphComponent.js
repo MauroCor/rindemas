@@ -19,7 +19,6 @@ import {
   accumulatePct,
   calculateAverage,
   generateDetailSavingsDatasets,
-  getMonthlyReturnForSaving
 } from '../utils/graphCalculations';
 import { buildDatasets, buildOptions } from '../utils/chartConfiguration';
 import { generateColor } from '../utils/chartColors';
@@ -128,63 +127,6 @@ const GraphComponent = ({ data, showAverage = false, graphMode, onChangeGraphMod
     calculateAverage(filteredData, fxPath), 
     [filteredData, fxPath]
   );
-
-  // Log específico para modo rendimiento - Lista de objetos agrupada
-  if (graphMode === 'rendimiento') {
-    const rendimientoAnalysis = {
-      configuracion: {
-        graphMode: graphMode,
-        detailUnit: detailUnit,
-        isPesos: isPesos,
-        labels: labels
-      },
-      calculos: {
-        portfolioMonthlyReturnPct: portfolioMonthlyReturnPct,
-        portfolioAccumPct: portfolioAccumPct,
-        inflationPctSeries: inflationPctSeries
-      },
-      datasets: detailSavingsDatasets,
-      ahorrosPorMes: filteredData.map((month, idx) => ({
-        mes: month.date,
-        index: idx,
-        ahorros: month.saving.map(s => ({
-          nombre: s.name,
-          tipo: s.type,
-          moneda: s.ccy,
-          tna: s.tna,
-          monto: s.amount,
-          invertido: s.invested,
-          obtenido: s.obtained,
-          liquido: s.liquid,
-          retornoMensual: getMonthlyReturnForSaving(month, s),
-          retornoMensualCalculado: s.tna ? (s.tna / 100) / 12 : 0 // TNA a mensual
-        }))
-      })),
-      rentaPasiva50TNA: filteredData.map((month, idx) => {
-        const rentaPasiva = month.saving.find(s => s.tna === 50);
-        if (rentaPasiva) {
-          return {
-            mes: month.date,
-            index: idx,
-            nombre: rentaPasiva.name,
-            tipo: rentaPasiva.type,
-            moneda: rentaPasiva.ccy,
-            tna: rentaPasiva.tna,
-            monto: rentaPasiva.amount,
-            invertido: rentaPasiva.invested,
-            obtenido: rentaPasiva.obtained,
-            liquido: rentaPasiva.liquid,
-            retornoMensual: getMonthlyReturnForSaving(month, rentaPasiva),
-            retornoMensualEsperado: 50 / 100 / 12, // 50% TNA = 4.17% mensual
-            diferencia: getMonthlyReturnForSaving(month, rentaPasiva) - (50 / 100 / 12)
-          };
-        }
-        return null;
-      }).filter(Boolean)
-    };
-    
-    console.log('🎯 ANÁLISIS RENDIMIENTO - Lista de objetos agrupada:', rendimientoAnalysis);
-  }
 
   const datasets = buildDatasets({
     graphMode,
