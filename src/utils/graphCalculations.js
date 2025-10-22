@@ -43,8 +43,12 @@ export const getMonthlyReturnForSaving = (month, saving) => {
   const tna = saving.tna != null ? Number(saving.tna) : 0;
   if (!tna || tna === null || tna === undefined) return null;
   
-  // Para renta variable, TNA es rendimiento acumulado vs compra inicial
-  return month.date === saving.date_from ? 0 : tna;
+  // Para renta variable (var), TNA es rendimiento acumulado vs compra inicial
+  if (saving.type === 'var') {
+    return month.date === saving.date_from ? 0 : tna;
+  } else {
+    return month.date === saving.date_from ? 0 : tna / 100 / 12;
+  }
 };
 
 // Calcular rendimientos mensuales del portafolio
@@ -83,13 +87,21 @@ export const calculatePortfolioMonthlyReturns = (filteredData, detailUnit) => {
   return result;
 };
 
-// Acumular porcentajes
-export const accumulatePct = (rMonthlyPct) => {
+export const accumulatePct = (rMonthlyPct, detailUnit = null) => {
   const out = [];
   let acc = 1;
   for (let i = 0; i < rMonthlyPct.length; i++) {
-    acc *= (1 + (rMonthlyPct[i] || 0) / 100);
-    out.push((acc - 1) * 100);
+    const value = rMonthlyPct[i] || 0;
+    
+    // Si es modo dólares, mostrar mensual
+    if (detailUnit === 'dolares') {
+      out.push(value);
+    } else {
+      // Si es modo pesos, acumular
+      const isPercentage = Math.abs(value) > 1;
+      acc *= (1 + (isPercentage ? value / 100 : value));
+      out.push((acc - 1) * 100);
+    }
   }
   return out;
 };
@@ -138,12 +150,10 @@ export const generateDetailSavingsDatasets = (filteredData, labels, detailUnit, 
       
       const entry = perSavingMap.get(key);
       if (s.type === 'var') {
-        // Para renta variable, rMonthly ya es el porcentaje acumulado
         entry.data[idx] = rMonthly;
       } else {
-        // Para otros tipos, usar cálculo acumulado
         entry.acc *= (1 + (rMonthly || 0));
-        entry.data[idx] = (entry.acc - 1);
+        entry.data[idx] = (entry.acc - 1) * 100;
       }
     });
   }

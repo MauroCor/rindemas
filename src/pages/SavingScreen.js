@@ -23,7 +23,7 @@ const SavingScreen = () => {
     const startIndexRef = useRef(0);
     const [loading, setLoading] = useState(true);
     const [includeFutureLiquidity, setIncludeFutureLiquidity] = useState(false);
-    const [graphMode, setGraphMode] = useState('total+avg');
+    const [graphMode, setGraphMode] = useState('portafolio');
 
     useEffect(() => {
         setLoading(true);
@@ -264,8 +264,8 @@ const SavingScreen = () => {
                 <div className="pt-10 text-center max-w-screen-sm mx-auto">
                     <GraphComponent
                         data={graphDataMonths}
-                        showAverage={graphMode === 'total+avg' || graphMode === 'todo'}
-                        showSavings={graphMode === 'todo'}
+                        showAverage={graphMode === 'portafolio' || graphMode === 'rendimiento'}
+                        showSavings={graphMode === 'rendimiento'}
                         graphMode={graphMode}
                         onChangeGraphMode={setGraphMode}
                     />

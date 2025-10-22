@@ -5,7 +5,8 @@ export const buildTooltipCallbacks = ({ graphMode, formatNumber, filteredData, f
     }
     
     if (graphMode === 'rendimiento') {
-      return `${context.dataset.label}: ${Number(context.raw).toFixed(1)}%`;
+      const value = Number(context.raw);
+      return `${context.dataset.label}: ${value.toFixed(1)}%`;
     }
     
     const isUSD = context.dataset.label.includes('(USD)') || context.dataset.label.includes('USD');

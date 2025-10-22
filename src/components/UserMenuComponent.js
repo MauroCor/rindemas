@@ -36,8 +36,24 @@ const UserMenu = ({ userName, handleLogout }) => {
     return () => { mounted = false; };
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isOpen && !event.target.closest('.user-menu-container')) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
-    <div className="relative sm:pl-[71px]">
+    <div className="relative sm:pl-[71px] user-menu-container">
 
       <button
         onClick={toggleMenu}
