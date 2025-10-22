@@ -9,8 +9,8 @@ export const postIncome = (data) => {
   return apiRequest('/api/income/', 'POST', data);
 };
 
-export const patchIncome = (data) => {
-  return apiRequest('/api/income/', 'PATCH', data);
+export const patchIncome = (id, data) => {
+  return apiRequest(`/api/income/${id}/`, 'PATCH', data);
 };
 
 export const putIncome = (id, data) => {

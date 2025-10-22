@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatPrice } from '../utils/numbers';
 import RecordDetailModal from './RecordDetailModal';
 import BalanceDetailModal from './BalanceDetailModal';
 
 const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, initialOpen = false, readOnly = false, notes = [], monthDate }) => {
-    const [showDetails, setShowDetails] = useState(initialOpen);
+    const dropdownId = `${title}-${monthDate || 'default'}`;
+    
+    const getStoredState = () => {
+        try {
+            const stored = localStorage.getItem(`dropdown-${dropdownId}`);
+            return stored ? JSON.parse(stored) : initialOpen;
+        } catch {
+            return initialOpen;
+        }
+    };
+    
+    const [showDetails, setShowDetails] = useState(getStoredState);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showBalanceModal, setShowBalanceModal] = useState(false);
     const [recordType, setRecordType] = useState('');
-    const toggleDropdown = () => setShowDetails(!showDetails);
+    
+    const toggleDropdown = () => {
+        const newState = !showDetails;
+        setShowDetails(newState);
+        try {
+            localStorage.setItem(`dropdown-${dropdownId}`, JSON.stringify(newState));
+        } catch {
+        }
+    };
+
+    useEffect(() => {
+        const newState = getStoredState();
+        setShowDetails(newState);
+    }, [title, monthDate]);
     
     const handleRecordClick = (record, type) => {
         if (type === 'saving') {
@@ -128,7 +152,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                     <span className="text-left text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>TIPO</span>
                                     <span className="w-[95%] text-center text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>NOMBRE</span>
                                     <span className="w-[45%] text-center text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>MONTO</span>
-                                    <span className="w-[40%] text-right text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>TNA</span>
+                                    <span className="w-[40%] text-right text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}>%</span>
                                     <span className="w-[35%] text-right text-[8px] font-bold uppercase" style={{color:'#9CA3AF'}}></span>
                                 </div>
                                 {data.saving.map((item, index) => {

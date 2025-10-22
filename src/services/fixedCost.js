@@ -9,8 +9,8 @@ export const postFixedCost = (data) => {
   return apiRequest('/api/fixed-cost/', 'POST', data);
 };
 
-export const patchFixedCost = (data) => {
-  return apiRequest('/api/fixed-cost/', 'PATCH', data);
+export const patchFixedCost = (id, data) => {
+  return apiRequest(`/api/fixed-cost/${id}/`, 'PATCH', data);
 };
 
 export const putFixedCost = (id, data) => {

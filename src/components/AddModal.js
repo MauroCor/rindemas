@@ -145,6 +145,12 @@ const AddModal = () => {
     closeAddModal();
   };
 
+  const resetFormForIngresoEgreso = () => {
+    setValue('name', '');
+    setValue('price', '');
+    setValue('ccy', 'ARS');
+  };
+
   const handleSubmit = async () => {
     let data = {};
     let sectionName = '';
@@ -196,7 +202,11 @@ const AddModal = () => {
         // noop
       }
       
-      resetForm();
+      if (tab === 'Ingreso' || tab === 'Egreso') {
+        resetFormForIngresoEgreso();
+      } else {
+        resetForm();
+      }
       
     } catch (error) {
       const msg = handleApiError(error, 'handleSubmit');
@@ -245,7 +255,7 @@ const AddModal = () => {
                     <MonthDropComponent type='Desde' value={values.desdeValue} onChange={(value) => setValue('desdeValue', value)} />
                   </div>
                   <div className="flex flex-col">
-                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
+                    <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta</label>
                     <MonthDropComponent type='Hasta' value={values.hastaValue} onChange={(value) => setValue('hastaValue', value)} />
                   </div>
                 </div>
@@ -395,22 +405,30 @@ const AddModal = () => {
                         <input
                           className="text-center w-56 p-2 rounded-lg"
                           type="text"
-                          inputMode="decimal"
+                          inputMode="text"
                           autoComplete="off"
                           placeholder="Ej: 0.0000087"
                           value={values.qty}
                           onChange={(e) => {
                             const v = e.target.value;
-                            const valid = /^\d*(?:\.?\d*)?$/.test(v);
+                            const valid = values.plazo === 'var' 
+                              ? /^\d*(?:[.,]?\d*)?$/.test(v)
+                              : /^\d*(?:\.?\d*)?$/.test(v);
                             if (valid) {
-                              let newV = cleanNumberInput(v, 9);
-                              setValue('qty', newV);
-                              if (values.plazo === 'var' && varQuote && Number(varQuote) > 0) {
-                                const qNum = Number(newV || 0);
-                                const inv = qNum * Number(varQuote);
-                                if (!Number.isNaN(inv) && Number.isFinite(inv)) {
-                                  setValue('invested', String(Math.round(inv)));
+                              if (values.plazo === 'var') {
+                                setValue('qty', v);
+                                
+                                const normalizedV = v.replace(',', '.');
+                                if (varQuote && Number(varQuote) > 0) {
+                                  const qNum = Number(normalizedV || 0);
+                                  const inv = qNum * Number(varQuote);
+                                  if (!Number.isNaN(inv) && Number.isFinite(inv)) {
+                                    setValue('invested', String(Math.round(inv)));
+                                  }
                                 }
+                              } else {
+                                let newV = cleanNumberInput(v, 9);
+                                setValue('qty', newV);
                               }
                             }
                           }}
@@ -436,7 +454,7 @@ const AddModal = () => {
                         <MonthDropComponent type='Desde' value={values.desdeValue} onChange={(value) => setValue('desdeValue', value)} />
                       </div>
                       <div className="flex flex-col">
-                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta (Opcional)</label>
+                        <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>Hasta</label>
                         <MonthDropComponent type='Hasta' value={values.hastaValue} onChange={(value) => setValue('hastaValue', value)} />
                       </div>
                     </div>

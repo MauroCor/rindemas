@@ -99,8 +99,11 @@ const ResultScreen = () => {
       message: `¿Eliminar '${data.name}' a partir de ${monthName}?`,
       onConfirm: async () => {
         try {
-          const patchFunction = type === 'fixedCost' ? patchFixedCost : patchIncome;
-          await patchFunction(body);
+          if (type === 'fixedCost') {
+            await patchFixedCost(data.id, body);
+          } else {
+            await patchIncome(data.id, body);
+          }
           setConfirm({ open: false, message: '', onConfirm: null });
           fetchAndMergeData();
         } catch (error) {

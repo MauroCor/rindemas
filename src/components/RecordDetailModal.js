@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { formatPrice } from '../utils/numbers';
-import { putSaving } from '../services/saving';
+import { putSaving, getSavings } from '../services/saving';
 import { MODAL_STYLES, MODAL_BORDER_STYLES, LABEL_STYLES, INPUT_STYLES, TEXT_COLORS } from '../utils/styles';
 
 const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedRecord, setEditedRecord] = useState({});
   const [loading, setLoading] = useState(false);
+  const [tickerValues, setTickerValues] = useState({ current: null, initial: null });
 
   const formatNumber = (num) => {
     if (!num) return '';
@@ -45,6 +46,43 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
       setIsEditing(false);
     }
   }, [isOpen]);
+
+  // Cargar datos de ticker cuando se abre el modal
+  useEffect(() => {
+    const loadTickerData = async () => {
+      if (!isOpen || !record || record.type !== 'var') {
+        setTickerValues({ current: null, initial: null });
+        return;
+      }
+
+      try {
+        // Obtener todos los datos mensuales
+        const allSavings = await getSavings('', true);
+        
+        // Encontrar el ticker_value del mes actual
+        const currentMonth = record.monthDate;
+        const currentMonthData = allSavings.find(month => month.date === currentMonth);
+        const currentTickerValue = currentMonthData?.saving?.find(item => item.id === record.id)?.ticker_value;
+
+        // Encontrar el ticker_value del mes inicial del ahorro
+        let initialTickerValue = null;
+        if (record.date_from) {
+          const initialMonthData = allSavings.find(month => month.date === record.date_from);
+          initialTickerValue = initialMonthData?.saving?.find(item => item.id === record.id)?.ticker_value;
+        }
+
+        setTickerValues({
+          current: currentTickerValue,
+          initial: initialTickerValue
+        });
+      } catch (error) {
+        console.error('Error loading ticker data:', error);
+        setTickerValues({ current: null, initial: null });
+      }
+    };
+
+    loadTickerData();
+  }, [isOpen, record]);
 
   const handleSave = async () => {
     setLoading(true);
@@ -105,7 +143,7 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
         }
       }
       
-      await putSaving(updateData);
+      await putSaving(record.id, updateData);
       onUpdate(updateData);
       setIsEditing(false);
       onClose();
@@ -125,7 +163,7 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
         month_date: record.monthDate,
         projection: false
       };
-      await putSaving(payload);
+      await putSaving(record.id, payload);
       onConfirm(payload);
       onClose();
     } catch (error) {
@@ -216,12 +254,34 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
                   </p>
                 </div>
 
+                {record.type === 'var' && (
+                  <div className="py-1">
+                    <p className="text-sm">
+                      <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Precio inicial:</span> 
+                      <span className="ml-1" style={{color: TEXT_COLORS.primary}}>
+                        {tickerValues.initial ? formatPrice(tickerValues.initial, 'USD') : '?'}
+                      </span>
+                    </p>
+                  </div>
+                )}
+
                 {record.type !== 'plan' && (
                   <div className="py-1">
                     <p className="text-sm">
                       <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Monto Inicial:</span> 
                       <span className="ml-1" style={{color: TEXT_COLORS.primary}}>
                         {formatPrice(record.invested, record.ccy)}
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                {record.type === 'var' && (
+                  <div className="py-1">
+                    <p className="text-sm">
+                      <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Precio actual:</span> 
+                      <span className="ml-1" style={{color: TEXT_COLORS.primary}}>
+                        {tickerValues.current ? formatPrice(tickerValues.current, 'USD') : '?'}
                       </span>
                     </p>
                   </div>
@@ -320,41 +380,6 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
                   </div>
                 )}
 
-                {/* Monto Actual - Para Renta Variable
-                {record.type === 'var' && (
-                  <div className="py-1">
-                    {isEditing ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium" style={{color: TEXT_COLORS.secondary}}>Monto Actual:</span>
-                        <input
-                          type="text"
-                          value={formatNumber(editedRecord.obtained)}
-                          onInput={(e) => {
-                            const cleanValue = parseNumber(e.target.value).slice(0, 9);
-                            e.target.value = formatNumber(cleanValue);
-                            setEditedRecord({...editedRecord, obtained: parseFloat(cleanValue) || 0});
-                          }}
-                          onChange={(e) => {
-                            const cleanValue = parseNumber(e.target.value);
-                            setEditedRecord({...editedRecord, obtained: parseFloat(cleanValue) || 0});
-                          }}
-                          className="px-2 rounded border text-sm w-24" style={INPUT_STYLES}
-                        />
-                      </div>
-                    ) : (
-                      <p className="text-sm">
-                        <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Monto Actual:</span> 
-                        <span className="ml-1" style={{color: record.projection ? '#7C3AED' : TEXT_COLORS.primary}}>
-                          {formatPrice(record.obtained, 'USD')}
-                        </span>
-                        {record.projection && (
-                          <span className="ml-1 text-xs" style={{color:'#7C3AED'}}>(proyección)</span>
-                        )}
-                      </p>
-                    )}
-                  </div>
-                )} */}
-
                 {record.type === 'fijo' && (
                   <div className="py-1">
                     {isEditing ? (
@@ -391,7 +416,7 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
 
                 <div className="py-1">
                   <p className="text-sm">
-                    <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>TNA:</span> 
+                    <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Rendimiento:</span> 
                     <span className="ml-1" style={{color: TEXT_COLORS.primary}}>{Math.round(record.tna)}%</span>
                   </p>
                 </div>
@@ -427,7 +452,7 @@ const RecordDetailModal = ({ isOpen, onClose, record, onUpdate, onConfirm }) => 
                   ) : (
                     <p className="text-sm">
                       <span className="font-medium" style={{color: TEXT_COLORS.secondary}}>Cantidad:</span> 
-                      <span className="ml-1" style={{color: TEXT_COLORS.primary}}>{parseFloat(record.qty).toFixed(6)}</span>
+                      <span className="ml-1" style={{color: TEXT_COLORS.primary}}>{parseFloat(record.qty).toFixed(9)}</span>
                     </p>
                   )}
                 </div>

@@ -15,8 +15,8 @@ export const patchSaving = (id, data) => {
   return apiRequest(`/api/saving/${id}/`, 'PATCH', data);
 };
 
-export const putSaving = (data) => {
-  return apiRequest('/api/saving/', 'PUT', data);
+export const putSaving = (id, data) => {
+  return apiRequest(`/api/saving/${id}/`, 'PUT', data);
 };
 
 export const deleteSaving = (id) => {

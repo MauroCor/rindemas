@@ -13,6 +13,12 @@ const MonthDropComponent = ({ value, onChange, type }) => {
             const formattedDate = adjustMonths(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`, 1);
             onChange(formattedDate);
             setInitialValueSet(true);
+        } else if (type === "Hasta" && !initialValueSet) {
+            const currentDate = new Date();
+            const nextYear = new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), currentDate.getDate());
+            const formattedDate = `${nextYear.getFullYear()}-${String(nextYear.getMonth() + 1).padStart(2, '0')}`;
+            onChange(formattedDate);
+            setInitialValueSet(true);
         }
     }, [type, initialValueSet, onChange]);
 
@@ -31,22 +37,6 @@ const MonthDropComponent = ({ value, onChange, type }) => {
                 style={{ background:'#2D3748', color:'#F3F4F6', border:'1px solid #1F2937', height:'2.5rem' }}
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
             />
-            {type === "Hasta" && value && (
-                <button
-                    type="button"
-                    onClick={() => onChange("")}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-gray-500 font-bold text-xl"
-                >
-                    x
-                </button>
-            )}
-            {type === "Hasta" && !value && (
-                <div className='text-center'>
-                    <span className="text-xs text-center text-gray-300">
-                        Por defecto se creará por 1 año.
-                    </span>
-                </div>
-            )}
         </div>
     );
 };
