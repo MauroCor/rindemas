@@ -123,7 +123,7 @@ const Login = () => {
           <div className="mt-4 text-center -mb-3">
             <p className="text-sm text-gray-400">
               ¿No tienes cuenta? Solicita <a
-                href="mailto:maurocorrales4@gmail.com?subject=Nuevo%20usuario%20%7C%20Rinde%2B&body=%C2%A1Hola!%20%F0%9F%91%8B%0AQuisiera%20solicitar%20una%20cuenta%20personal%20en%20Rinde%2B%20%F0%9F%92%B0%0A%0AMis%20datos%3A%0A%F0%9F%91%A4%20Nombre%20completo%3A%0A%F0%9F%93%A7%20Email%3A%0A%F0%9F%92%A1%20Usuario%20deseado%20(opcional)%3A%0A%F0%9F%A4%9D%20%C2%BFDesea%20asesoramiento%20personalizado%3F%3A%0A%0A%C2%A1Gracias!%0ASaludos."
+                href="mailto:rindemas.web@gmail.com?subject=Nuevo%20usuario%20%7C%20Rinde%2B&body=%C2%A1Hola!%20%F0%9F%91%8B%0AQuisiera%20solicitar%20una%20cuenta%20personal%20en%20Rinde%2B%20%F0%9F%92%B0%0A%0AMis%20datos%3A%0A%F0%9F%91%A4%20Nombre%20completo%3A%0A%F0%9F%93%A7%20Email%3A%0A%F0%9F%92%A1%20Usuario%20deseado%20(opcional)%3A%0A%F0%9F%A4%9D%20%C2%BFDesea%20asesoramiento%20personalizado%3F%3A%0A%0A%C2%A1Gracias!%0ASaludos."
                 className="text-teal-400 hover:text-teal-200 transition-colors duration-200 underline"
               >aquí</a>.
             </p>

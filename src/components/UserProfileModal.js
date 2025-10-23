@@ -21,11 +21,11 @@ const UserProfileModal = ({ isOpen, onClose, user, onChangePassword }) => {
               </div>
               <div className="pt-4" />
               <p className="text-xs" style={{color:'#6B7280'}}>
-                ¿Consultas? Contacta al <a
-                  href="mailto:maurocorrales4@gmail.com?subject=Rinde%2B%20Consultas."
+                ¿Consultas? <a
+                  href="mailto:rindemas.web@gmail.com?subject=Consultas%20%7C%20Rinde%2B"
                   className="text-teal-400 underline hover:text-teal-300"
                   style={{color:'#16A085'}}
-                >administrador</a>.
+                >Contactanos</a>.
               </p>
             </div>
           </div>
