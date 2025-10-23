@@ -76,7 +76,7 @@ export const generateToggledUserMessage = (user, toggledData) => generateUserMes
 
 export const generateMailtoLink = (email, message) => {
   if (!email) return '#';
-  const subject = encodeURIComponent('Rinde+ - Información de cuenta');
+  const subject = encodeURIComponent('Cuenta | Rinde+');
   const body = encodeURIComponent(message);
   return `mailto:${email}?subject=${subject}&body=${body}`;
 };
