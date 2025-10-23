@@ -12,7 +12,6 @@ import { getNotes } from '../services/notes';
 import { parse, compareAsc } from 'date-fns';
 import { handlePrev, handleNext, focusCurrentMonth } from '../utils/useMonthlyData';
 import { useExchangeRate } from '../context/ExchangeRateContext';
-import AddButtonComponent from '../components/AddButtonComponent';
 import { formatPrice } from '../utils/numbers';
 
 const BalanceScreen = () => {
@@ -142,7 +141,6 @@ const BalanceScreen = () => {
     <div className="min-h-screen py-4" style={{background:'#111827', color:'#F3F4F6'}}>
       <h1 className="text-center text-2xl font-bold tracking-tight">Balance General</h1>
       <p className="italic text-center text-sm mb-6" style={{color:'#9CA3AF'}}>¿Cuánto dinero dispongo?</p>
-      <div className="text-center mb-2"><AddButtonComponent fromScreen="Ingreso" /></div>
 
       <CarouselComponent
         data={dataMonths}
