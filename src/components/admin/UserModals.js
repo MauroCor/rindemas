@@ -28,6 +28,7 @@ const UserModals = ({
   onDeleteCancel,
   showToggleConfirm,
   userToToggle,
+  toggleBackendError,
   onToggleConfirm,
   onToggleCancel
 }) => {
@@ -289,6 +290,11 @@ const UserModals = ({
                   </span>?
                 </p>
               </div>
+              {toggleBackendError && (
+                <div className="px-6 py-3 border-t" style={{ borderColor: '#1F2937' }}>
+                  <div className="text-red-400 text-sm text-center">{toggleBackendError}</div>
+                </div>
+              )}
               <div className="flex justify-center gap-2 px-5 py-3 border-t" style={MODAL_BORDER_STYLES}>
                 <button
                   onClick={onToggleCancel}

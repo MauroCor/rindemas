@@ -23,9 +23,9 @@ const CarouselComponent = ({ data, renderItem, loading, children, startIndex = 0
           </div>
         </>
       ) : (
-        <div>
-          <p className="text-gray-400 text-center mt-4 text-lg pt-6">Parece que no tienes datos aún.</p>
-          <p className="text-gray-400 text-center mt-4 text-lg">Usa el botón <span className="font-bold">+ Agregar</span> para empezar.</p>
+        <div className="text-center text-gray-400 mt-4 text-lg pt-6">
+          <p>¡Proyecta!</p>
+          <p>Comienza agregando tus datos siguiendo el <a href="/rindemas/ayuda" className="text-teal-400 hover:text-teal-300 underline">Manual</a>.</p>
         </div>
       )}
     </div>

@@ -66,17 +66,6 @@ const NavbarComponent = () => {
       {!isLoginPage && (
         <div className="flex-1 flex justify-center space-x-4">
           <NavLink
-            to="/balance"
-            className={({ isActive }) =>
-              isActive
-                ? "font-bold text-lg text-white border rounded-full px-2 py-1"
-                : "text-white hover:text-gray-200 px-2 py-1"
-            }
-            style={({ isActive }) => isActive ? { borderColor: '#16A085' } : {}}
-          >
-            Balance
-          </NavLink>
-          <NavLink
             to="/saldo"
             className={({ isActive }) =>
               isActive
@@ -87,7 +76,6 @@ const NavbarComponent = () => {
           >
             Saldo
           </NavLink>
-
           <NavLink
             to="/ahorro"
             className={({ isActive }) =>
@@ -98,6 +86,17 @@ const NavbarComponent = () => {
             style={({ isActive }) => isActive ? { borderColor: '#16A085' } : {}}
           >
             Ahorro
+          </NavLink>
+          <NavLink
+            to="/balance"
+            className={({ isActive }) =>
+              isActive
+                ? "font-bold text-lg text-white border rounded-full px-2 py-1"
+                : "text-white hover:text-gray-200 px-2 py-1"
+            }
+            style={({ isActive }) => isActive ? { borderColor: '#16A085' } : {}}
+          >
+            Balance
           </NavLink>
         </div>
       )}

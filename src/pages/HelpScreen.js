@@ -27,7 +27,7 @@ const HelpScreen = () => {
           {openTips && (
             <div className="px-6 pb-6">
               <p className="text-gray-300 mb-4">
-                🎯 Rinde+ tiene <span className="font-semibold">3 secciones principales</span>: <span className="font-semibold">Balance</span>, <span className="font-semibold">Saldos</span> y <span className="font-semibold">Ahorros</span>.
+                🎯 Rinde+ tiene <span className="font-semibold">3 secciones principales</span>: <span className="font-semibold">Saldo</span>, <span className="font-semibold">Ahorro</span> y <span className="font-semibold">Balance</span>.
               </p>
 
               <p className="text-gray-300 mb-4">
@@ -41,30 +41,6 @@ const HelpScreen = () => {
               <p className="text-gray-300 mb-3">
                 💱 Los importes en <span className="font-semibold">dólares</span> se convierten automáticamente con la cotización actual que indica el carrusel. Podés ajustar otra cotización desde <span className="font-semibold">Usuario → Dólar</span>.
               </p>
-
-              <p className="text-gray-300 mb-4">
-                🚀 <strong>Recomendación:</strong> Empezá agregando tus datos en <span className="font-semibold">Saldos</span> para tener una base sólida.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* Pestaña: Balance (desplegable) */}
-        <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
-          <button onClick={()=>setOpenBalance(!openBalance)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Balance</h2>
-            <span className="text-gray-300 text-sm absolute right-6">{openBalance ? '▲' : '▼'}</span>
-          </button>
-          {openBalance && (
-            <div className="px-6 pb-6">
-              <p className="text-gray-300 mb-4">
-                💳 <strong>Vista de tu billetera general</strong><br/>
-                Te responde: <span className="font-semibold">¿Cuánto dinero tenés disponible cada mes?</span> Incluye tus rendimientos de ahorros. 💰
-              </p>
-
-              <p className="text-gray-300 mb-3">
-                📊 <strong>¿Qué es el Balance?</strong> Es tu dinero disponible del mes: saldo mensual + ahorros líquidos. Todo en una sola vista.
-              </p>
             </div>
           )}
         </section>
@@ -72,14 +48,14 @@ const HelpScreen = () => {
         {/* Pestaña: Saldos (desplegable) */}
         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
           <button onClick={()=>setOpenSaldos(!openSaldos)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Saldos</h2>
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Saldo</h2>
             <span className="text-gray-300 text-sm absolute right-6">{openSaldos ? '▲' : '▼'}</span>
           </button>
           {openSaldos && (
             <div className="px-6 pb-6">
               <p className="text-gray-300 mb-4">
                 💸 <strong>Gestioná tus ingresos y gastos mensuales</strong><br/>
-                Te responde: <span className="font-semibold">¿Cuánto dinero queda de tus ingresos cada mes?</span> 📊
+                Responde: <span className="font-semibold">¿Cuánto dinero queda de tus ingresos cada mes?</span> 📊
               </p>
 
               <p className="text-gray-300 mb-3">
@@ -90,6 +66,7 @@ const HelpScreen = () => {
                 <li>Agregá ingresos y egresos <span className="font-semibold">recurrentes</span> por al menos un año para proyectar mejor.</li>
                 <li>Agrupá <span className="font-semibold">gastos hormiga</span> como un Gasto general.</li>
                 <li>Para ingresos/egresos <span className="font-semibold">variables</span>, siempre es mejor subestimar ingresos y sobreestimar gastos para evitar sorpresas desagradables.</li>
+                <li>Editá ingresos y egresos seleccionando el registro en el carrusel.</li>
               </ul>
             </div>
           )}
@@ -98,14 +75,14 @@ const HelpScreen = () => {
         {/* Pestaña: Ahorros (desplegable) */}
         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
           <button onClick={()=>setOpenAhorros(!openAhorros)} className="w-full flex items-center justify-center relative px-6 py-4">
-            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Ahorros</h2>
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Ahorro</h2>
             <span className="text-gray-300 text-sm absolute right-6">{openAhorros ? '▲' : '▼'}</span>
           </button>
           {openAhorros && (
             <div className="px-6 pb-6">
               <p className="text-gray-300 mb-4">
                 💎 <strong>Gestioná tus ahorros invertidos</strong><br/>
-                Te responde: <span className="font-semibold">¿Cuánto crece y rinde mi cartera?</span> 📈
+                Responde: <span className="font-semibold">¿Cuánto crece y rinde mi cartera?</span> 📈
               </p>
 
               <p className="text-gray-300 mb-3">
@@ -159,6 +136,27 @@ const HelpScreen = () => {
                 <li>Ajusta fecha desde y hasta a graficar.</li>
                 <li>Elige en las referencias qué líneas graficar.</li>
               </ul>
+            </div>
+          )}
+        </section>
+
+         {/* Pestaña: Balance (desplegable) */}
+         <section className="rounded-lg mb-4 shadow-lg" style={{background:'#1F2937'}}>
+          <button onClick={()=>setOpenBalance(!openBalance)} className="w-full flex items-center justify-center relative px-6 py-4">
+            <h2 className="text-xl font-semibold text-center" style={{color:'#16A085'}}>Balance</h2>
+            <span className="text-gray-300 text-sm absolute right-6">{openBalance ? '▲' : '▼'}</span>
+          </button>
+          {openBalance && (
+            <div className="px-6 pb-6">
+              <p className="text-gray-300 mb-4">
+                📊 Resumen de tu <strong>balance general</strong> (Sólo vista, no es posible editar).<br/>
+                Responde: <span className="font-semibold">¿Cuánto dinero tenés disponible cada mes?</span> Incluye tus rendimientos de ahorros. 💰
+              </p>
+
+              <p className="text-gray-300 mb-3">
+                ¿Qué es el <strong>Balance</strong>?<br/>
+                Dinero disponible mensual: Saldo mensual + Ahorros líquidos.
+              </p>
             </div>
           )}
         </section>

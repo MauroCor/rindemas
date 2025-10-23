@@ -6,6 +6,8 @@ const UserForm = ({
   editingUser, 
   formData, 
   loading,
+  backendError,
+  editBackendError,
   onInputChange, 
   onSubmit, 
   onCancel 
@@ -126,6 +128,11 @@ const UserForm = ({
               />
             </div>
           </form>
+          {(backendError || editBackendError) && (
+            <div className="px-6 py-3 border-t" style={{ borderColor: '#1F2937' }}>
+              <div className="text-red-400 text-sm text-center">{backendError || editBackendError}</div>
+            </div>
+          )}
           <div className="flex justify-center gap-2 px-5 py-3 border-t" style={MODAL_BORDER_STYLES}>
             <button
               type="button"

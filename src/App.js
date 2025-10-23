@@ -31,7 +31,7 @@ const AppContent = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={<Navigate to="/balance" />} />
+        <Route path="/" element={<Navigate to="/saldo" />} />
         <Route
           path="/balance"
           element={

@@ -18,7 +18,10 @@ const AdminScreen = () => {
     showUserEdited: false,
     showUserToggled: false,
     copied: false,
-    hasAccess: true
+    hasAccess: true,
+    backendError: '',
+    editBackendError: '',
+    toggleBackendError: ''
   });
   
   const [userState, setUserState] = useState({
@@ -88,12 +91,12 @@ const AdminScreen = () => {
       password: ''
     });
     setUserState(prev => ({ ...prev, editingUser: null }));
-    setUiState(prev => ({ ...prev, showCreateForm: false }));
+    setUiState(prev => ({ ...prev, showCreateForm: false, backendError: '' }));
   };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
-    setUiState(prev => ({ ...prev, loading: true }));
+    setUiState(prev => ({ ...prev, loading: true, backendError: '' }));
     try {
       await createUser(formData);
       setUserState(prev => ({ ...prev, createdUser: formData }));
@@ -101,7 +104,7 @@ const AdminScreen = () => {
       resetForm();
       setUiState(prev => ({ ...prev, showUserCreated: true }));
     } catch (error) {
-      logError('Error creating user:', error);
+      setUiState(prev => ({ ...prev, backendError: 'Error al crear usuario. Verifique los datos.' }));
     } finally {
       setUiState(prev => ({ ...prev, loading: false }));
     }
@@ -123,7 +126,7 @@ const AdminScreen = () => {
     e.preventDefault();
     if (!userState.editingUser) return;
     
-    setUiState(prev => ({ ...prev, loading: true }));
+    setUiState(prev => ({ ...prev, loading: true, editBackendError: '' }));
     try {
       await updateUser(userState.editingUser.id, formData);
       setUserState(prev => ({
@@ -135,7 +138,7 @@ const AdminScreen = () => {
       resetForm();
       setUiState(prev => ({ ...prev, showUserEdited: true }));
     } catch (error) {
-      logError('Error updating user:', error);
+      setUiState(prev => ({ ...prev, editBackendError: 'Error al actualizar usuario. Verifique los datos.' }));
     } finally {
       setUiState(prev => ({ ...prev, loading: false }));
     }
@@ -177,7 +180,7 @@ const AdminScreen = () => {
   const handleToggleConfirm = async () => {
     if (!userState.userToToggle) return;
     
-    setUiState(prev => ({ ...prev, loading: true }));
+    setUiState(prev => ({ ...prev, loading: true, toggleBackendError: '' }));
     try {
       await toggleUserStatus(userState.userToToggle.id, userState.userToToggle.is_active);
       setUserState(prev => ({
@@ -193,7 +196,7 @@ const AdminScreen = () => {
       setUserState(prev => ({ ...prev, userToToggle: null }));
       await loadUsers();
     } catch (error) {
-      logError('Error toggling user status:', error);
+      setUiState(prev => ({ ...prev, toggleBackendError: 'Error al cambiar estado del usuario.' }));
     } finally {
       setUiState(prev => ({ ...prev, loading: false }));
     }
@@ -302,6 +305,8 @@ const AdminScreen = () => {
         editingUser={userState.editingUser}
         formData={formData}
         loading={uiState.loading}
+        backendError={uiState.backendError}
+        editBackendError={uiState.editBackendError}
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
         onCancel={resetForm}
@@ -329,6 +334,7 @@ const AdminScreen = () => {
         onDeleteCancel={handleDeleteCancel}
         showToggleConfirm={uiState.showToggleConfirm}
         userToToggle={userState.userToToggle}
+        toggleBackendError={uiState.toggleBackendError}
         onToggleConfirm={handleToggleConfirm}
         onToggleCancel={handleToggleCancel}
       />
