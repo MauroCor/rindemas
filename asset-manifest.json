@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/rindemas/static/css/main.d0901224.css",
-    "main.js": "/rindemas/static/js/main.a3bbdb8d.js",
+    "main.js": "/rindemas/static/js/main.88d879b4.js",
     "static/media/logo-rindemas.png": "/rindemas/static/media/logo-rindemas.81d5d424288c98d4e937.png",
     "static/media/logo-rindemas-mobile.png": "/rindemas/static/media/logo-rindemas-mobile.0e61f3935bc3d7d2c90d.png",
     "index.html": "/rindemas/index.html",
     "main.d0901224.css.map": "/rindemas/static/css/main.d0901224.css.map",
-    "main.a3bbdb8d.js.map": "/rindemas/static/js/main.a3bbdb8d.js.map"
+    "main.88d879b4.js.map": "/rindemas/static/js/main.88d879b4.js.map"
   },
   "entrypoints": [
     "static/css/main.d0901224.css",
-    "static/js/main.a3bbdb8d.js"
+    "static/js/main.88d879b4.js"
   ]
 }
