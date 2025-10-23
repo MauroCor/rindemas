@@ -1,20 +1,17 @@
 const CONTACT_EMAIL = 'rindemas.web@gmail.com';
 
 const optimizeMessage = (message) => {
-  return message
-    .replace(/\n/g, '%0D%0A')
-    .replace(/\r\n/g, '%0D%0A')
-    .trim();
+  const encoded = encodeURIComponent(message);
+  return encoded.replace(/%0A/g, '%0D%0A');
 };
 
 export const generateMailto = (email, subject, message = '') => {
   if (!email) return '#';
   
-  const optimizedMessage = optimizeMessage(message);
   const encodedSubject = encodeURIComponent(subject);
-  const encodedBody = encodeURIComponent(optimizedMessage);
+  const optimizedBody = optimizeMessage(message);
   
-  return `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
+  return `mailto:${email}?subject=${encodedSubject}&body=${optimizedBody}`;
 };
 
 export const generateAccountRequestMailto = () => {
