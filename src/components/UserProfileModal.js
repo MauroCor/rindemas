@@ -1,5 +1,6 @@
 import React from 'react';
 import { MODAL_STYLES, MODAL_BORDER_STYLES, TEXT_COLORS } from '../utils/styles';
+import { generateContactMailto } from '../utils/emailUtils';
 
 const UserProfileModal = ({ isOpen, onClose, user, onChangePassword }) => {
   if (!isOpen) return null;
@@ -22,7 +23,7 @@ const UserProfileModal = ({ isOpen, onClose, user, onChangePassword }) => {
               <div className="pt-4" />
               <p className="text-xs" style={{color:'#6B7280'}}>
                 ¿Consultas? <a
-                  href="mailto:rindemas.web@gmail.com?subject=Consultas%20%7C%20Rinde%2B"
+                  href={generateContactMailto()}
                   className="text-teal-400 underline hover:text-teal-300"
                   style={{color:'#16A085'}}
                 >Contactanos</a>.

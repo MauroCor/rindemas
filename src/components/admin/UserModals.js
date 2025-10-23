@@ -1,12 +1,10 @@
 import React from 'react';
 import { MODAL_STYLES, MODAL_BORDER_STYLES, TEXT_COLORS } from '../../utils/styles';
 import { 
-  generateCreatedUserMessage, 
-  generateEditedUserMessage, 
-  generateToggledUserMessage,
-  generateMailtoLink,
-  copyToClipboard 
-} from '../../utils/adminUtils';
+  generateCreatedUserMailto,
+  generateEditedUserMailto, 
+  generateToggledUserMailto
+} from '../../utils/emailUtils';
 
 const UserModals = ({
   showUserCreated,
@@ -47,7 +45,7 @@ const UserModals = ({
                 <div className="flex justify-between items-center mb-4">
                   <p className="text-base" style={{color: TEXT_COLORS.primary}}>Informar al cliente:</p>
                   <button
-                    onClick={() => onCopyMessage(generateCreatedUserMessage(createdUser))}
+                    onClick={() => onCopyMessage(generateCreatedUserMailto(createdUser, true))}
                     className="flex items-center gap-2 px-3 py-1 rounded text-sm hover:bg-gray-700 transition-colors"
                     style={{color: TEXT_COLORS.primary}}
                   >
@@ -70,12 +68,12 @@ const UserModals = ({
                 </div>
                 <div className="bg-gray-800 rounded-lg p-4 border relative" style={{borderColor: '#374151'}}>
                   <p className="text-sm font-mono text-left whitespace-pre-wrap">
-                    {generateCreatedUserMessage(createdUser)}
+                    {generateCreatedUserMailto(createdUser, true)}
                   </p>
                 </div>
                 <p className="text-sm mt-4 text-center" style={{color: TEXT_COLORS.secondary}}>
                   Enviar por <a 
-                    href={generateMailtoLink(createdUser?.email, generateCreatedUserMessage(createdUser))}
+                    href={generateCreatedUserMailto(createdUser)}
                     className="text-teal-400 hover:text-teal-300 underline"
                   >
                     email
@@ -108,7 +106,7 @@ const UserModals = ({
                 <div className="flex justify-between items-center mb-4">
                   <p className="text-base" style={{color: TEXT_COLORS.primary}}>Informar al cliente:</p>
                   <button
-                    onClick={() => onCopyMessage(generateEditedUserMessage(editedUser, editedUserData))}
+                    onClick={() => onCopyMessage(generateEditedUserMailto(editedUser, editedUserData, true))}
                     className="flex items-center gap-2 px-3 py-1 rounded text-sm hover:bg-gray-700 transition-colors"
                     style={{color: TEXT_COLORS.primary}}
                   >
@@ -131,12 +129,12 @@ const UserModals = ({
                 </div>
                 <div className="bg-gray-800 rounded-lg p-4 border relative" style={{borderColor: '#374151'}}>
                   <p className="text-sm font-mono text-left whitespace-pre-wrap">
-                    {generateEditedUserMessage(editedUser, editedUserData)}
+                    {generateEditedUserMailto(editedUser, editedUserData, true)}
                   </p>
                 </div>
                 <p className="text-sm mt-4 text-center" style={{color: TEXT_COLORS.secondary}}>
                   Enviar por <a 
-                    href={generateMailtoLink(editedUserData?.email || editedUser?.email, generateEditedUserMessage(editedUser, editedUserData))}
+                    href={generateEditedUserMailto(editedUser, editedUserData)}
                     className="text-teal-400 hover:text-teal-300 underline"
                   >
                     email
@@ -171,7 +169,7 @@ const UserModals = ({
                 <div className="flex justify-between items-center mb-4">
                   <p className="text-base" style={{color: TEXT_COLORS.primary}}>Informar al cliente:</p>
                   <button
-                    onClick={() => onCopyMessage(generateToggledUserMessage(toggledUser, toggledUserData))}
+                    onClick={() => onCopyMessage(generateToggledUserMailto(toggledUser, toggledUserData, true))}
                     className="flex items-center gap-2 px-3 py-1 rounded text-sm hover:bg-gray-700 transition-colors"
                     style={{color: TEXT_COLORS.primary}}
                   >
@@ -194,12 +192,12 @@ const UserModals = ({
                 </div>
                 <div className="bg-gray-800 rounded-lg p-4 border relative" style={{borderColor: '#374151'}}>
                   <pre className="text-sm text-gray-300 whitespace-pre-wrap font-mono">
-                    {generateToggledUserMessage(toggledUser, toggledUserData)}
+                    {generateToggledUserMailto(toggledUser, toggledUserData, true)}
                   </pre>
                 </div>
                 <p className="text-sm mt-4 text-center" style={{color: TEXT_COLORS.secondary}}>
                   Enviar por <a 
-                    href={generateMailtoLink(toggledUser?.email, generateToggledUserMessage(toggledUser, toggledUserData))}
+                    href={generateToggledUserMailto(toggledUser, toggledUserData)}
                     className="text-teal-400 hover:text-teal-300 underline"
                   >
                     email
