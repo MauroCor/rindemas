@@ -31,15 +31,15 @@ const HelpScreen = () => {
               </p>
 
               <p className="text-gray-300 mb-4">
-                📅 Todas funcionan con un carrusel mensual que te permite navegar entre meses.
+                📅 Todas incluyen una vista mensual que permite desplazarse entre meses.
               </p>
 
               <p className="text-gray-300 mb-3">
-                💡 En el <strong>carrusel</strong> podés seleccionar cualquier registro para ver su detalle y editarlo.
+                💡 En la tarjeta del mes podés seleccionar cualquier registro para <strong>ver su detalle y editarlo</strong> (excepto en balance).
               </p>
 
               <p className="text-gray-300 mb-3">
-                💱 Los importes en <span className="font-semibold">dólares</span> se convierten automáticamente con la cotización actual que indica el carrusel. Podés ajustar otra cotización desde <span className="font-semibold">Usuario → Dólar</span>.
+              💱 Los valores en <span className="font-semibold">dólares</span> usan la cotización actual. Podés cambiarla en <span className="font-semibold">Usuario → Dólar</span>.
               </p>
             </div>
           )}
@@ -66,7 +66,7 @@ const HelpScreen = () => {
                 <li>Agregá ingresos y egresos <span className="font-semibold">recurrentes</span> por al menos un año para proyectar mejor.</li>
                 <li>Agrupá <span className="font-semibold">gastos hormiga</span> como un Gasto general.</li>
                 <li>Para ingresos/egresos <span className="font-semibold">variables</span>, siempre es mejor subestimar ingresos y sobreestimar gastos para evitar sorpresas desagradables.</li>
-                <li>Editá ingresos y egresos seleccionando el registro en el carrusel.</li>
+                <li>Editá ingresos y egresos seleccionando el registro en la tarjeta del mes.</li>
               </ul>
             </div>
           )}
