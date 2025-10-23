@@ -1,4 +1,5 @@
 import SpinnerComponent from "./SpinnerComponent";
+import { Link } from 'react-router-dom';
 
 const CarouselComponent = ({ data, renderItem, loading, children, startIndex = 0, itemsPerPages = 3 }) => {
   const buffer = 0; // mostrar exactamente itemsPerPages
@@ -25,7 +26,8 @@ const CarouselComponent = ({ data, renderItem, loading, children, startIndex = 0
       ) : (
         <div className="text-center text-gray-400 mt-4 text-lg pt-6">
           <p>¡Proyecta!</p>
-          <p>Comienza agregando tus datos siguiendo el <a href="/rindemas/ayuda" className="text-teal-400 hover:text-teal-300 underline">Manual</a>.</p>
+          <p>Agrega tus datos mensuales para comenzar.</p>
+          <p>Puedes guiarte con el <Link to="/ayuda" className="text-teal-400 hover:text-teal-300 underline">Manual de uso</Link>.</p>
         </div>
       )}
     </div>
