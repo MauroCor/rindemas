@@ -25,9 +25,9 @@ const Login = () => {
 
       if (token) {
         setMessage('Ingresando...');
-        login(token);  // Guarda token context y localStorage
+        login(token);
         setTimeout(() => {
-          navigate('/balance');
+          navigate('/saldo');
         }, 1000);
       }
     } catch (error) {

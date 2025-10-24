@@ -104,22 +104,15 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                                 key={index} 
                                 className="flex justify-between items-center border-b cursor-pointer hover:bg-gray-700" 
                                 style={{borderColor:'#374151', color:'#E5E7EB'}}
-                                onClick={() => !readOnly && item.name !== 'Tarjeta' && handleRecordClick(item, isIncome ? 'income' : 'expense')}
+                                onClick={() => !readOnly && handleRecordClick(item, isIncome ? 'income' : 'expense')}
                             >
                                 <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
                                 <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy !== 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
-                                <span className="w-[33%] text-left text-sm" style={{color: item.name === 'Ingresos' ? '#10B981' : item.name === 'Egresos' ? '#e67875' : item.name === 'Tarjeta' ? '#e67875' : '#F3F4F6', textShadow: item.name === 'Ingresos' ? '0 0 6px rgba(16, 185, 129, 0.4)' : item.name === 'Egresos' ? '0 0 6px rgba(220, 38, 38, 0.4)' : item.name === 'Tarjeta' ? '0 0 6px rgba(217, 119, 6, 0.4)' : 'none'}}>{formatPrice(item.price, 'ARS')}</span>
-                                {!readOnly && item.name !== 'Tarjeta' && onDelete && (
+                                <span className="w-[33%] text-left text-sm" style={{color: item.name === 'Ingresos' ? '#10B981' : item.name === 'Egresos' ? '#e67875' : '#F3F4F6', textShadow: item.name === 'Ingresos' ? '0 0 6px rgba(16, 185, 129, 0.4)' : item.name === 'Egresos' ? '0 0 6px rgba(220, 38, 38, 0.4)' : 'none'}}>{formatPrice(item.price, 'ARS')}</span>
+                                {!readOnly && onDelete && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onDelete(item); }}
                                         className="w-[5%] text-red-400 text-sm hover:text-red-500"
-                                    >
-                                        &#10005;
-                                    </button>
-                                )}
-                                {!readOnly && item.name === 'Tarjeta' && (
-                                    <button
-                                        className="w-[5%] text-gray-600 text-lg cursor-default"
                                     >
                                         &#10005;
                                     </button>
