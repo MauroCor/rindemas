@@ -108,7 +108,7 @@ const FinancialDropComponent = ({ title, data, isIncome, onDelete, onPatch, init
                             >
                                 <span className="w-[40%] text-center text-sm whitespace-normal">{item.name}</span>
                                 <span className="w-[35%] text-left text-sm whitespace-normal" style={{color:'#9CA3AF'}}>{item.ccy !== 'ARS' ? formatPrice(item.amount, item.ccy) : ''}</span>
-                                <span className="w-[33%] text-left text-sm" style={{color: item.name === 'Ingresos' ? '#10B981' : item.name === 'Egresos' ? '#e67875' : '#F3F4F6', textShadow: item.name === 'Ingresos' ? '0 0 6px rgba(16, 185, 129, 0.4)' : item.name === 'Egresos' ? '0 0 6px rgba(220, 38, 38, 0.4)' : 'none'}}>{formatPrice(item.price, 'ARS')}</span>
+                                <span className="w-[33%] text-left text-sm" style={{color: item.name === 'Ingresos' ? '#10B981' : (item.name === 'Egresos' || (item.name === 'Tarjeta' && readOnly)) ? '#e67875' : '#F3F4F6', textShadow: item.name === 'Ingresos' ? '0 0 6px rgba(16, 185, 129, 0.4)' : (item.name === 'Egresos' || (item.name === 'Tarjeta' && readOnly)) ? '0 0 6px #DC262640' : 'none'}}>{formatPrice(item.price, 'ARS')}</span>
                                 {!readOnly && onDelete && (
                                     <button
                                         onClick={(e) => { e.stopPropagation(); onDelete(item); }}
