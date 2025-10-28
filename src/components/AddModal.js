@@ -459,15 +459,9 @@ const AddModal = () => {
                       </div>
                     </div>
                   </>
-                )}
-                <div className="flex flex-col">
-                  <label className="text-sm text-center mb-1" style={{color:'#FFFFFF'}}>¿Proyección?</label>
-                  <div className='flex justify-center'>
-                    <SwitchComponent value={values.projection} onToggle={(value) => setValue('projection', value)} optionA="NO" optionB="SÍ" />
-                  </div>
-                </div>
-              </>
-            )}
+                  )}
+                </>
+              )}
           </div>
 
           {backendError && (
